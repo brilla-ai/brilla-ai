@@ -7,7 +7,7 @@ Noticed a bug? Utilize the Issue tab to create any issues/bugs to report it. Tha
 ## Pull Requests
 
 Have a fix to a bug? Want to contribute new functionality? Please use guidelines below:
-- Use branches. Create a branch for the change with a clear and meaningful name. For example `updating_about_description` is preferred over `update`
+- Use branches. Create a branch for the change with a clear and meaningful name beginning with your github username and separated by hyphens. For example `wsedor-updating-about-description`
 - Single fixes over multiple fixes. Each PR should be targeted to a single fix or group of fixes resolving a single issue.
 - Testing: In addition to testing the  change, run existing tests and if necessary add new tests for the change.
 - Open a pull request and fill out the template details.
