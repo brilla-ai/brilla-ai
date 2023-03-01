@@ -1,5 +1,5 @@
 # Contributing To nsmqai
-Contributions to the project as alwyas welcome! Please see issue specific guidelines below.
+Contributions to the project as always welcome! Please see issue specific guidelines below.
 
 ## Bug Reports
 Noticed a bug? Utilize the Issue tab to create any issues/bugs to report it. Thank you for helping us improve!
