@@ -15,3 +15,8 @@
 
 # webapp
 /webapp/ @wsedor @jojoboateng
+
+# docs & housekeeping
+/docs/ @wsedor @jojoboateng
+/README.md @wsedor @jojoboateng
+/LICENSE @jojoboateng
