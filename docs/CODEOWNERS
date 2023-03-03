@@ -2,16 +2,16 @@
 # These owners are responsible for code in their sections and will be automatically listed on each pull request
 
 # data-preprocessing
-/data-preprocessing/ @jojoboateng
+/data-preprocessing/ @quaku21 @jojoboateng
 
 # question-answering
 /question-answering/ @jojoboateng
 
 # speech-to-text
-/speech-to-text/ @jojoboateng
+/speech-to-text/  @kojomensahonums @jojoboateng
 
 # text-to-speech
-/text-to-speech/ @jojoboateng
+/text-to-speech/ @nanayeb34 @jojoboateng
 
 # webapp
 /webapp/ @wsedor @jojoboateng
