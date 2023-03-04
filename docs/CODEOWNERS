@@ -1,0 +1,22 @@
+# This file contains the code owners for each top level directory in the project.
+# These owners are responsible for code in their sections and will be automatically listed on each pull request
+
+# data-preprocessing
+/data-preprocessing/ @quaku21 @jojoboateng
+
+# question-answering
+/question-answering/ @naafidasana @jojoboateng
+
+# speech-to-text
+/speech-to-text/  @kojomensahonums @jojoboateng
+
+# text-to-speech
+/text-to-speech/ @Nanayeb34 @jojoboateng
+
+# webapp
+/webapp/ @wsedor @jojoboateng
+
+# docs & housekeeping
+/docs/ @wsedor @jojoboateng
+/README.md @wsedor @jojoboateng
+/LICENSE @jojoboateng
