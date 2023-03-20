@@ -42,7 +42,7 @@ def downloadVideo(link):
 jsonData = readInstructionFile()
 
 #Define doc variables
-excelDocumentName = jsonData['excel_doc_name']  #document name
+excelDocumentName = jsonData['excel_doc_path']  #document path
 excelSheetName = jsonData['sheet_name']  #name of sheet in document
 videosHeaderName = jsonData['video_header_name'] #name of header of column containing video links
 localVideoDirectoryPath = jsonData['video_folder_path'] #path to folder that will contain downloaded videos locally
