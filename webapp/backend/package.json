@@ -9,7 +9,7 @@
     "lint": "prettier --check {**/,}*.js",
     "dev": "nodemon server.js"
   },
-  "author": "Syed Afzal",
+  "author": "William Edor",
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^2.4.3",
