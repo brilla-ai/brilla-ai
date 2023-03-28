@@ -37,6 +37,3 @@ Removing server   ... done
 Removing frontend ... done
 Removing mongo    ... done
 ```
-
-
-##
