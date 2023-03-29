@@ -8,4 +8,4 @@ What testing was done and what are the results. Add screenshots/short videos whe
 
 # Reviewers
 
-@mentions of two persons at minimum to review the proposed changes
+@mentions of 1 person at minimum to review the proposed changes
