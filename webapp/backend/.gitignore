@@ -1,8 +1,8 @@
-// node modules
+# node modules
 node_modules
 
-// environment variables
+# environment variables
 .env
 
-// Output files
+# Output files
 build
