@@ -1,9 +1,0 @@
-{
-    "excel_doc_path": "NSMQ.xslx",
-    "sheet_name": "Sheet1",
-    "video_folder_path": "/videos", 
-    "video_header_name": "links",
-    "google_drive_folder_name": "NSMQ_videos",
-    "google_drive_folder_ID": "1234567",
-    "service_account_path": "credentials.json"
-}
