@@ -2,7 +2,7 @@
 
 ## Frontend
 
-Front end is using NextJS. To deploy it locally, run the development server from `webapp/frontend`:
+Frontend is using NextJS. To deploy the frontend locally, run the development server from `webapp/frontend`:
 
 ```bash
 npm run dev
@@ -16,7 +16,7 @@ You can start editing the page by modifying `webapp/frontend/pages/index.tsx`. T
 
 ## Backend
 
-Backend is using NodeJS. To deploy it locally, run the development server from `webapp/backend`:
+Backend is using NodeJS with a MongoDB Atlas cluster. To deploy the backend locally, run the development server from `webapp/backend`:
 
 ### Server
 
@@ -49,7 +49,3 @@ Run the following command to test application
 ```bash
 npm run test
 ```
-
-## Database
-
-Coming soon
