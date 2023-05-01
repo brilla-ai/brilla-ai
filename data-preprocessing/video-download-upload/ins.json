@@ -3,7 +3,5 @@
     "sheet_name": "Sheet1",
     "video_folder_path": "videos", 
     "video_header_name": "Links",
-    "google_drive_folder_name": "nsmq_test",
-    "google_drive_folder_ID": "1HUOn385tax6aY07XObUleCIgTd71qF-5",
     "service_account_path": "credentials.json"
 }

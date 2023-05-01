@@ -14,7 +14,7 @@ from pathlib import Path
 import json
 import argparse
 import os
-
+from dotenv import load_dotenv
 
 
 #Brief usage function
@@ -26,9 +26,17 @@ def usage():
 
 #Function to read instruction file containing necessary parameters/values for this script to run
 def readInstructionFile():
+    load_dotenv()
     with open('ins.json', 'r') as ins:
         data = json.load(ins)
-    #print(data)
+    folder_id = os.getenv('GOOGLE_DRIVE_FOLDER_ID')
+    folder_name= os.getenv('GOOGLE_DRIVE_NAME')
+
+     # Create a dictionary object with the folder ID and name
+    folder_data = {'folder_id': folder_id, 'folder_name': folder_name}
+    
+    # Update the data object with the folder data
+    data.update(folder_data)
     return data
 
 #Function to read excel sheet and return stream/data
@@ -48,15 +56,14 @@ def downloadVideo(link, localVidDir):
 
 #Function to validate json instruction file
 def check_json_file(filepath):
-    required_keys = ["excel_doc_path", "sheet_name", "video_folder_path", "video_header_name",
-                     "google_drive_folder_name", "google_drive_folder_ID", "service_account_path"]
+    required_keys = ["excel_doc_path", "sheet_name", "video_folder_path", "video_header_name", "service_account_path"]
     
     with open(filepath) as f:
         data = json.load(f)
     
     for key in required_keys:
         if key not in data:
-            raise ValueError("bad JSON instruction file")
+            raise ValueError("Bad JSON instruction file")
     
     return True
 
@@ -135,3 +142,4 @@ if __name__ == "__main__":
         usage()
     else:
         __main__(args)
+        
