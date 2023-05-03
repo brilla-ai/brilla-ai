@@ -5,7 +5,7 @@
   "main": "server.ts",
   "scripts": {
     "test": "npm run build && npm run jasmine",
-    "start": "ts-node-esm src/server.ts",
+    "start": "nodemon src/server.ts",
     "tsc": "tsc",
     "build": "npx tsc",
     "prettier": "prettier --config .prettierrc \"src/**/**.ts\" --write",
