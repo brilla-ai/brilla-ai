@@ -1,9 +1,10 @@
 // Import libraries
 import { config } from "dotenv";
-import express, { Application, Request, Response } from "express";
+import express, { Application } from "express";
 import json from "body-parser";
 import cors from "cors";
 import { connectToDatabase } from "./services/database.service";
+import routes from "./handlers/index";
 
 // Server
 config();
@@ -14,10 +15,8 @@ const address = "http://localhost:".concat(port);
 app.use(json.json());
 app.use(cors());
 
-// Endpoint
-app.get("/", (req: Request, res: Response) => {
-  res.send("Welcome to NSMQ AI Web backend");
-});
+// Main route
+app.use("/", routes)
 
 app.listen(port, () => {
   console.log(`Starting backend app on: ${address}`);
