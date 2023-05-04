@@ -3,7 +3,7 @@
 
 import React from "react";
 
-// import Footer from "./Footer";
+import Footer from "./Footer";
 import Header from "./Header";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
@@ -11,7 +11,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     <>
       <Header />
       <main>{children}</main>
-      {/* <Footer /> */}
+      <Footer />
     </>
   );
 };
