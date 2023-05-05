@@ -1,0 +1,5 @@
+{   
+     "root_path": "Videos",
+     "cropped_video_destination_path": "cropped_videos",
+     "target_statements": ["riidles"]
+}
