@@ -7,7 +7,7 @@ In line with best practices, developers using Google colaboratory to write their
 2. Push the local branch with no new changes to Github in order to create a remote branch. 
 3. Open your notebook in Google Colaboratory.
 4. Click on 'File' and select 'Save a copy in Github'.
-5. A pop up window will appear and you will be asked to authenticate your Google account with your Github accoount if you haven't already done so.
+5. A pop up window will appear and you will be asked to authenticate your Google account with your Github account if you haven't already done so.
 6. After authentication, select 'nsmq-ai/nsmqai' in the drop down arrow next to repository.
 7. Click on the drop down arrow next to branch and select the branch you have created.
 8. Write a commit message for your change.
