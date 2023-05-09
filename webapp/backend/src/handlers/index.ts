@@ -1,5 +1,5 @@
 import {Request, Response, Router} from "express";
-import demoVideos from "./api/videos";
+import demoVideoRoutes from "./api/videos";
 
 // Router object
 const routes = Router();
@@ -10,6 +10,6 @@ routes.get("/", (req: Request, res: Response) => {
 });
 
 // Demo video route
-routes.use("/videos", demoVideos);
+routes.use("/demo-videos", demoVideoRoutes);
 
 export default routes;

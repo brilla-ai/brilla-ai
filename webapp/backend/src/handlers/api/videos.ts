@@ -4,21 +4,21 @@ import allVideos from "../../videoData";
 import path from "path";
 
 // Initialise router object
-const demoVideos = Router();
+const demoVideosRoutes = Router();
 
 // Metadata for all videos
-demoVideos.get("/", (req: Request, res: Response) => {
+demoVideosRoutes.get("/", (req: Request, res: Response) => {
   res.json(allVideos);
 });
 
 // Metadata for a single video
-demoVideos.get("/:id/metadata", (req: Request, res: Response) => {
+demoVideosRoutes.get("/:id/metadata", (req: Request, res: Response) => {
   const id = parseInt(req.params.id, 10);
   res.json(allVideos[id]);
 });
 
 // Endpoint for a single video to stream
-demoVideos.get("/video/:id", (req: Request, res: Response) => {
+demoVideosRoutes.get("/:id", (req: Request, res: Response) => {
     try{
         // Constant range
         const range = req.headers.range;
@@ -60,4 +60,4 @@ demoVideos.get("/video/:id", (req: Request, res: Response) => {
     }
 });
 
-export default demoVideos;
+export default demoVideosRoutes;
