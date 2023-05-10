@@ -3,7 +3,7 @@
 In line with best practices, developers using Google colaboratory to write their scripts are encouraged to integrate their notebooks into Github for version control.
 
 **Steps to integrate Colab with Github**
-1. Clone the nsmqai repositiory and create a local branch. All branches must have the right naming conventions. See [here](https://github.com/nsmq-ai/nsmqai/blob/34bca778b61e3cca6532805c37eae9e74d18a8a5/docs/CONTRIBUTING.md) for more information on how to name your branch.
+1. Clone the nsmqai repository and create a local branch. All branches must have the right naming conventions. See [here](https://github.com/nsmq-ai/nsmqai/blob/34bca778b61e3cca6532805c37eae9e74d18a8a5/docs/CONTRIBUTING.md) for more information on how to name your branch.
 2. Push the local branch with no new changes to Github in order to create a remote branch. 
 3. Open your notebook in Google Colaboratory.
 4. Click on 'File' and select 'Save a copy in Github'.
