@@ -1,6 +1,6 @@
 import { Request, Response, Router } from "express";
 import fs from "fs";
-import allVideos from "../../videoData";
+import allDemoVideos from "../../videoData";
 import path from "path";
 
 // Initialise router object
@@ -8,13 +8,13 @@ const demoVideosRoutes = Router();
 
 // Metadata for all videos
 demoVideosRoutes.get("/", (req: Request, res: Response) => {
-  res.json(allVideos);
+  res.json(allDemoVideos);
 });
 
 // Metadata for a single video
 demoVideosRoutes.get("/:id/metadata", (req: Request, res: Response) => {
   const id = parseInt(req.params.id, 10);
-  res.json(allVideos[id]);
+  res.json(allDemoVideos[id]);
 });
 
 // Endpoint for a single video to stream

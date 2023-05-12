@@ -1,4 +1,4 @@
-const allVideos = [
+const allDemoVideos = [
   {
     id: "video1",
     title:
@@ -12,4 +12,4 @@ const allVideos = [
   { id: "video3", title: "NSMQ2022_PRESEC_ACCRAADEMY_POPEJOHNS_cropped" },
 ];
 
-export default allVideos;
+export default allDemoVideos;
