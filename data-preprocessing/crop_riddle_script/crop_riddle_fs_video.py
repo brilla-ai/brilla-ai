@@ -86,11 +86,14 @@ if not os.path.exists(cropped_video_destination_path):
     os.makedirs(cropped_video_destination_path)
 else:
     # Seek permission to go ahead with existing folder
-    permission = input(f"Do you want to use the existing folder:{cropped_video_destination_path} for the cropped videos [y or n]: ")  # noqa: E501
+    permission = input(f"Do you want to use the existing folder:\
+                       {cropped_video_destination_path}  \
+                       for the cropped videos [y or n]: ") 
     if permission.lower() == "y":
         print("Going ahead with the script...")
     else:
-        raise ValueError("Please check destination folder of cropped videos in the instructions file")  # noqa: E501
+        raise ValueError("Please check destination folder of cropped videos in the \
+                         instructions file")
  
 def __main__(args):
     """
@@ -148,7 +151,8 @@ def __main__(args):
             target_statements = data["target_statements"]
             for statement in target_statements:
                 if re.search(statement, text, re.IGNORECASE):
-                    print(f"Start statement: {statement} found at {start} time and {end} time")  # noqa: E501
+                    print(f"Start statement: {statement} found at {start} time and \
+                           {end} time")
                     # Crop video
                     cropped_video = video.subclip(start)
                     # Stop search when match is found
