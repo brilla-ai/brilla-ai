@@ -31,7 +31,7 @@ Please note that, on Windows, a separate anaconda command shell will be installe
 
 ## Instruction file (ins.json)
 
-- Provide root path containing videoes as a value of **"root_path"**. Root path should be an absolute path.
+- Provide root path containing videos as a value of **"root_path"**. Root path should be an absolute path.
 - A Windows root path may need additional backslashes.
 - **Original example**: "C:\Users\name\software_projects\nsmqai_test\Videos". The original example will throw an error in the instuction file.
 - Modify by including additional backslashes as shown in the modified version. **Modified version**: "C:\\Users\\name\\software_projects\\nsmqai_test\\Videos".
@@ -49,10 +49,4 @@ Execute python script
 
 ```bash
 python crop_riddle_fs_video.py
-```
-
-[Optional]*You may need to make python script executable with the following command*
-
-```bash
-chmod +x crop_riddle_fs_video.py
 ```
