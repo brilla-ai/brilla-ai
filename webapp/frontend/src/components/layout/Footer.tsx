@@ -22,10 +22,10 @@ const Footer = () => {
       </div>
 
       <div className="flex items-center space-x-4">
-        <a href="" className="text-gray-600 hover:text-gray-800 ">
+        <a href="https://github.com/nsmq-ai/nsmqai" className="text-gray-600 hover:text-gray-800 ">
           <FaGithub />
         </a>
-        <a href="" className="text-gray-600 hover:text-gray-800 ">
+        <a href="https://github.com/nsmq-ai/nsmqai" className="text-gray-600 hover:text-gray-800 ">
           <FaLinkedin />
         </a>
       </div>
