@@ -3,7 +3,7 @@ import { config } from "dotenv";
 import express, { Application } from "express";
 import json from "body-parser";
 import cors from "cors";
-//import { connectToDatabase } from "./services/database.service";
+import { connectToDatabase } from "./services/database.service";
 import routes from "./handlers/index";
 
 // Server
@@ -20,7 +20,7 @@ app.use("/", routes)
 
 app.listen(port, () => {
   console.log(`Starting backend app on: ${address}`);
-  //connectToDatabase();
+  connectToDatabase();
 });
 
 export default app;

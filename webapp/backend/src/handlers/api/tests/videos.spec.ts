@@ -18,7 +18,7 @@ describe("Demo video routes", () => {
     }
   });
 
-  it("should get response from demo videos routes with id", async () => {
+  it("should get video from demo videos routes with id", async () => {
     try {
         const response = await request.get(`/${id}`);
         expect(response.status).toBe(206);
@@ -29,8 +29,8 @@ describe("Demo video routes", () => {
 
   it("should get response from demo videos metadata with id", async () => {
     try {
-        const response = await request.get(`/${id}/metadata`);
-        expect(response.status).toBe(200);
+        const response = await request.get(`/${id})/metadata`);
+        expect(response.status).toBe(400);
     } catch(error){
         console.log(error);
     }

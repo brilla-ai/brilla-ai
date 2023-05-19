@@ -14,6 +14,17 @@ demoVideosRoutes.get("/", (req: Request, res: Response) => {
 // Metadata for a single video
 demoVideosRoutes.get("/:id/metadata", (req: Request, res: Response) => {
   const id = parseInt(req.params.id, 10);
+
+  // Check if id is a valid number
+  if (isNaN(id)) {
+    return res.status(400).json({ error: "Invalid id parameter" });
+  }
+
+  // Check if id is within the appropriate range
+  if (id < 0 || id >= allDemoVideos.length) {
+    return res.status(404).json({ error: "Video not found" });
+  }
+
   res.json(allDemoVideos[id]);
 });
 
@@ -25,6 +36,11 @@ demoVideosRoutes.get("/:id", (req: Request, res: Response) => {
 
         // Request parameter id
         const id = req.params.id;
+
+        // Check if id is a non-empty string
+        if (!id) {
+          return res.status(400).json({ error: "Invalid id parameter" });
+        }
 
         // Video path
         const videoPath = path.join(__dirname, `../../../assets/${id}.mp4`);
