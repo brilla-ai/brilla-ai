@@ -7,7 +7,10 @@ type VideoCardProps = {
 
 const VideoCard = ({ id, image }: VideoCardProps) => {
   return (
-    <div className="max-w-sm bg-transparent  text-black">
+    <div
+      className="max-w-sm bg-transparent  text-black"
+      data-testid="video-card"
+    >
       <img className="w-full" src={image} alt={`Video number ${id}`} />
       <div className="flex justify-center my-5">
         <Link
