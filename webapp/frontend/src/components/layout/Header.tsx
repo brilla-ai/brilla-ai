@@ -3,12 +3,12 @@ import Link from "next/link";
 
 const navigationPages = [
   {
-    name: "Home",
+    name: "Demo",
     href: "/",
   },
   {
-    name: "Demo Page",
-    href: "/demo",
+    name: "Live",
+    href: "/live",
   },
   {
     name: "About",
