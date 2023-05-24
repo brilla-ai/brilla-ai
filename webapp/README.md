@@ -4,13 +4,21 @@
 
 Frontend is using NextJS. To deploy the frontend locally, run the development server from `webapp/frontend`:
 
+### Testing
+
+To run all tests in the frontend, run the following command from `webapp/frontend`:
+
+```bash
+npm run test
+```
+
+### Running
+
 ```bash
 npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-![homepage](./frontend/public/homepage.png)
 
 You can start editing the page by modifying `webapp/frontend/pages/index.tsx`. The page auto-updates as you edit the file.
 
@@ -25,7 +33,7 @@ Backend is using NodeJS with a MongoDB Atlas cluster. To deploy the backend loca
 Run the following command to install node modules
 
 ```bash
-npm install 
+npm install
 ```
 
 Use the following commands to start the server
