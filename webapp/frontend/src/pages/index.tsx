@@ -1,5 +1,5 @@
-import VideoCard from "@/components/homepage/VideoCard";
-import Layout from "@/components/layout/Layout";
+import VideoCard from "../components/homepage/VideoCard";
+import Layout from "../components/layout/Layout";
 
 export default function Home() {
   return (
