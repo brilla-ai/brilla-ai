@@ -151,14 +151,12 @@ def __main__(args):
             target_statements = data["target_statements"]
             for statement in target_statements:
                 if re.search(statement, text, re.IGNORECASE):
-                    print(f"Start statement: {statement} found at {start} time and \
-                           {end} time")
                     # Crop video
                     cropped_video = video.subclip(start)
                     # Stop search when match is found
                     break
                 else:
-                    print("Start statement not found in text")
+                    continue
             end_segment = end
         # Set end of video 
         cropped_video.set_end(end_segment)
