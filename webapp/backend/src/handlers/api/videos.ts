@@ -43,7 +43,7 @@ demoVideosRoutes.get("/:id", (req: Request, res: Response) => {
         }
 
         // Video path
-        const videoPath = path.join(__dirname, `../../../assets/${id}.mp4`);
+        const videoPath = path.join(__dirname, `../../../assets/video/${id}.mp4`);
 
         // Size of the video
         const videoSize = fs.statSync(videoPath).size;

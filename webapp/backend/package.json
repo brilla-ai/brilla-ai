@@ -34,6 +34,7 @@
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-prettier": "^4.2.1",
     "esm": "^3.2.25",
+    "ffmpeg-extract-audio": "^1.0.2",
     "jasmine": "^4.6.0",
     "jasmine-spec-reporter": "^7.0.0",
     "jasmine-ts": "^0.4.0",

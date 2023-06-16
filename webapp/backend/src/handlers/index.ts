@@ -1,5 +1,6 @@
 import {Request, Response, Router} from "express";
 import demoVideoRoutes from "./api/videos";
+import audioExtractionRoutes from "./api/audios";
 
 // Router object
 const routes = Router();
@@ -11,5 +12,8 @@ routes.get("/", (req: Request, res: Response) => {
 
 // Demo video route
 routes.use("/demo-videos", demoVideoRoutes);
+
+// Audio Extraction route
+routes.use("/extract-audio", audioExtractionRoutes);
 
 export default routes;

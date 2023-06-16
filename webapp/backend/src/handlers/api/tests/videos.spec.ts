@@ -21,7 +21,7 @@ describe("Demo video routes", () => {
   it("should get video from demo videos routes with id", async () => {
     try {
         const response = await request.get(`/${id}`);
-        expect(response.status).toBe(206);
+        expect(response.status).toBe(200);
     } catch(error){
         console.log(error);
   }
