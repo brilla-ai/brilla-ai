@@ -1,7 +1,13 @@
 import Layout from "@/components/layout/Layout";
 import { GetServerSidePropsContext } from "next";
 
-export default function DemoPage({ id }: { id: number }) {
+export default function DemoPage({
+  id,
+  backendURLEndpoint,
+}: {
+  id: number;
+  backendURLEndpoint: string;
+}) {
   return (
     <Layout>
       <main className="flex flex-col items-center justify-between min-h-screen px-24 py-8">
@@ -11,7 +17,7 @@ export default function DemoPage({ id }: { id: number }) {
             controls
             width={640}
             height={480}
-            src={`http://localhost:5000/demo-videos/video${id}`}
+            src={`${backendURLEndpoint}/video${id}`}
             // The src will be updated to the actual video url
           />
           {/* TODO: ADD  CHAT SECTION */}
@@ -24,7 +30,8 @@ export default function DemoPage({ id }: { id: number }) {
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const { id } = context.query;
+  const backendURLEndpoint = process.env.BACKEND_VIDEOS_URL;
   return {
-    props: { id },
+    props: { id, backendURLEndpoint },
   };
 }
