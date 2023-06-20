@@ -1,17 +1,18 @@
 import Layout from "@/components/layout/Layout";
+import { GetServerSidePropsContext } from "next";
 
-import ReactPlayer from "react-player/lazy";
-
-export default function DemoPage() {
+export default function DemoPage({ id }: { id: number }) {
   return (
     <Layout>
-      <main className="flex min-h-screen flex-col items-center justify-between px-24 py-8">
+      <main className="flex flex-col items-center justify-between min-h-screen px-24 py-8">
         <div className="grid grid-cols-2 gap-2 mt-8">
-          <ReactPlayer
-            url="https://youtu.be/P8vtPmJE1FY"
-            // Update to stream url once #18 is merged
-            width="600px"
-            height="400px"
+          <video
+            className="w-full h-full"
+            controls
+            width={640}
+            height={480}
+            src={`http://localhost:5000/demo-videos/video${id}`}
+            // The src will be updated to the actual video url
           />
           {/* TODO: ADD  CHAT SECTION */}
           <div className="h-full bg-red-400">chat goes here</div>
@@ -19,4 +20,11 @@ export default function DemoPage() {
       </main>
     </Layout>
   );
+}
+
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const { id } = context.query;
+  return {
+    props: { id },
+  };
 }
