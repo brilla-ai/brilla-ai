@@ -4,6 +4,12 @@
 
 Frontend is using NextJS. To deploy the frontend locally, run the development server from `webapp/frontend`:
 
+## Environment Variables
+
+This project uses a few environment variables to connect to the backend. You can create a `.env.local` file in the `webapp/frontend` directory to set these variables. The following variables are required:
+`BACKEND_VIDEOS_URL=http://localhost:5000/demo-videos/`
+This is the URL to the backend videos. This is used to display and play the videos in the frontend.
+
 ### Testing
 
 To run all tests in the frontend, run the following command from `webapp/frontend`:
