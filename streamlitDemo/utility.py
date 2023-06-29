@@ -61,6 +61,8 @@ def realTimeLocalSTT(audio_file_path):
     # setup whisper models
     whisperModel = whisper.load_model("base")
 
+    # majority of audio chunk code referenced from https://www.geeksforgeeks.org/audio-processing-using-pydub-and-google-speechrecognition-api/#
+    
     # Input audio file to be sliced
     audio = AudioSegment.from_mp3(audio_file_path)
 
