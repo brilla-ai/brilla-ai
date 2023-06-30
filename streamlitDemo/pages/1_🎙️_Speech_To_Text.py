@@ -8,7 +8,7 @@ st.write(
     """
     This demo illustrates a real time transcription of the Speech To Text Model of the NSMQ AI. Steps:
     - Play the audio,
-    - Click "Transcribe" to begin processing
+    - Click "Transcribe"
     - See the real time transcription
     
     Enjoy!
