@@ -68,4 +68,4 @@ with testUserAudioTab:
     if st.session_state.record:
         with st.spinner('Transcribing Your Voice...Say Something'):
             realTimeAudioRecordingSTT()
-            
+
