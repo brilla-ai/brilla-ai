@@ -16,6 +16,9 @@
 # webapp
 /webapp/ @wsedor @jojoboateng
 
+# streamlit app
+/streamlitDemo @wsedor @jojoboateng @Nanayeb34 @kojomensahonums @naafidasana @quaku21
+
 # docs & housekeeping
 /docs/ @wsedor @jojoboateng
 /README.md @wsedor @jojoboateng
