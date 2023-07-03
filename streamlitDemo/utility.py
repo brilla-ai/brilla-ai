@@ -3,8 +3,11 @@ import requests
 from pydub import AudioSegment
 import whisper
 import os
+import tempfile
 import glob
 from pathlib import Path
+from streamlit_webrtc import WebRtcMode, webrtc_streamer
+import queue
 
 # VIDEO PATHS
 DEMO_VIDEO_1_PATH = './assets/video/video1.mp4'
@@ -28,6 +31,11 @@ TTS_API = ''
 DEMO_QA_QUESTION = {"text": "there is really nothing improper about me,i am just a fraction,my numerator exceeds my denominator,i am not a mixed fraction or mixed number,an example of me is 7 3"}
 DEMO_QA_ANSWER = {"answer": "improper fraction"}
 
+# DEFAULTS FOR REAL TIME AUDIO RECORDING TRANSCRIPTION
+WHISPER_MODEL="base"        # "Model to use". Choices are ["tiny","base","small","medium","large"]
+USE_ENGLISH=False           # "Whether to use English model"
+TIMEOUT=3                   # Timeout for getting frames from the audio receiver. Default is 3 seconds.
+
 # API FUNCTIONS
 def get_stt_text():
     response = requests.get(STT_API)
@@ -43,7 +51,8 @@ def get_tts_audio(answer):
     return response.json()
 
 # LOCAL STT PROCESSING
-def realTimeLocalSTT(audio_file_path):
+def realTimeAudioFileSTT(audio_file_path):
+    # TODO: get actual transcription from API and display
     # clean up audio chunk folder in case there is anything in there
     cleanupAudioChunkFiles()
 
@@ -155,6 +164,66 @@ def realTimeLocalSTT(audio_file_path):
     # clean up audio chunk folder since processing is complete
     cleanupAudioChunkFiles()
 
+def realTimeAudioRecordingSTT(model=WHISPER_MODEL, english=USE_ENGLISH, timeout=TIMEOUT):
+    #there are no english models for large
+    if model != "large" and english:
+        model = model + ".en"
+    audio_model = whisper.load_model(model)
+
+    # streamlit-webrtc component containing the audio functionality
+    webrtc_ctx = webrtc_streamer(
+        key="speech-to-text",
+        mode=WebRtcMode.SENDONLY,
+        audio_receiver_size=1024,
+        media_stream_constraints={"video": False, "audio": True},
+    )
+
+    status_indicator = st.empty()
+
+    # creating a placeholder for the fixed sized textbox
+    transcriptBox = st.empty()
+    # transcriptText = ''
+    # boxHeight = 180
+    # transcriptBox.text_area(
+    #     "Real time transcription",
+    #     transcriptText,
+    #     height = boxHeight,
+    #     label_visibility  = 'hidden'
+    # )
+
+    while True:
+        if webrtc_ctx.audio_receiver:
+            try:
+                audio_frames = webrtc_ctx.audio_receiver.get_frames(timeout=timeout)
+            except queue.Empty:
+                continue
+
+            status_indicator.write("Running...Say something!")
+            sound_chunk = AudioSegment.empty()
+            for audio_frame in audio_frames:
+                sound = AudioSegment(
+                    data=audio_frame.to_ndarray().tobytes(),
+                    sample_width=audio_frame.format.bytes,
+                    frame_rate=audio_frame.sample_rate,
+                    channels=len(audio_frame.layout.channels),
+                )
+                sound_chunk += sound
+            
+            if len(sound_chunk) > 0:
+                text = transcribeAudio(audio_model, sound_chunk)
+                transcriptBox.write(text)
+                # transcriptBox.text_area("", transcriptText, height = boxHeight)
+        else:
+            break
+
+def transcribeAudio(audio_model, audio_segment: AudioSegment):
+    with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmpfile:
+        audio_segment.export(tmpfile.name, format="wav")
+        answer = audio_model.transcribe(tmpfile.name, language='english')["text"]
+        tmpfile.close()  
+        os.remove(tmpfile.name)
+        return answer
+
 # CLEAN UP OF AUDIO CHUNK FILES
 def cleanupAudioChunkFiles():
     for f in Path(AUDIO_CHUNK_FOLDER_PATH).glob('*.mp3'):
@@ -174,7 +243,7 @@ def aiOperation(video_file_path, audio_file_path):
 
     with rttCol:
         if st.button('Transcribe'):
-            realTimeLocalSTT(audio_file_path)
+            realTimeAudioFileSTT(audio_file_path)
 
     st.divider()
 
