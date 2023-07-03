@@ -191,3 +191,13 @@ def aiOperation(video_file_path, audio_file_path):
         # st.write(QA_ANSWER["answer"])
         # st.write(get_qa_answer(question))
         st.text_area("Answer", DEMO_QA_ANSWER["answer"], label_visibility  = 'hidden')
+    
+    st.divider()
+
+    st.write('#### Generated Speech!')
+
+    # TODO: get actual audio from API and display
+    audio_file = open(audio_file_path, 'rb')
+    audio_bytes = audio_file.read()
+    st.audio(audio_bytes, format="audio/mp3")
+    
