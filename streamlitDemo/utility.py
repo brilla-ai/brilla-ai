@@ -5,10 +5,9 @@ import whisper
 import os
 import tempfile
 import glob
-import io
 from pathlib import Path
-import speech_recognition as sr
-import base64
+from streamlit_webrtc import WebRtcMode, webrtc_streamer
+import queue
 
 # VIDEO PATHS
 DEMO_VIDEO_1_PATH = './assets/video/video1.mp4'
@@ -35,10 +34,7 @@ DEMO_QA_ANSWER = {"answer": "improper fraction"}
 # DEFAULTS FOR REAL TIME AUDIO RECORDING TRANSCRIPTION
 WHISPER_MODEL="base"        # "Model to use". Choices are ["tiny","base","small","medium","large"]
 USE_ENGLISH=False           # "Whether to use English model"
-VERBOSE_OUTPUT=False        # "Whether to print verbose output"
-ENERGY_LEVEL=300            # "Energy level for mic to detect"
-PAUSE_LEVEL=0.8             # "Pause time before entry ends"
-ENABLE_DYNAMIC_ENERGY=False # "Flag to enable dynamic energy"
+TIMEOUT=3                   # Timeout for getting frames from the audio receiver. Default is 3 seconds.
 
 # API FUNCTIONS
 def get_stt_text():
@@ -168,51 +164,65 @@ def realTimeAudioFileSTT(audio_file_path):
     # clean up audio chunk folder since processing is complete
     cleanupAudioChunkFiles()
 
-def realTimeAudioRecordingSTT(model=WHISPER_MODEL, english=USE_ENGLISH, verbose=VERBOSE_OUTPUT, energy=ENERGY_LEVEL, 
-                              pause=PAUSE_LEVEL, dynamic_energy=ENABLE_DYNAMIC_ENERGY):
-    # creating a placeholder for the fixed sized textbox
-    transcriptBox = st.empty()
-    transcriptText = ''
-    boxHeight = 180
-    transcriptBox.text_area(
-        "Real time transcription",
-        transcriptText,
-        height = boxHeight,
-        label_visibility  = 'hidden'
-    )
-
+def realTimeAudioRecordingSTT(model=WHISPER_MODEL, english=USE_ENGLISH, timeout=TIMEOUT):
     #there are no english models for large
     if model != "large" and english:
         model = model + ".en"
-    audio_model = whisper.load_model(model)    
-    
-    #load the speech recognizer and set the initial energy threshold and pause threshold
-    r = sr.Recognizer()
-    r.energy_threshold = energy
-    r.pause_threshold = pause
-    r.dynamic_energy_threshold = dynamic_energy
+    audio_model = whisper.load_model(model)
 
-    temp_dir = tempfile.mkdtemp()
-    save_path = os.path.join(temp_dir, "temp.wav")
+    # streamlit-webrtc component containing the audio functionality
+    webrtc_ctx = webrtc_streamer(
+        key="speech-to-text",
+        mode=WebRtcMode.SENDONLY,
+        audio_receiver_size=1024,
+        media_stream_constraints={"video": False, "audio": True},
+    )
 
-    with sr.Microphone(sample_rate=16000) as source:
-        while True:
-            #get and save audio to wav file
-            audio = r.listen(source)
-            data = io.BytesIO(audio.get_wav_data())
-            audio_clip = AudioSegment.from_file(data)
-            audio_clip.export(save_path, format="wav")
+    status_indicator = st.empty()
 
-            if english:
-                result = audio_model.transcribe(save_path, language='english')
-            else:
-                result = audio_model.transcribe(save_path)
+    # creating a placeholder for the fixed sized textbox
+    transcriptBox = st.empty()
+    # transcriptText = ''
+    # boxHeight = 180
+    # transcriptBox.text_area(
+    #     "Real time transcription",
+    #     transcriptText,
+    #     height = boxHeight,
+    #     label_visibility  = 'hidden'
+    # )
 
-            if not verbose:
-                transcriptText += result["text"]
-                transcriptBox.text_area("", transcriptText, height = boxHeight)
-            else:
-                print(result)
+    while True:
+        if webrtc_ctx.audio_receiver:
+            try:
+                audio_frames = webrtc_ctx.audio_receiver.get_frames(timeout=timeout)
+            except queue.Empty:
+                continue
+
+            status_indicator.write("Running...Say something!")
+            sound_chunk = AudioSegment.empty()
+            for audio_frame in audio_frames:
+                sound = AudioSegment(
+                    data=audio_frame.to_ndarray().tobytes(),
+                    sample_width=audio_frame.format.bytes,
+                    frame_rate=audio_frame.sample_rate,
+                    channels=len(audio_frame.layout.channels),
+                )
+                sound_chunk += sound
+            
+            if len(sound_chunk) > 0:
+                text = transcribeAudio(audio_model, sound_chunk)
+                transcriptBox.write(text)
+                # transcriptBox.text_area("", transcriptText, height = boxHeight)
+        else:
+            break
+
+def transcribeAudio(audio_model, audio_segment: AudioSegment):
+    with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmpfile:
+        audio_segment.export(tmpfile.name, format="wav")
+        answer = audio_model.transcribe(tmpfile.name, language='english')["text"]
+        tmpfile.close()  
+        os.remove(tmpfile.name)
+        return answer
 
 # CLEAN UP OF AUDIO CHUNK FILES
 def cleanupAudioChunkFiles():

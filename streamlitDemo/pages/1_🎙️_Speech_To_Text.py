@@ -40,32 +40,12 @@ with testUserAudioTab:
     st.write(
         """
         Steps:
-        - Click "Start Recording"
+        - Click "START"
         - Say something
         - See the real time transcription   
-        - Click "Stop Recording" 
+        - Click "STOP" 
         """
     )
-
-    # session for controlling the start/stop button
-    if 'record' not in st.session_state:
-        st.session_state.record = False
-
-    def clickStartButton():
-        st.session_state.record = True
     
-    def clickStopButton():
-        st.session_state.record = False
-
-    startCol, stopCol = st.columns(2)
-
-    with startCol:
-        st.button('Start Recording', on_click=clickStartButton)
-    
-    with stopCol:
-        st.button('Stop Recording', on_click=clickStopButton)
-
-    if st.session_state.record:
-        with st.spinner('Transcribing Your Voice...Say Something'):
-            realTimeAudioRecordingSTT()
+    realTimeAudioRecordingSTT()
 
