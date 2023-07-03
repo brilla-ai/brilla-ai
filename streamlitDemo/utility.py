@@ -3,8 +3,12 @@ import requests
 from pydub import AudioSegment
 import whisper
 import os
+import tempfile
 import glob
+import io
 from pathlib import Path
+import speech_recognition as sr
+import base64
 
 # VIDEO PATHS
 DEMO_VIDEO_1_PATH = './assets/video/video1.mp4'
@@ -28,6 +32,14 @@ TTS_API = ''
 DEMO_QA_QUESTION = {"text": "there is really nothing improper about me,i am just a fraction,my numerator exceeds my denominator,i am not a mixed fraction or mixed number,an example of me is 7 3"}
 DEMO_QA_ANSWER = {"answer": "improper fraction"}
 
+# DEFAULTS FOR REAL TIME AUDIO RECORDING TRANSCRIPTION
+WHISPER_MODEL="base"        # "Model to use". Choices are ["tiny","base","small","medium","large"]
+USE_ENGLISH=False           # "Whether to use English model"
+VERBOSE_OUTPUT=False        # "Whether to print verbose output"
+ENERGY_LEVEL=300            # "Energy level for mic to detect"
+PAUSE_LEVEL=0.8             # "Pause time before entry ends"
+ENABLE_DYNAMIC_ENERGY=False # "Flag to enable dynamic energy"
+
 # API FUNCTIONS
 def get_stt_text():
     response = requests.get(STT_API)
@@ -43,7 +55,8 @@ def get_tts_audio(answer):
     return response.json()
 
 # LOCAL STT PROCESSING
-def realTimeLocalSTT(audio_file_path):
+def realTimeAudioFileSTT(audio_file_path):
+    # TODO: get actual transcription from API and display
     # clean up audio chunk folder in case there is anything in there
     cleanupAudioChunkFiles()
 
@@ -155,6 +168,52 @@ def realTimeLocalSTT(audio_file_path):
     # clean up audio chunk folder since processing is complete
     cleanupAudioChunkFiles()
 
+def realTimeAudioRecordingSTT(model=WHISPER_MODEL, english=USE_ENGLISH, verbose=VERBOSE_OUTPUT, energy=ENERGY_LEVEL, 
+                              pause=PAUSE_LEVEL, dynamic_energy=ENABLE_DYNAMIC_ENERGY):
+    # creating a placeholder for the fixed sized textbox
+    transcriptBox = st.empty()
+    transcriptText = ''
+    boxHeight = 180
+    transcriptBox.text_area(
+        "Real time transcription",
+        transcriptText,
+        height = boxHeight,
+        label_visibility  = 'hidden'
+    )
+
+    #there are no english models for large
+    if model != "large" and english:
+        model = model + ".en"
+    audio_model = whisper.load_model(model)    
+    
+    #load the speech recognizer and set the initial energy threshold and pause threshold
+    r = sr.Recognizer()
+    r.energy_threshold = energy
+    r.pause_threshold = pause
+    r.dynamic_energy_threshold = dynamic_energy
+
+    temp_dir = tempfile.mkdtemp()
+    save_path = os.path.join(temp_dir, "temp.wav")
+
+    with sr.Microphone(sample_rate=16000) as source:
+        while True:
+            #get and save audio to wav file
+            audio = r.listen(source)
+            data = io.BytesIO(audio.get_wav_data())
+            audio_clip = AudioSegment.from_file(data)
+            audio_clip.export(save_path, format="wav")
+
+            if english:
+                result = audio_model.transcribe(save_path, language='english')
+            else:
+                result = audio_model.transcribe(save_path)
+
+            if not verbose:
+                transcriptText += result["text"]
+                transcriptBox.text_area("", transcriptText, height = boxHeight)
+            else:
+                print(result)
+
 # CLEAN UP OF AUDIO CHUNK FILES
 def cleanupAudioChunkFiles():
     for f in Path(AUDIO_CHUNK_FOLDER_PATH).glob('*.mp3'):
@@ -174,7 +233,7 @@ def aiOperation(video_file_path, audio_file_path):
 
     with rttCol:
         if st.button('Transcribe'):
-            realTimeLocalSTT(audio_file_path)
+            realTimeAudioFileSTT(audio_file_path)
 
     st.divider()
 
