@@ -1,7 +1,7 @@
 import streamlit as st
 from utility import aiOperation, DEMO_AUDIO_3_PATH, DEMO_VIDEO_3_PATH
 
-st.set_page_config(page_title="NSMQ AI 2nd Demo", page_icon="💡", layout="wide")
+st.set_page_config(page_title="NSMQ AI 3rd Demo", page_icon="💡", layout="wide")
 
 st.markdown("# NSMQ AI 2nd Demo💡")
 st.write(
