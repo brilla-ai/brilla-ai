@@ -1,6 +1,5 @@
 import streamlit as st
 from utility import get_tts_audio, autoplay_audio, TTS_VOICE_BANK
-import time
 
 st.set_page_config(page_title="Text To Speech", page_icon="🔉", layout="wide")
 
