@@ -1,5 +1,5 @@
 import streamlit as st
-from utility import DEMO_AUDIO_3_PATH, realTimeAudioFileSTT, realTimeAudioRecordingSTT
+from utility import DEMO_AUDIO_3_PATH, realtime_audio_file_STT, realtime_audio_recording_STT, autoplay_audio
 
 st.set_page_config(page_title="Speech To Text Demo", page_icon="🎙️", layout="wide")
 
@@ -11,41 +11,14 @@ st.write(
     """
 )
 
-sampleAudioTab, testUserAudioTab = st.tabs(["AUDIO SAMPLE", "TEST LIVE RECORDING"])
+sampleAudioTab, liveRecordingTab = st.tabs(["AUDIO SAMPLE", "TEST LIVE RECORDING"])
 
 with sampleAudioTab:
-    st.write(
-        """
-        This demo illustrates a real time transcription of the Speech To Text Model of the NSMQ AI. Steps:
-        - Play the audio
-        - Click "Transcribe"
-        - See the real time transcription
-        
-        Enjoy!
-        """
-    )
-
-    # audio file
-    audio_file = open(DEMO_AUDIO_3_PATH, 'rb')
-    audio_bytes = audio_file.read()
-    st.audio(audio_bytes, format="audio/mp3")
-
-    # realtime transcription
-    if st.button('Transcribe'):
-        # TODO: get actual transcription from API and display
-        realTimeAudioFileSTT(DEMO_AUDIO_3_PATH)
+    if st.button('Start Transcribing Sample'):
+        autoplay_audio(DEMO_AUDIO_3_PATH)
+        realtime_audio_file_STT(DEMO_AUDIO_3_PATH)
 
 
-with testUserAudioTab:
-    st.write(
-        """
-        Steps:
-        - Click "START"
-        - Say something
-        - See the real time transcription   
-        - Click "STOP" 
-        """
-    )
-    
-    realTimeAudioRecordingSTT()
+with liveRecordingTab:
+    realtime_audio_recording_STT()
 
