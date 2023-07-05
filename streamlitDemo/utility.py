@@ -25,12 +25,18 @@ QA_API_KEY = 'QA_API'
 TTS_API_KEY = 'TTS_API'
 NO_API_SET_FLAG = '-1'
 
-# TEST VALUES
+# QA RIDDLE VALUES
 QA_QUESTION_BANK = {
     "riddle1": "there is really nothing improper about me,i am just a fraction,my numerator exceeds my denominator,i am not a mixed fraction or mixed number,an example of me is 7 3",
     "riddle2": "I am a point of concurrency associated with a triangle. I am a meeting point of three lines associated with a triangle. I am in a way a center of some sort. I am not the in-center and neither am I the circum-center. I am the point at which the three altitudes of a triangle meet. Who am I?",
     "riddle3": "I am a theorem in mechanics That is named after a French scientist named Bernard. I apply to the equilibrium state of an object. I give the relationship between three coplanar concurrent forces that act on a body in equilibrium. I recall the sine rule. Who am I?"
     }
+
+# TTS VOICE OPTIONS
+TTS_VOICE_BANK = {
+    "voice1": "Ghanaian (Voice 1)",
+    "voice2": "Ghanaian (Voice 2)"
+}
 
 # DEFAULTS FOR REAL TIME AUDIO RECORDING TRANSCRIPTION
 TIMEOUT = 3  # Timeout for getting frames from the audio receiver. Default is 3 seconds.
@@ -69,13 +75,22 @@ def get_qa_answer(question):
             answer = response.json()['answer']
             return answer
 
-def get_tts_audio(answer):
+def get_tts_audio(text, voice):
     TTS_API = get_tts_api()
     # only make the API call if a valid url is present
     if TTS_API != NO_API_SET_FLAG:
-        response = requests.get(TTS_API, data=answer)
-        #TODO: change from json to audio
-        return response.json()
+        voiceOption = '1' if voice == TTS_VOICE_BANK['voice1'] else '2'
+
+        payload = json.dumps({'text' : text, 'voice': voiceOption})
+        response = requests.get(TTS_API.rstrip('/') + '/synthesize_audios', data=payload)
+
+        outputFileName = "tts_output.wav"
+
+        if response.status_code == 200:
+            with open(outputFileName, "wb+") as file:
+                file.write(response.content)
+    
+    return outputFileName
 
 # SET API IN ENVIRONMENT VARIABLES
 def set_stt_api(apiVal):
@@ -277,7 +292,7 @@ def ai_operation(video_file_path, audio_file_path):
         st.write("#### Question")
         # st.write(QA_QUESTION["text"])
         # st.write(get_stt_text()['reference'])
-        st.text_area("Question", QA_QUESTION_BANK["text"], label_visibility  = 'hidden')
+        st.text_area("Question", QA_QUESTION_BANK["riddle1"], label_visibility  = 'hidden')
         
     with answerCol:
         st.write("#### Answer")

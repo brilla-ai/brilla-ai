@@ -13,7 +13,7 @@ st.write(
 st.divider()
 
 # text input for riddle
-riddle = st.radio("Choose A Riddle", (QA_QUESTION_BANK['riddle1'], QA_QUESTION_BANK['riddle2'], QA_QUESTION_BANK['riddle3']))
+riddle = st.radio("Select A Riddle", (QA_QUESTION_BANK['riddle1'], QA_QUESTION_BANK['riddle2'], QA_QUESTION_BANK['riddle3']))
 
 # answer display
 answerBoxText = ''
