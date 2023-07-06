@@ -8,16 +8,21 @@ from streamlit_webrtc import WebRtcMode, webrtc_streamer
 import queue
 import base64
 import json
+import uuid
 
 # VIDEO PATHS
 DEMO_VIDEO_1_PATH = './assets/video/video1.mp4'
 DEMO_VIDEO_2_PATH  = './assets/video/video2.mp4'
 DEMO_VIDEO_3_PATH  = './assets/video/video3.mp4'
+DEMO_VIDEO_4_PATH  = './assets/video/video4.mp4'
+DEMO_VIDEO_5_PATH  = './assets/video/video5.mp4'
 
 # AUDIO PATHS
 DEMO_AUDIO_1_PATH  = './assets/audio/audio_video1.mp3'
 DEMO_AUDIO_2_PATH  = './assets/audio/audio_video2.mp3'
 DEMO_AUDIO_3_PATH  = './assets/audio/audio_video3.mp3'
+DEMO_AUDIO_4_PATH  = './assets/audio/audio_video4.mp3'
+DEMO_AUDIO_5_PATH  = './assets/audio/audio_video5.mp3'
 
 # API ENDPOINTS
 STT_API_KEY = 'STT_API'
@@ -28,8 +33,8 @@ NO_API_SET_FLAG = '-1'
 # QA RIDDLE VALUES
 QA_QUESTION_BANK = {
     "riddle1": "there is really nothing improper about me,i am just a fraction,my numerator exceeds my denominator,i am not a mixed fraction or mixed number,an example of me is 7 3",
-    "riddle2": "I am a point of concurrency associated with a triangle. I am a meeting point of three lines associated with a triangle. I am in a way a center of some sort. I am not the in-center and neither am I the circum-center. I am the point at which the three altitudes of a triangle meet. Who am I?",
-    "riddle3": "I am a theorem in mechanics That is named after a French scientist named Bernard. I apply to the equilibrium state of an object. I give the relationship between three coplanar concurrent forces that act on a body in equilibrium. I recall the sine rule. Who am I?"
+    "riddle2": "i am a metallic element, i belong to one of the major series in the periodic table characterised by incomplete 5 f subshell	, i was named after a planet in the solar system, i show variable valences of 2345 and 6, i have several isotopes whose masses spread over a range of 15 mass units but all having atomic number of 92, i nuclear weapons and nuclear energy generation we are all synonymous",
+    "riddle3": "i am used metaphorically to refer to reasoning or decision making that is narrow in scope	in science, i am a common condition that affects many people in the world, my underlying cause is believed to be a combination of genetic and environmental factors, i occur if the eyeball is too long or the cornea is too curved are you extremely myopic, i am the condition in which one unable to see distant objects clearly because the images are focused in front of the retina of the eye"
     }
 
 # TTS VOICE OPTIONS
@@ -127,16 +132,35 @@ def autoplay_audio(audioFile):
             unsafe_allow_html=True,
         )
 
-# LOCAL STT PROCESSING
-def realtime_audio_file_STT(audio_file_path):
+# AUTOPLAY VIDEO
+def autoplay_video(video_file_path):
+    with open(video_file_path, "rb") as f:
+        data = f.read()
+        b64 = base64.b64encode(data).decode()
+        md = f"""
+            <video width="550" height="400" controls autoplay="true">
+            <source src="data:video/mp4;base64,{b64}" type="video/mp4">
+            </video>
+            """
+        st.markdown(
+            md,
+            unsafe_allow_html=True,
+        )
+
+
+# STT PROCESSING
+def realtime_audio_file_STT(audio_file_path, labelFlag="hidden"):
     with st.spinner('Transcribing'):
         # creating a placeholder for the fixed sized textbox
         transcriptBox = st.empty()
         transcriptText = ''
+        boxHeight = 200
         transcriptBox.text_area(
-            "Real time transcription",
+            "Question",
             transcriptText,
-            label_visibility  = 'hidden'
+            key=uuid.uuid4(),
+            label_visibility = labelFlag,
+            height = boxHeight
         )
 
         # temp location for audio chunks
@@ -216,12 +240,14 @@ def realtime_audio_file_STT(audio_file_path):
             transcriptText += get_stt_transcript(audio_chunk_temp_file)
             os.remove(audio_chunk_temp_file)
 
-            transcriptBox.text_area("", transcriptText)
+            transcriptBox.text_area("Question", transcriptText, key=uuid.uuid4(), label_visibility=labelFlag, height = boxHeight)
 
             # Check for flag.
             # If flag is 1, end of the whole audio reached.
             if flag == 1:
                 break
+
+    return transcriptText
 
 def realtime_audio_recording_STT():
     # temp location for audio chunks
@@ -243,7 +269,8 @@ def realtime_audio_recording_STT():
         transcriptBox.text_area(
             "Real time transcription",
             transcriptText,
-            label_visibility  = 'hidden'
+            label_visibility  = 'hidden',
+            key=uuid.uuid4()
         )
     
         while webrtc_ctx.state.playing:
@@ -271,41 +298,55 @@ def realtime_audio_recording_STT():
             else:
                 break
 
+# QA PROCESSING
+def realtime_question_answering(riddle, labelFlag="hidden"):
+    answerBoxText = ''
+
+    with st.spinner("Working On Answer!"):
+        answerBox = st.empty()
+        answerBox.text_area("Answer", answerBoxText, height = 10, label_visibility=labelFlag, key=uuid.uuid4())
+        answerBoxText = get_qa_answer(riddle)
+    
+    answerBox.text_area("Answer", answerBoxText, key=uuid.uuid4())
+
+    return answerBoxText
+
+# TTS PROCESSING
+def realtime_text_to_speech(text, voice):
+    outputAudioFile = ''
+    with st.spinner('Generating speech...'):
+        outputAudioFile = get_tts_audio(text, voice)
+    autoplay_audio(outputAudioFile)
+
 # OVERALL END TO END OPERATION DISPLAY
 def ai_operation(video_file_path, audio_file_path):
-    videoCol, rttCol = st.columns([3,2])
+    if not check_api_values():
+        return
+
+    videoCol, aiResponseCol = st.columns([3,2])
 
     with videoCol:
-        vid1_file = open(video_file_path, 'rb')
-        vid1_bytes = vid1_file.read()
-        st.video(vid1_bytes)
+        autoplay_video(video_file_path)
 
-    with rttCol:
-        if st.button('Transcribe'):
-            realtime_audio_file_STT(audio_file_path)
+    with aiResponseCol:
+        transcript = realtime_audio_file_STT(audio_file_path, "visible")
+        answer = realtime_question_answering(transcript, "visible")
 
-    st.divider()
+        st.text('Generated Speech')
+        realtime_text_to_speech(answer, TTS_VOICE_BANK['voice2'])
 
-    questionCol, answerCol = st.columns([1.5,1])
-
-    with questionCol:
-        st.write("#### Question")
-        # st.write(QA_QUESTION["text"])
-        # st.write(get_stt_text()['reference'])
-        st.text_area("Question", QA_QUESTION_BANK["riddle1"], label_visibility  = 'hidden')
-        
-    with answerCol:
-        st.write("#### Answer")
-        # st.write(QA_ANSWER["answer"])
-        # st.write(get_qa_answer(question))
-        st.text_area("Answer", "answer", label_visibility  = 'hidden')
+def check_api_values():
+    isValid = True
+    if get_stt_api() == '-1':
+        isValid = False
+        st.warning('Please setup the STT API on the API Setup page', icon="⚠️")
     
-    st.divider()
+    if get_tts_api() == '-1':
+        isValid = False
+        st.warning('Please setup the TTS API on the API Setup page', icon="⚠️")
 
-    st.write('#### Generated Speech')
-
-    # TODO: get actual audio from API and display
-    audio_file = open(audio_file_path, 'rb')
-    audio_bytes = audio_file.read()
-    st.audio(audio_bytes, format="audio/mp3")
-
+    if get_qa_api() == '-1':
+        isValid = False
+        st.warning('Please setup the QA API on the API Setup page', icon="⚠️")
+    
+    return isValid

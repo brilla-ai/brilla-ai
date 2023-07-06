@@ -1,5 +1,5 @@
 import streamlit as st
-from utility import ai_operation, DEMO_AUDIO_3_PATH, DEMO_VIDEO_3_PATH
+from utility import check_api_values, ai_operation, DEMO_AUDIO_3_PATH, DEMO_VIDEO_3_PATH
 
 st.set_page_config(page_title="NSMQ AI 3rd Demo", page_icon="💡", layout="wide")
 
