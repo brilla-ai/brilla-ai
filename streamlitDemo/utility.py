@@ -320,6 +320,9 @@ def realtime_text_to_speech(text, voice):
 
 # OVERALL END TO END OPERATION DISPLAY
 def ai_operation(video_file_path, audio_file_path):
+    if not check_api_values():
+        return
+
     videoCol, aiResponseCol = st.columns([3,2])
 
     with videoCol:
@@ -333,11 +336,17 @@ def ai_operation(video_file_path, audio_file_path):
         realtime_text_to_speech(answer, TTS_VOICE_BANK['voice2'])
 
 def check_api_values():
+    isValid = True
     if get_stt_api() == '-1':
+        isValid = False
         st.warning('Please setup the STT API on the API Setup page', icon="⚠️")
     
     if get_tts_api() == '-1':
+        isValid = False
         st.warning('Please setup the TTS API on the API Setup page', icon="⚠️")
 
     if get_qa_api() == '-1':
+        isValid = False
         st.warning('Please setup the QA API on the API Setup page', icon="⚠️")
+    
+    return isValid

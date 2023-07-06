@@ -10,8 +10,6 @@ st.write(
     """
 )
 
-check_api_values()
-
 st.divider()
 
 # display end to end flow
