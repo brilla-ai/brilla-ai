@@ -1,7 +1,7 @@
 # NSMQ AI Workshop Demo
 
 ## Setup
-- The code can be run locally. Follow steps here to setup a python environment for streamlit https://docs.streamlit.io/library/get-started/installation
+- The demo app can be run locally. Follow steps here to setup a python environment for streamlit https://docs.streamlit.io/library/get-started/installation
 - Install dependencies in the virtual python environment by running command `pip install -r requirements.txt`
 
 ## Deploy
