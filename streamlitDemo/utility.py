@@ -8,16 +8,21 @@ from streamlit_webrtc import WebRtcMode, webrtc_streamer
 import queue
 import base64
 import json
+import uuid
 
 # VIDEO PATHS
 DEMO_VIDEO_1_PATH = './assets/video/video1.mp4'
 DEMO_VIDEO_2_PATH  = './assets/video/video2.mp4'
 DEMO_VIDEO_3_PATH  = './assets/video/video3.mp4'
+DEMO_VIDEO_4_PATH  = './assets/video/video4.mp4'
+DEMO_VIDEO_5_PATH  = './assets/video/video5.mp4'
 
 # AUDIO PATHS
 DEMO_AUDIO_1_PATH  = './assets/audio/audio_video1.mp3'
 DEMO_AUDIO_2_PATH  = './assets/audio/audio_video2.mp3'
 DEMO_AUDIO_3_PATH  = './assets/audio/audio_video3.mp3'
+DEMO_AUDIO_4_PATH  = './assets/audio/audio_video4.mp3'
+DEMO_AUDIO_5_PATH  = './assets/audio/audio_video5.mp3'
 
 # API ENDPOINTS
 STT_API_KEY = 'STT_API'
@@ -127,16 +132,33 @@ def autoplay_audio(audioFile):
             unsafe_allow_html=True,
         )
 
-# LOCAL STT PROCESSING
-def realtime_audio_file_STT(audio_file_path):
+# AUTOPLAY VIDEO
+def autoplay_video(video_file_path):
+    with open(video_file_path, "rb") as f:
+        data = f.read()
+        b64 = base64.b64encode(data).decode()
+        md = f"""
+            <video width="550" height="400" controls autoplay="true">
+            <source src="data:video/mp4;base64,{b64}" type="video/mp4">
+            </video>
+            """
+        st.markdown(
+            md,
+            unsafe_allow_html=True,
+        )
+
+
+# STT PROCESSING
+def realtime_audio_file_STT(audio_file_path, labelFlag="hidden"):
     with st.spinner('Transcribing'):
         # creating a placeholder for the fixed sized textbox
         transcriptBox = st.empty()
         transcriptText = ''
         transcriptBox.text_area(
-            "Real time transcription",
+            "Question",
             transcriptText,
-            label_visibility  = 'hidden'
+            key=uuid.uuid4(),
+            label_visibility = labelFlag,
         )
 
         # temp location for audio chunks
@@ -216,12 +238,14 @@ def realtime_audio_file_STT(audio_file_path):
             transcriptText += get_stt_transcript(audio_chunk_temp_file)
             os.remove(audio_chunk_temp_file)
 
-            transcriptBox.text_area("", transcriptText)
+            transcriptBox.text_area("Question", transcriptText, key=uuid.uuid4(), label_visibility=labelFlag)
 
             # Check for flag.
             # If flag is 1, end of the whole audio reached.
             if flag == 1:
                 break
+
+    return transcriptText
 
 def realtime_audio_recording_STT():
     # temp location for audio chunks
@@ -243,7 +267,8 @@ def realtime_audio_recording_STT():
         transcriptBox.text_area(
             "Real time transcription",
             transcriptText,
-            label_visibility  = 'hidden'
+            label_visibility  = 'hidden',
+            key=uuid.uuid4()
         )
     
         while webrtc_ctx.state.playing:
@@ -271,41 +296,46 @@ def realtime_audio_recording_STT():
             else:
                 break
 
+# QA PROCESSING
+def realtime_question_answering(riddle, labelFlag="hidden"):
+    answerBoxText = ''
+
+    with st.spinner("Working On Answer!"):
+        answerBox = st.empty()
+        answerBox.text_area("Answer", answerBoxText, height = 10, label_visibility=labelFlag, key=uuid.uuid4())
+        answerBoxText = get_qa_answer(riddle)
+    
+    answerBox.text_area("Answer", answerBoxText, key=uuid.uuid4())
+
+    return answerBoxText
+
+# TTS PROCESSING
+def realtime_text_to_speech(text, voice):
+    outputAudioFile = ''
+    with st.spinner('Generating speech...'):
+        outputAudioFile = get_tts_audio(text, voice)
+    autoplay_audio(outputAudioFile)
+
 # OVERALL END TO END OPERATION DISPLAY
 def ai_operation(video_file_path, audio_file_path):
-    videoCol, rttCol = st.columns([3,2])
+    videoCol, aiResponseCol = st.columns([3,2])
 
     with videoCol:
-        vid1_file = open(video_file_path, 'rb')
-        vid1_bytes = vid1_file.read()
-        st.video(vid1_bytes)
+        autoplay_video(video_file_path)
 
-    with rttCol:
-        if st.button('Transcribe'):
-            realtime_audio_file_STT(audio_file_path)
+    with aiResponseCol:
+        transcript = realtime_audio_file_STT(audio_file_path, "visible")
+        answer = realtime_question_answering(transcript, "visible")
 
-    st.divider()
+        st.text('Generated Speech')
+        realtime_text_to_speech(answer, TTS_VOICE_BANK['voice2'])
 
-    questionCol, answerCol = st.columns([1.5,1])
-
-    with questionCol:
-        st.write("#### Question")
-        # st.write(QA_QUESTION["text"])
-        # st.write(get_stt_text()['reference'])
-        st.text_area("Question", QA_QUESTION_BANK["riddle1"], label_visibility  = 'hidden')
-        
-    with answerCol:
-        st.write("#### Answer")
-        # st.write(QA_ANSWER["answer"])
-        # st.write(get_qa_answer(question))
-        st.text_area("Answer", "answer", label_visibility  = 'hidden')
+def check_api_values():
+    if get_stt_api() == '-1':
+        st.warning('Please setup the STT API on the API Setup page', icon="⚠️")
     
-    st.divider()
+    if get_tts_api() == '-1':
+        st.warning('Please setup the TTS API on the API Setup page', icon="⚠️")
 
-    st.write('#### Generated Speech')
-
-    # TODO: get actual audio from API and display
-    audio_file = open(audio_file_path, 'rb')
-    audio_bytes = audio_file.read()
-    st.audio(audio_bytes, format="audio/mp3")
-
+    if get_qa_api() == '-1':
+        st.warning('Please setup the QA API on the API Setup page', icon="⚠️")
