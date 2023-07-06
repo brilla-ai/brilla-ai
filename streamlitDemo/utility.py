@@ -154,11 +154,13 @@ def realtime_audio_file_STT(audio_file_path, labelFlag="hidden"):
         # creating a placeholder for the fixed sized textbox
         transcriptBox = st.empty()
         transcriptText = ''
+        boxHeight = 200
         transcriptBox.text_area(
             "Question",
             transcriptText,
             key=uuid.uuid4(),
             label_visibility = labelFlag,
+            height = boxHeight
         )
 
         # temp location for audio chunks
@@ -238,7 +240,7 @@ def realtime_audio_file_STT(audio_file_path, labelFlag="hidden"):
             transcriptText += get_stt_transcript(audio_chunk_temp_file)
             os.remove(audio_chunk_temp_file)
 
-            transcriptBox.text_area("Question", transcriptText, key=uuid.uuid4(), label_visibility=labelFlag)
+            transcriptBox.text_area("Question", transcriptText, key=uuid.uuid4(), label_visibility=labelFlag, height = boxHeight)
 
             # Check for flag.
             # If flag is 1, end of the whole audio reached.
