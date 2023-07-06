@@ -33,8 +33,8 @@ NO_API_SET_FLAG = '-1'
 # QA RIDDLE VALUES
 QA_QUESTION_BANK = {
     "riddle1": "there is really nothing improper about me,i am just a fraction,my numerator exceeds my denominator,i am not a mixed fraction or mixed number,an example of me is 7 3",
-    "riddle2": "I am a point of concurrency associated with a triangle. I am a meeting point of three lines associated with a triangle. I am in a way a center of some sort. I am not the in-center and neither am I the circum-center. I am the point at which the three altitudes of a triangle meet. Who am I?",
-    "riddle3": "I am a theorem in mechanics That is named after a French scientist named Bernard. I apply to the equilibrium state of an object. I give the relationship between three coplanar concurrent forces that act on a body in equilibrium. I recall the sine rule. Who am I?"
+    "riddle2": "i am a metallic element, i belong to one of the major series in the periodic table characterised by incomplete 5 f subshell	, i was named after a planet in the solar system, i show variable valences of 2345 and 6, i have several isotopes whose masses spread over a range of 15 mass units but all having atomic number of 92, i nuclear weapons and nuclear energy generation we are all synonymous",
+    "riddle3": "i am used metaphorically to refer to reasoning or decision making that is narrow in scope	in science, i am a common condition that affects many people in the world, my underlying cause is believed to be a combination of genetic and environmental factors, i occur if the eyeball is too long or the cornea is too curved are you extremely myopic, i am the condition in which one unable to see distant objects clearly because the images are focused in front of the retina of the eye"
     }
 
 # TTS VOICE OPTIONS
