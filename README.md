@@ -6,7 +6,7 @@ Read more details in the [paper](https://arxiv.org/abs/2301.13089) outlining the
 
 ## Getting Started
 
-TBD - Information on deployment and setup, etc
+Information on app deployment and setup can be found [here](./streamlitDemo/README.md)
 
 ## Contributing
 
