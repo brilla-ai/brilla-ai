@@ -9,6 +9,7 @@ import queue
 import base64
 import json
 import uuid
+import time
 
 # VIDEO PATHS
 DEMO_VIDEO_1_PATH = './assets/video/video1.mp4'
@@ -237,6 +238,7 @@ def realtime_audio_file_STT(audio_file_path, labelFlag="hidden"):
             sound_chunk.export(audio_chunk_temp_file, format ="wav")
             
             # Slicing of the audio file is done. transcribe audio chunks
+            time.sleep(2)
             transcriptText += get_stt_transcript(audio_chunk_temp_file)
             os.remove(audio_chunk_temp_file)
 
