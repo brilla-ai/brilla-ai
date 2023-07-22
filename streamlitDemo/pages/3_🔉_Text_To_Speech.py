@@ -1,5 +1,5 @@
 import streamlit as st
-from utility import get_tts_api, realtime_text_to_speech, TTS_VOICE_BANK
+from utility import get_tts_api, realtime_text_to_speech, TTS_VOICE_BANK, NO_API_SET_FLAG
 
 st.set_page_config(page_title="Text To Speech", page_icon="🔉", layout="wide")
 
@@ -10,8 +10,8 @@ st.write(
     """
 )
 
-if get_tts_api() == '-1':
-    st.warning('Please setup the TTS API on the API Setup page', icon="⚠️")
+if get_tts_api() == NO_API_SET_FLAG:
+    st.warning('Please setup the TTS API endpoint on the API Setup page', icon="⚠️")
 
 st.divider()
 

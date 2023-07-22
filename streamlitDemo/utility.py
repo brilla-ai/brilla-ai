@@ -29,7 +29,12 @@ DEMO_AUDIO_5_PATH  = './assets/audio/audio_video5.mp3'
 STT_API_KEY = 'STT_API'
 QA_API_KEY = 'QA_API'
 TTS_API_KEY = 'TTS_API'
+ALL_IN_ONE_API_KEY = 'ALL_IN_ONE_API'
 NO_API_SET_FLAG = '-1'
+
+# API SETUP PAGE
+INDIVIDUAL_API_SETUP = 'INV_APIS'
+ALL_IN_ONE_API_SETUP = 'ALL_API'
 
 # QA RIDDLE VALUES
 QA_QUESTION_BANK = {
@@ -108,6 +113,14 @@ def set_qa_api(apiVal):
 def set_tts_api(apiVal):
     os.environ[TTS_API_KEY] = apiVal
 
+def set_all_in_one_api(apiVal):
+    os.environ[ALL_IN_ONE_API_KEY] = apiVal
+
+    # also set each indiviudal api
+    set_stt_api(apiVal)
+    set_qa_api(apiVal)
+    set_tts_api(apiVal)
+
 # GET API IN ENVIRONMENT VARIABLES
 def get_stt_api():
     return os.environ.get(STT_API_KEY, NO_API_SET_FLAG)
@@ -117,6 +130,124 @@ def get_qa_api():
     
 def get_tts_api():
     return os.environ.get(TTS_API_KEY, NO_API_SET_FLAG)
+
+def get_all_in_one_api():
+    return os.environ.get(ALL_IN_ONE_API_KEY, NO_API_SET_FLAG)
+
+# FUNCTIONS TO TEST APIs
+def is_api_valid(apiURL, apiKey):
+    testEndpoint = ''
+
+    # if url is empty return false
+    if apiURL == '':
+        return False
+
+    if apiKey == STT_API_KEY:
+        testEndpoint = '/stt-test'
+    elif apiKey == QA_API_KEY:
+        testEndpoint = '/qa-test'
+    elif apiKey == TTS_API_KEY:
+        testEndpoint = '/tts-test'
+    else:
+        return False
+
+    # perform endpoint test
+    TEST_API = apiURL.rstrip('/') + testEndpoint
+    response = requests.get(TEST_API)
+
+    if response.status_code == 200:
+        return True
+
+def is_stt_api_valid(apiURL):
+    return is_api_valid(apiURL, STT_API_KEY)
+
+def is_qa_api_valid(apiURL):
+    return is_api_valid(apiURL, QA_API_KEY)
+
+def is_tts_api_valid(apiURL):
+    return is_api_valid(apiURL, TTS_API_KEY)
+
+def is_all_in_one_api_valid(apiURL):
+    return is_stt_api_valid(apiURL) and is_qa_api_valid(apiURL) and is_tts_api_valid(apiURL)
+
+def apiSetupPageOperation(inputType):
+    successStatus = st.empty()
+    errorStatus = st.empty()
+
+    errorDetected = False
+    errorMsg = ''
+    partialSuccessMsg = ''
+
+    sttAPIVal = ''
+    qaAPIVal = ''
+    ttsAPIVal = ''
+    allInOneAPIVal = ''
+    keyVal = ''
+
+    # flags to determine if APIs should be set
+    setSTTAPI = False
+    setQAAPI = False
+    setTTSAPI = False
+    setALLAPI = False
+
+    # display section based on page
+    if inputType == INDIVIDUAL_API_SETUP:
+        keyVal = 'individual-url'
+        sttAPIVal = st.text_input('Speech To Text API', get_stt_api() if get_stt_api() != NO_API_SET_FLAG else "")
+        qaAPIVal = st.text_input('Question Answering API', get_qa_api() if get_qa_api() != NO_API_SET_FLAG else "")
+        ttsAPIVal = st.text_input('Text To Speech API', get_tts_api() if get_tts_api() != NO_API_SET_FLAG else "")
+    elif inputType == ALL_IN_ONE_API_SETUP:
+        keyVal = 'all-in-one-url'
+        allInOneAPIVal = st.text_input('All In One API', get_all_in_one_api() if get_all_in_one_api() != NO_API_SET_FLAG else "")
+        sttAPIVal = allInOneAPIVal
+        qaAPIVal = allInOneAPIVal
+        ttsAPIVal = allInOneAPIVal
+
+    if st.button('Submit', key=keyVal):
+        with st.spinner('Validating APIs'):
+            # validate APIs
+            if is_stt_api_valid(sttAPIVal):
+                partialSuccessMsg += ' STT API endpoint set successfully.'
+                setSTTAPI = True
+            else:
+                errorMsg += ' STT API endpoint is not active.'
+                errorDetected = True
+
+            if is_qa_api_valid(qaAPIVal):
+                partialSuccessMsg += ' QA API endpoint set successfully.'
+                setQAAPI = True
+            else:
+                errorMsg += ' QA API endpoint is not active.'
+                errorDetected = True
+
+            if is_tts_api_valid(ttsAPIVal):
+                partialSuccessMsg += ' TTS API endpoint set successfully.'
+                setTTSAPI = True
+            else:
+                errorMsg += ' TTS API endpoint is not active.'
+                errorDetected = True
+            
+            if is_all_in_one_api_valid(allInOneAPIVal):
+                setALLAPI = True
+
+            # set APIs
+            if inputType == INDIVIDUAL_API_SETUP:
+                if setSTTAPI:
+                    set_stt_api(sttAPIVal)
+                if setTTSAPI:
+                    set_tts_api(ttsAPIVal)
+                if setQAAPI:
+                    set_qa_api(qaAPIVal)
+            elif inputType == ALL_IN_ONE_API_SETUP:
+                if setALLAPI:
+                    set_all_in_one_api(allInOneAPIVal)
+
+            if not errorDetected:
+                successStatus.success("All API endpoints set successfully.")
+            else:
+                if partialSuccessMsg:
+                    successStatus.success(partialSuccessMsg)
+                errorStatus.error(errorMsg, icon="⚠️")
 
 # AUTOPLAY AUDIO
 def autoplay_audio(audioFile):
@@ -339,16 +470,16 @@ def ai_operation(video_file_path, audio_file_path):
 
 def check_api_values():
     isValid = True
-    if get_stt_api() == '-1':
+    if get_stt_api() == NO_API_SET_FLAG:
         isValid = False
-        st.warning('Please setup the STT API on the API Setup page', icon="⚠️")
+        st.warning('Please setup the STT API endpoint on the API Setup page', icon="⚠️")
     
-    if get_tts_api() == '-1':
+    if get_tts_api() == NO_API_SET_FLAG:
         isValid = False
-        st.warning('Please setup the TTS API on the API Setup page', icon="⚠️")
+        st.warning('Please setup the TTS API endpoint on the API Setup page', icon="⚠️")
 
-    if get_qa_api() == '-1':
+    if get_qa_api() == NO_API_SET_FLAG:
         isValid = False
-        st.warning('Please setup the QA API on the API Setup page', icon="⚠️")
+        st.warning('Please setup the QA API endpoint on the API Setup page', icon="⚠️")
     
     return isValid

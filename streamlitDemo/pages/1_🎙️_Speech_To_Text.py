@@ -1,5 +1,5 @@
 import streamlit as st
-from utility import DEMO_AUDIO_3_PATH, get_stt_api, realtime_audio_file_STT, realtime_audio_recording_STT, autoplay_audio
+from utility import DEMO_AUDIO_3_PATH, NO_API_SET_FLAG, get_stt_api, realtime_audio_file_STT, realtime_audio_recording_STT, autoplay_audio
 
 st.set_page_config(page_title="Speech To Text Demo", page_icon="🎙️", layout="wide")
 
@@ -11,8 +11,8 @@ st.write(
     """
 )
 
-if get_stt_api() == '-1':
-    st.warning('Please setup the STT API on the API Setup page', icon="⚠️")
+if get_stt_api() == NO_API_SET_FLAG:
+    st.warning('Please setup the STT API endpoint on the API Setup page', icon="⚠️")
 
 sampleAudioTab, liveRecordingTab = st.tabs(["AUDIO SAMPLE", "TEST LIVE RECORDING"])
 
