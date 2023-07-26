@@ -3,7 +3,7 @@ import os
 import csv
 
 # absolute location of the json files
-PATH = "."
+PATH = "./json_books/"
 
 # search for json files in the directory and add their names to a list
 def put_json_filenames_in_list():
@@ -15,7 +15,7 @@ def put_json_filenames_in_list():
 
 # load all json file
 def load_json_file(json_file):
-    with open(json_file, "r") as file:
+    with open(PATH+json_file, "r") as file:
         entire_json = json.load(file)
         return entire_json[0]
 
