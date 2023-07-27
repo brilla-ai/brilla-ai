@@ -2,19 +2,19 @@
 # These owners are responsible for code in their sections and will be automatically listed on each pull request
 
 # data-preprocessing
-/data-preprocessing/ @quaku21 @jojoboateng
+/data-preprocessing/ @quaku21 @jojoboateng @wsedor
 
 # question-answering
-/question-answering/ @naafidasana @jojoboateng
+/question-answering/ @naafidasana @jojoboateng @kojomensahonums @wsedor @Nanayeb34
 
 # speech-to-text
-/speech-to-text/  @kojomensahonums @jojoboateng
+/speech-to-text/  @kojomensahonums @jojoboateng @wsedor @Nanayeb34 @naafidasana
 
 # streamlitDemo
 /streamlitDemo/ @wsedor @jojoboateng @kojomensahonums @naafidasana @quaku21 @Nanayeb34
 
 # text-to-speech
-/text-to-speech/ @Nanayeb34 @jojoboateng
+/text-to-speech/ @Nanayeb34 @jojoboateng @naafidasana @kojomensahonums @wsedor
 
 # webapp
 /webapp/ @wsedor @jojoboateng
