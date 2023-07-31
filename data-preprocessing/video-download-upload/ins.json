@@ -1,0 +1,7 @@
+{
+    "excel_doc_path": "NSMQ.xlsx",
+    "sheet_name": "Sheet1",
+    "video_folder_path": "videos", 
+    "video_header_name": "Links",
+    "service_account_path": "credentials.json"
+}
