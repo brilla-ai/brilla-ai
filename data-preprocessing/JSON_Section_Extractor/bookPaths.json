@@ -1,3 +1,4 @@
 {
-    "path_to_parsed_books": "./parsed_books/"
+    "path_to_parsed_books": "./parsed_books/",
+    "directory": "results"
 }
