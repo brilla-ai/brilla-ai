@@ -10,4 +10,5 @@ The main.py file accepts a path to json files of parsed books. These files conta
 ## Intructions
 - Open the bookPaths.json file
 - Replace the **./parsed_books/** value with the **absolute** path location of the json files
+- Replace the **results** value with the name of the directory you want results to be saved
 - Run the main.py file
