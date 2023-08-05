@@ -1,11 +1,12 @@
 import json
 import os
-import csv
+import sys
+import argparse
 
 # reads bookPaths.json to obtain absolute path of the location of json files to be used.
 
 def read_PATH_json():
-    with open('bookPaths.json', 'r') as file:
+    with open('booksPath.json', 'r') as file:
         return json.load(file)
 
 # search for json files in the directory and add their names to a list
@@ -32,7 +33,7 @@ def json_section(json_dictionary):
 
 
 # nested_list argument is optional as it has a default false value. The argument is used to distinguish the two json formats used. Thus it handles the json files based on whether or not they contain nested lists or direct objects in a single list.
-def json_to_section(json_dictionary, nested_list=False): 
+def json_to_section(json_dict, pages, sections, nested_list=False): 
     if nested_list:
         for page in json_dict:
             try:
@@ -43,9 +44,9 @@ def json_to_section(json_dictionary, nested_list=False):
             except:
                 continue
     else:
-        for page in json_dictionary:
+        for page in json_dict:
             try:
-                for subpage in json_dictionary[page]:
+                for subpage in json_dict[page]:
                     section = json_section(subpage)
                     pages.append(page)
                     sections.append(str(" ".join(section)))
@@ -56,7 +57,6 @@ def json_to_section(json_dictionary, nested_list=False):
 def create_directory(directory):
     if not os.path.exists(directory):
         os.makedirs(directory)
-        print(f"Directory '{directory}' created successfully.")
     else:
         pass
 
@@ -71,28 +71,60 @@ def write_sections_to_txt(file, list1, list2, directory):
             file.write(f"{item1}\t{item2}\n")
 
 
+class ScriptUsage:
+    def __init__(self):
+        self.parser = argparse.ArgumentParser()
+
+    def version(self):
+        print("Script version: 1.0")
+
+    def instruction(self):
+        print("Script instructions:")
+        print("1. Provide the absolute path to the json files in the booksPath.json file.")
+        print("2. Make sure the files in the path provided end with an json extension.")
+        print("3. Provide the name of the directory that should be created in the root directory, in which results will be stored.")
+
+    def help(self):
+        self.parser.print_help()
+    
+    def main(self):
+        parsed_books_path = read_PATH_json()['path_to_parsed_books']
+        results_path = read_PATH_json()['directory']
+        all_json_files = put_json_filenames_in_list(parsed_books_path)
+
+        for file in all_json_files:
+            pages = []
+            sections = []
+            json_dict = load_json_file(file, parsed_books_path)
 
 
-parsed_books_path = read_PATH_json()['path_to_parsed_books']
-results_path = read_PATH_json()['directory']
-all_json_files = put_json_filenames_in_list(parsed_books_path)
+            json_to_section(json_dict,pages, sections, nested_list=True)
+
+            # second json structure
+            if len(sections) == 0: # checks if all sections are empty strings. If yes, there is a tendency that the current json contain direct objects and not nested lists.
+                json_to_section(json_dict, pages, sections) # return all sections using the second json structure as the standard.
+
+            # write results to csv file
+            create_directory(results_path)
+            write_sections_to_txt(file, pages, sections, results_path)
+
+
+
+    def parse_args(self):
+        self.parser.add_argument('-v', '--version', action='store_true', help='Display script version')
+        self.parser.add_argument('-i', '--instruction', action='store_true', help='Display script instructions')
+        args = self.parser.parse_args()
+
+        if args.version:
+            self.version()
+        elif args.instruction:
+            self.instruction()
+        else:
+            self.main()
 
 
 if __name__ == '__main__':
+    usage = ScriptUsage()
+    usage.parse_args()
 
-    for file in all_json_files:
-        pages = []
-        sections = []
-        json_dict = load_json_file(file, parsed_books_path)
-
-
-        json_to_section(json_dict, nested_list=True)
-
-        # second json structure
-        if len(sections) == 0: # checks if all sections are empty strings. If yes, there is a tendency that the current json contain direct objects and not nested lists.
-            json_to_section(json_dict) # return all sections using the second json structure as the standard.
-
-        # write results to csv file
-        create_directory(results_path)
-        write_sections_to_txt(file, pages, sections, results_path)
-
+    

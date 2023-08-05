@@ -8,7 +8,7 @@ In the case of the JSON structures provided, one (*Algebra.json*) has a nested s
 The main.py file accepts a path to json files of parsed books. These files contain portions called sections. The file then returns all sections alongside their page numbers in a csv file format; a csv file for each json file.
 
 ## Intructions
-- Open the bookPaths.json file
+- Open the booksPath.json file
 - Replace the **./parsed_books/** value with the **absolute** path location of the json files
 - Replace the **results** value with the name of the directory you want results to be saved
-- Run the main.py file
+- Run the json_section_extractor.py file
