@@ -13,7 +13,7 @@ This script allows you to create a public API that enables audio file transcript
 ## Requirements
 Before running the script, you will need to have the following:
 
-1. A valid [ngrok](https://ngrok.com/) account to create a public URL for your API.
+1. A valid [ngrok](https://ngrok.com/) account.
 2. An authentication token provided by ngrok, which you will copy into the code.
 
 ## Setup
