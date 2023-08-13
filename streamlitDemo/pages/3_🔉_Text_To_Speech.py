@@ -1,5 +1,5 @@
 import streamlit as st
-from utility import DEMO_AUDIO_1_PATH, get_tts_audio
+from utility import get_tts_api, realtime_text_to_speech, TTS_VOICE_BANK, NO_API_SET_FLAG
 
 st.set_page_config(page_title="Text To Speech", page_icon="🔉", layout="wide")
 
@@ -10,15 +10,24 @@ st.write(
     """
 )
 
+if get_tts_api() == NO_API_SET_FLAG:
+    st.warning('Please setup the TTS API endpoint on the API Setup page', icon="⚠️")
+
 st.divider()
 
+# placeholder for error message
+errorMsg = st.empty()
+
+# choose voice options
+voice = st.radio('Select A Voice', (TTS_VOICE_BANK['voice1'], TTS_VOICE_BANK['voice2']), horizontal=True)
+
 # text input
-answer = st.text_area("Enter Text", '', height = 80)
+text = st.text_area("Enter Text", '', height = 80)
 
 # generated audio file
 if st.button('Get Generated Speech!'):
-    # TODO: get actual audio from API and display
-    #st.write(get_tts_audio(answer))
-    audio_file = open(DEMO_AUDIO_1_PATH, 'rb')
-    audio_bytes = audio_file.read()
-    st.audio(audio_bytes, format="audio/mp3")
+    # check that text box has a value
+    if text:
+        realtime_text_to_speech(text, voice)
+    else:
+        errorMsg.error('Please provide a text', icon="⚠️")
