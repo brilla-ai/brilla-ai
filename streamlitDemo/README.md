@@ -10,14 +10,9 @@ Select an environment manager of your choice to establish your virtual environme
 - virtualenv
 - conda
 
-## Done setting up your virtual environment? Get ready to install the packages
+### Is your virtual environment ready? If so, execute this command in your terminal which will set up the web application.
 ```bash
-pip3 install -r requirements.txt
-```
-
-## Running NSMQ AI project 
-```bash
-streamlit run NSMQ_AI.py
+python start_nsmqai.py
 ```
 
 Now, the web application will be running and accessible through the following URL: ```http://localhost:8501/```
