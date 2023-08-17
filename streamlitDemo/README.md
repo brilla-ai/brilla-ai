@@ -1,14 +1,36 @@
-# NSMQ AI Workshop Demo
+# NSMQ AI Web App Environment Setup
 
-## Setup
-- The demo app can be run locally. Follow steps here to setup a python environment for streamlit https://docs.streamlit.io/library/get-started/installation
+### Prerequites
+1. Python 3 
+2. PIP 
 
-## Deploy
-- From the local repo directory `/nsmqai/streamlitDemo`, run command from the virtual environment terminal `python start_nsmqai.py`
-- WebApp will be deployed at `http://localhost:8501/`
+## Virtual Environment
+Select an environment manager of your choice to establish your virtual environment. Here's a selection of environment managers available for you to consider:
+- venv
+- virtualenv
+- conda
 
+## Done setting up your virtual environment? Get ready to install the packages
+```bash
+pip3 install -r requirements.txt
+```
+
+## Running NSMQ AI project 
+```bash
+streamlit run NSMQ_AI.py
+```
+
+Now, the web application will be running and accessible through the following URL: ```http://localhost:8501/```
+
+## API Setup 
+Here is the list of APIs that must be running to access the complete functionality of the web application. Note that each of these APIs is contained within their respective notebooks, and you need to have them running:
+- Speech-to-Text API
+- Text-to-Speech API
+- Question-Answering API
+
+Make sure you've completed the setup process for all the ML notebooks and have them running. Once everything is configured and your scripts are active, copy the distinct public URL provided by `ngrok` for each notebook. Then, proceed to submit these URLs in the API Settings page of the web application. This will grant access to the running servers through the web app.
+
+--- 
+
+### Hompage
 ![homepage](./images/homepage.png)
-
-## Having App Issues?
-- Check API URLs being used are valid and actively running
-- Check that API URLs are setup on the `http://localhost:8501/API_Setup`
