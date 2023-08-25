@@ -12,6 +12,7 @@ This README provides an overview of two essential scripts developed for the "NSM
 ---
 
 ## HTML Parsing for Textbook Content Structuring and JSON to Text File Conversion Scripts
+- File name: extract_textbook_from_url_notebook_.ipynb
 
 These scripts have been developed to facilitate data processing tasks in the context of the "NSMQ - Kwame AI Project." Below, we outline the functionality of each script along with instructions for running them.
 
@@ -26,6 +27,7 @@ These scripts have been developed to facilitate data processing tasks in the con
 
 
 ### JSON to Text File Conversion Script
+- File name: json_to_txt_script_notebook_.ipynb
 
 #### Functions
 1. **convert_dict_to_strings():** Converts a dictionary of strings into a list of strings.
