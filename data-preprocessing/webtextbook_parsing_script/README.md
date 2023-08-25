@@ -12,11 +12,12 @@ This README provides an overview of two essential scripts developed for the "NSM
 ---
 
 ## HTML Parsing for Textbook Content Structuring and JSON to Text File Conversion Scripts
-- File name: extract_textbook_from_url_notebook_.ipynb
+
 
 These scripts have been developed to facilitate data processing tasks in the context of the "NSMQ - Kwame AI Project." Below, we outline the functionality of each script along with instructions for running them.
 
 ### HTML Parsing for Textbook Content Structuring
+- File name: extract_textbook_from_url_notebook_.ipynb
 
 #### Functions
 1. **unique(array):** Eliminates duplicate items from a processed dataset.
