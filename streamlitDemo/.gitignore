@@ -1,2 +1,29 @@
-/__pycache__
+# Compiled Python files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
 /audioChunk
+
+# Virtual environment
+nsmqai/
+
+# Streamlit cache
+.st_cache/
+
+# Streamlit session state
+.st_folder/
+
+# Logs
+*.log
+
+# Environment variables
+.env
+
+# Dependencies
+__pypackages__/
+
+# Local development settings
+.idea/
+.vscode/
