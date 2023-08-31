@@ -28,7 +28,7 @@ Here is the list of APIs that must be running to access the complete functionali
 Make sure you've completed the setup process for all the ML notebooks and have them running. Once everything is configured and your scripts are active, copy the distinct public URL provided by `ngrok` for each notebook. Then, proceed to submit these URLs in the API Settings page of the web application. This will grant access to the running servers through the web app.
 
 ![API Setup page](./images/APISetUp.png)
-### API Setup Page
+
 --- 
 
 ### Homepage
