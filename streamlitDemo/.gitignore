@@ -27,3 +27,4 @@ __pypackages__/
 # Local development settings
 .idea/
 .vscode/
+.gitignore
