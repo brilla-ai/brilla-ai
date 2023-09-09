@@ -11,6 +11,8 @@ import json
 import uuid
 import time
 import os 
+import yt_dlp
+import subprocess
 
 
 CURRENT_DIR =  os.getcwd();
@@ -489,3 +491,19 @@ def check_api_values():
         st.warning('Please setup the QA API endpoint on the API Setup page', icon="⚠️")
     
     return isValid
+
+# LIVE VIDEO OPERATIONS
+def get_url_manifest(liveVideoURL):
+    with yt_dlp.YoutubeDL() as ydl:
+        stream_info = ydl.extract_info(liveVideoURL, download=False)
+        json_dump_info = json.dumps(ydl.sanitize_info(stream_info))
+        json_loads_resp = json.loads(json_dump_info)
+
+        return json_loads_resp['url']
+    
+def extract_audio_from_live_stream(urlManifest):
+    temp_dir = tempfile.mkdtemp()
+    # TODO: utilize callback approach to be able to send audio chunk to STT api while ffmpeg command is running 
+    runAudioExtractCmd = subprocess.Popen('ffmpeg -i {} -vn -acodec libmp3lame -f segment -segment_time 5 {}'
+                                            .format(urlManifest, os.path.join(temp_dir, "audio%03d.mp3")))
+    runAudioExtractCmd.wait()
