@@ -3,7 +3,6 @@ import requests
 from pydub import AudioSegment
 import os
 import tempfile
-from pathlib import Path
 from streamlit_webrtc import WebRtcMode, webrtc_streamer
 import queue
 import base64
@@ -12,6 +11,8 @@ import uuid
 import time
 import yt_dlp
 import subprocess
+import re
+from urllib.parse import urlparse, parse_qs, urljoin
 
 # VIDEO PATHS
 DEMO_VIDEO_1_PATH = './assets/video/video1.mp4'
@@ -281,6 +282,17 @@ def autoplay_video(video_file_path):
             unsafe_allow_html=True,
         )
 
+def autoplay_live_video(video_url):
+    md = f"""
+        <iframe width="550" height="400" src="{video_url}?autoplay=1">
+        </iframe>
+        """
+    
+    st.markdown(
+        md,
+        unsafe_allow_html=True,
+    )
+
 
 # STT PROCESSING
 def realtime_audio_file_STT(audio_file_path, labelFlag="hidden"):
@@ -486,9 +498,16 @@ def check_api_values():
     
     return isValid
 
-# LIVE VIDEO OPERATIONS
+# LIVE VIDEO AUDIO EXTRACTION OPERATIONS
+def create_embed_link_from_url(liveVideoURL):
+        urlData = urlparse(liveVideoURL)
+        query = parse_qs(urlData.query)
+
+        # convert youtube link to an embed link
+        return urljoin("https://www.youtube.com/embed/", query["v"][0])
+
 def get_url_manifest(liveVideoURL):
-    with yt_dlp.YoutubeDL() as ydl:
+    with yt_dlp.YoutubeDL({"quiet": True}) as ydl:
         stream_info = ydl.extract_info(liveVideoURL, download=False)
         json_dump_info = json.dumps(ydl.sanitize_info(stream_info))
         json_loads_resp = json.loads(json_dump_info)
@@ -496,8 +515,40 @@ def get_url_manifest(liveVideoURL):
         return json_loads_resp['url']
     
 def extract_audio_from_live_stream(urlManifest):
-    temp_dir = tempfile.mkdtemp()
-    # TODO: utilize callback approach to be able to send audio chunk to STT api while ffmpeg command is running 
+    tempDir = tempfile.mkdtemp()
     runAudioExtractCmd = subprocess.Popen('ffmpeg -i {} -vn -acodec libmp3lame -f segment -segment_time 5 {}'
-                                            .format(urlManifest, os.path.join(temp_dir, "audio%03d.mp3")))
-    runAudioExtractCmd.wait()
+                                            .format(urlManifest, os.path.join(tempDir, "audio%03d.mp3")), 
+                                            stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=1, 
+                                            universal_newlines=True, shell=True)
+    with st.spinner('Transcribing'):
+        # creating a placeholder for the fixed sized textbox
+        transcriptText = ''
+        boxHeight = 200
+        label_flag = "visible"
+        transcriptBox = st.empty()
+
+        transcriptBox.text_area(
+                "Question",
+                transcriptText,
+                key=uuid.uuid4(),
+                label_visibility = label_flag,
+                height = boxHeight
+            )
+
+        while True:
+            line = runAudioExtractCmd.stdout.readline()
+            audioLineMatch = re.search(r"\baudio\w+.mp3", line)
+
+            if audioLineMatch:
+                # wait for the audio to be written to file before sending 
+                time.sleep(3)
+                audioChunkFileName = audioLineMatch.group()
+                fullAudioPath = os.path.join(tempDir, audioChunkFileName)
+
+                if os.path.isfile(fullAudioPath):
+                    transcriptText += get_stt_transcript(fullAudioPath)
+                
+                transcriptBox.text_area("Question", transcriptText, key=uuid.uuid4(), label_visibility=label_flag, height = boxHeight)
+
+        runAudioExtractCmd.communicate()
+
