@@ -1,0 +1,87 @@
+"""
+Web Textbook Parsing Script
+
+This Python script extracts content from selected online textbooks, converts the extracted data to JSON, and optionally converts it to TXT or CSV format.
+
+Instructions:
+1. Install the required libraries by running this script. If any library is missing, it will be installed automatically.
+2. Save this file in the same folder as json_to_txt_or_csv.ipy and url_textbook_to_json.ipy.
+3. Prepare a CSV file with columns 'BOOKS' for textbook names and 'URL' for textbook URLs.
+4. Update the 'csv_file' variable with the path to your CSV file.
+5. Run this script to extract content from selected textbooks and save it as JSON.
+6. If needed, change the 'output_format' variable to either 'txt' or 'csv' to convert the JSON to your desired format.
+
+Author: Ernest Samuel
+Date: 16/09/2023
+
+"""
+
+# Install, if missing, and import libraries
+"""
+Instructions for libraries instructions if you dont have it installed
+
+1. Before running this script, make sure to install the required libraries by executing the following commands in your command-line/terminal:
+   - To install the 'requests' library, run: pip install requests
+   - To install the 'beautifulsoup4' library, run: pip install beautifulsoup4
+   - To install the 'pandas' library, run: pip install pandas
+
+2. Once you have installed the required libraries, you can use this script to import them and perform your desired tasks.
+
+"""
+
+# Import libraries
+import requests
+from bs4 import BeautifulSoup
+import pandas as pd
+import os
+from urllib.parse import urljoin
+import json
+
+# Import functions from other .py modules
+from json_to_txt_or_csv import convert_to_txt_or_csv
+from url_textbook_to_json import extract_rawTable_of_content, extract_url, extract_textbook
+
+
+if __name__ == "__main__":
+    # Read CSV file containing links to the textbooks
+    # CSV should have columns 'BOOKS' for textbook names and 'URL' for URLs
+    csv_file = "data-preprocessing/webtextbook_parsing_script/ipy_script_parsing/openstax_textbooks_sheet.csv"
+    openStax = pd.read_csv(csv_file)
+
+    # Select specific textbooks to extract
+    selected_textbooks = openStax.iloc[[8]]
+
+
+    # Iterate through selected textbooks and extract content
+    for BookName, urls in zip(selected_textbooks['BOOKS'], selected_textbooks['URL']):
+    
+        print("Extracting content from:", BookName)
+        
+        # Initialize the starting page for online view
+        landing_page = 'preface'
+        site = str(urls)
+
+        # Extract the table of contents
+        pageList = extract_rawTable_of_content(site, landing_page)
+
+        # Initialize the starting index for required content from the table of contents
+        max_number = 10  # Maximum number of numerical index on the table of contents
+        char = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'i']
+
+        # Extract the list of URLs to be parsed for website scraping (used in htmlProcessing)
+        URLs = extract_url(site, pageList, max_number, char)
+
+        # Name of the textbook
+        textbook = str(BookName)
+        
+        # Extract the textbook content
+        extracted_content = extract_textbook(URLs, textbook)
+
+        # --------------- Convert JSON to TXT or CSV file. -------------------- #
+        file_name = f"{BookName}.json"
+        output_format = "csv"  # Change this to 'txt' if you prefer text format
+
+        print("\nConverting file format....")
+        # Convert JSON to TXT or CSV file.
+        convert_to_txt_or_csv(file_name, output_format) 
+        print("\nExtraction completed")
