@@ -9,24 +9,30 @@ import base64
 import json
 import uuid
 import time
+import os 
 import yt_dlp
 import subprocess
 import re
 from urllib.parse import urlparse, parse_qs, urljoin
 
+
+CURRENT_DIR =  os.getcwd()
+VIDEO_DIR = os.path.join(CURRENT_DIR, '/streamlitDemo/assets/video/')
+AUDIO_DIR = os.path.join(CURRENT_DIR, '/streamlitDemo/assets/audio/')
+
 # VIDEO PATHS
-DEMO_VIDEO_1_PATH = './assets/video/video1.mp4'
-DEMO_VIDEO_2_PATH  = './assets/video/video2.mp4'
-DEMO_VIDEO_3_PATH  = './assets/video/video3.mp4'
-DEMO_VIDEO_4_PATH  = './assets/video/video4.mp4'
-DEMO_VIDEO_5_PATH  = './assets/video/video5.mp4'
+DEMO_VIDEO_1_PATH  = VIDEO_DIR  + 'video1.mp4'
+DEMO_VIDEO_2_PATH  = VIDEO_DIR  + 'video2.mp4'
+DEMO_VIDEO_3_PATH  = VIDEO_DIR  + 'video3.mp4'
+DEMO_VIDEO_4_PATH  = VIDEO_DIR  + 'video4.mp4'
+DEMO_VIDEO_5_PATH  = VIDEO_DIR  + 'video5.mp4'
 
 # AUDIO PATHS
-DEMO_AUDIO_1_PATH  = './assets/audio/audio_video1.mp3'
-DEMO_AUDIO_2_PATH  = './assets/audio/audio_video2.mp3'
-DEMO_AUDIO_3_PATH  = './assets/audio/audio_video3.mp3'
-DEMO_AUDIO_4_PATH  = './assets/audio/audio_video4.mp3'
-DEMO_AUDIO_5_PATH  = './assets/audio/audio_video5.mp3'
+DEMO_AUDIO_1_PATH  = AUDIO_DIR + 'audio_video1.mp3'
+DEMO_AUDIO_2_PATH  = AUDIO_DIR + 'audio_video2.mp3'
+DEMO_AUDIO_3_PATH  = AUDIO_DIR + 'audio_video3.mp3'
+DEMO_AUDIO_4_PATH  = AUDIO_DIR + 'audio_video4.mp3'
+DEMO_AUDIO_5_PATH  = AUDIO_DIR + 'audio_video5.mp3'
 
 # API ENDPOINTS
 STT_API_KEY = 'STT_API'
