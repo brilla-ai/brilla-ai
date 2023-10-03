@@ -1,5 +1,6 @@
 import streamlit as st
-from utility import autoplay_live_video, create_embed_link_from_url, get_url_manifest, extract_audio_from_live_stream
+from utility import autoplay_live_video, create_embed_link_from_url, get_url_manifest, extract_audio_from_live_stream, set_live_video_url, get_live_video_url, NO_LIVE_VIDEO_URL_FLAG
+from authentication import is_user_authorized
 
 st.set_page_config(page_title="NSMQ AI Live Quiz", page_icon="✨", layout="wide")
 
@@ -12,9 +13,16 @@ st.write(
 
 st.divider()
 
-liveVideoURL = st.text_input('Live Video Link')
+# display the input field only for authenticated user
+# option to login not displayed here as unauthenticated users should only see the live video and no input option
+if is_user_authorized():
+    getLiveVideoURL = st.text_input('Live Video Link')
 
-if st.button('Submit'):
+    if st.button('Submit'):
+        set_live_video_url(getLiveVideoURL)
+
+liveVideoURL = get_live_video_url()
+if liveVideoURL != NO_LIVE_VIDEO_URL_FLAG:
     vidCol, aiOpsCol = st.columns([2,2])
 
     with vidCol:
