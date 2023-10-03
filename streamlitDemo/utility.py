@@ -45,6 +45,10 @@ NO_API_SET_FLAG = '-1'
 INDIVIDUAL_API_SETUP = 'INV_APIS'
 ALL_IN_ONE_API_SETUP = 'ALL_API'
 
+# LIVE MODE FLAGS
+LIVE_VIDEO_URL_KEY = 'LIVE_VIDEO_URL'
+NO_LIVE_VIDEO_URL_FLAG = '-1'
+
 # QA RIDDLE VALUES
 QA_QUESTION_BANK = {
     "riddle1": "there is really nothing improper about me,i am just a fraction,my numerator exceeds my denominator,i am not a mixed fraction or mixed number,an example of me is 7 3",
@@ -290,7 +294,7 @@ def autoplay_video(video_file_path):
 
 def autoplay_live_video(video_url):
     md = f"""
-        <iframe width="550" height="400" src="{video_url}?autoplay=1">
+        <iframe width="550" height="400" src="{video_url}?autoplay=1&mute=1">
         </iframe>
         """
     
@@ -505,6 +509,12 @@ def check_api_values():
     return isValid
 
 # LIVE VIDEO AUDIO EXTRACTION OPERATIONS
+def set_live_video_url(liveVideoUrl):
+    os.environ[LIVE_VIDEO_URL_KEY] = liveVideoUrl
+
+def get_live_video_url():
+    return os.environ.get(LIVE_VIDEO_URL_KEY, NO_LIVE_VIDEO_URL_FLAG)
+
 def create_embed_link_from_url(liveVideoURL):
         urlData = urlparse(liveVideoURL)
         query = parse_qs(urlData.query)
@@ -547,7 +557,7 @@ def extract_audio_from_live_stream(urlManifest):
 
             if audioLineMatch:
                 # wait for the audio to be written to file before sending 
-                time.sleep(3)
+                time.sleep(2)
                 audioChunkFileName = audioLineMatch.group()
                 fullAudioPath = os.path.join(tempDir, audioChunkFileName)
 

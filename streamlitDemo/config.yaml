@@ -1,0 +1,11 @@
+cookie:
+  expiry_days: 1
+  key: nsmq_ai
+  name: nsmq_ai_cookie
+credentials:
+  usernames:
+    admin:  # the username
+      name: nsmqai_admin  # the display name
+      password: $2b$12$0yzglwwaWxVD9acWyhHL0./W0b/UBm.5FLP7x6tccukRaAXidoLf.  # this is actually the password hash
+deploy_mode: prod # "prod" for production or "dev" for development. "dev" bypasses the admin layer for development purposes
+password_reset: false  # controls if password should be reset
