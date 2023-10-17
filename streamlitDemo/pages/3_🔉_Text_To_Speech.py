@@ -21,10 +21,7 @@ errorMsg = st.empty()
 # choose voice options
 voice = st.radio('Select A Voice', (TTS_VOICE_BANK['voice1'], TTS_VOICE_BANK['voice2']), horizontal=True)
 
-# text input
-#text = st.text_area("Enter Text", '', height = 80)
-
-# text input now a dropdown
+# text input-dropdown
 
 text= st.selectbox(
 'Select Text',
@@ -35,9 +32,6 @@ text= st.selectbox(
     
 )
 )
-
-#this fxn inherently does not allow you to leave box empty
-#apostrophe issues identified-how to make it read contracted words
 
 st.write('You selected:', text )
 
