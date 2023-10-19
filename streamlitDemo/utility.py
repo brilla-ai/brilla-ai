@@ -18,8 +18,8 @@ from authentication import is_prod_mode
 
 
 CURRENT_DIR =  os.getcwd()
-VIDEO_DIR = os.path.join(CURRENT_DIR, '/streamlitDemo/assets/video/' if is_prod_mode() else 'assets/video/')
-AUDIO_DIR = os.path.join(CURRENT_DIR, '/streamlitDemo/assets/audio/' if is_prod_mode() else 'assets/audio/')
+VIDEO_DIR = os.path.join(CURRENT_DIR, 'streamlitDemo/assets/video/' if is_prod_mode() else 'assets/video/')
+AUDIO_DIR = os.path.join(CURRENT_DIR, 'streamlitDemo/assets/audio/' if is_prod_mode() else 'assets/audio/')
 
 # VIDEO PATHS
 DEMO_VIDEO_1_PATH  = VIDEO_DIR  + 'video1.mp4'
@@ -90,6 +90,12 @@ def get_stt_transcript(audioFile):
                 clue_count = response.json()['clue_count']
                 is_start_of_riddle = response.json()['is_start_of_riddle']
                 is_end_of_riddle = response.json()['is_end_of_riddle']
+                print('transcript:',transcript)
+                print('clues:',clues)
+                print('clue_count:',clue_count)
+                print('is_start_of_riddle:',is_start_of_riddle)
+                print('is_end_of_riddle:',is_end_of_riddle)
+
                 return transcript, clues, clue_count, is_start_of_riddle, is_end_of_riddle
 
 def get_qa_answer(question, mode="demo", clues="", clue_count=0, is_start_of_riddle=False, is_end_of_riddle=False):
