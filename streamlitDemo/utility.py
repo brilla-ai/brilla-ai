@@ -92,7 +92,7 @@ def get_stt_transcript(audioFile):
                 is_end_of_riddle = response.json()['is_end_of_riddle']
                 return transcript, clues, clue_count, is_start_of_riddle, is_end_of_riddle
 
-def get_qa_answer(question, mode, clues, clue_count, is_start_of_riddle, is_end_of_riddle):
+def get_qa_answer(question, mode="demo", clues="", clue_count=0, is_start_of_riddle=False, is_end_of_riddle=False):
     QA_API = get_qa_api()
 
     # only make the API call if a valid url is present
@@ -111,7 +111,7 @@ def get_qa_answer(question, mode, clues, clue_count, is_start_of_riddle, is_end_
                 chatGPTAnswer = response.json()['chatGPT']
             return falconAnswer, chatGPTAnswer
 
-def get_tts_audio(text, voice, mode):
+def get_tts_audio(text, voice, mode="demo"):
     TTS_API = get_tts_api()
     # only make the API call if a valid url is present
     if TTS_API != NO_API_SET_FLAG:
@@ -119,9 +119,9 @@ def get_tts_audio(text, voice, mode):
 
         payload = json.dumps({'text' : text, 'voice': voiceOption})
         if mode == "demo":
-            response = requests.get(TTS_API.rstrip('/') + '/live_tts', data=payload)
-        elif mode == "live":
             response = requests.get(TTS_API.rstrip('/') + '/demo_tts', data=payload)
+        elif mode == "live":
+            response = requests.get(TTS_API.rstrip('/') + '/live_tts', data=payload)
 
         outputFileName = "tts_output.wav"
 
@@ -409,7 +409,7 @@ def realtime_audio_file_STT(audio_file_path, labelFlag="hidden"):
             
             # Slicing of the audio file is done. transcribe audio chunks
             time.sleep(2)
-            transcriptText += get_stt_transcript(audio_chunk_temp_file)
+            transcriptText += get_stt_transcript(audio_chunk_temp_file)[0]
             os.remove(audio_chunk_temp_file)
 
             transcriptBox.text_area("Question", transcriptText, key=uuid.uuid4(), label_visibility=labelFlag, height = boxHeight)
@@ -464,7 +464,7 @@ def realtime_audio_recording_STT():
                 
                 if len(sound_chunk) > 0:
                     sound_chunk.export(audio_chunk_temp_file, format ="wav")
-                    transcriptText += get_stt_transcript(audio_chunk_temp_file)
+                    transcriptText += get_stt_transcript(audio_chunk_temp_file)[0]
                     transcriptBox.text_area("", transcriptText)
                     os.remove(audio_chunk_temp_file)
             else:
@@ -478,7 +478,7 @@ def realtime_question_answering(riddle, labelFlag="hidden", mode="demo", clues="
         answerBox = st.empty()
         answerBox.text_area("Answer", answerBoxText, height = 10, label_visibility=labelFlag, key=uuid.uuid4())
         if mode == "demo":
-            falconAnswer = get_qa_answer(riddle, mode)
+            falconAnswer = get_qa_answer(riddle)[0]
         elif mode == "live":
             falconAnswer, chatGPTAnswer = get_qa_answer(riddle, mode, clues, clue_count, is_start_of_riddle, is_end_of_riddle)
         answerBoxText = falconAnswer
