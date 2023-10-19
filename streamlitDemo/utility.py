@@ -599,10 +599,10 @@ def ai_in_live_mode(tempDir, processCmd):
                 if len(clues.strip()) != 0 and not riddleAnswered:
                     answer = realtime_question_answering(transcript, "visible", "live", clues, clue_count, is_start_of_riddle, is_end_of_riddle)
 
-                st.text('Generated Speech')
                 if len(answer.strip()) != 0:
                     # mark riddle as answered
                     riddleAnswered = True
+                    st.text('Generated Speech')
                     realtime_text_to_speech(answer, TTS_VOICE_BANK['voice2'], "live")
 
 def process_youtube_video(downloadLink, isLiveStream):
