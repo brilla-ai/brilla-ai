@@ -10,6 +10,7 @@ NOT_ADMIN_MODE_FLAG = '-1'
 CONFIG_FILE = 'config.yaml'
 
 def authenticate():
+    print("cwd:", os.getcwd())
     with open(CONFIG_FILE) as file:
         config = yaml.load(file, Loader=SafeLoader)
 
