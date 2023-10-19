@@ -14,11 +14,12 @@ import yt_dlp
 import subprocess
 import re
 from urllib.parse import urlparse, parse_qs, urljoin
+from authentication import is_prod_mode
 
 
 CURRENT_DIR =  os.getcwd()
-VIDEO_DIR = os.path.join(CURRENT_DIR, '/streamlitDemo/assets/video/')
-AUDIO_DIR = os.path.join(CURRENT_DIR, '/streamlitDemo/assets/audio/')
+VIDEO_DIR = os.path.join(CURRENT_DIR, '/streamlitDemo/assets/video/' if is_prod_mode() else 'assets/video/')
+AUDIO_DIR = os.path.join(CURRENT_DIR, '/streamlitDemo/assets/audio/' if is_prod_mode() else 'assets/audio/')
 
 # VIDEO PATHS
 DEMO_VIDEO_1_PATH  = VIDEO_DIR  + 'video1.mp4'
@@ -85,28 +86,42 @@ def get_stt_transcript(audioFile):
 
             if response.status_code == 200:
                 transcript = response.json()['transcript']
-                return transcript
+                clues = response.json()['clues']
+                clue_count = response.json()['clue_count']
+                is_start_of_riddle = response.json()['is_start_of_riddle']
+                is_end_of_riddle = response.json()['is_end_of_riddle']
+                return transcript, clues, clue_count, is_start_of_riddle, is_end_of_riddle
 
-def get_qa_answer(question):
+def get_qa_answer(question, mode="demo", clues="", clue_count=0, is_start_of_riddle=False, is_end_of_riddle=False):
     QA_API = get_qa_api()
 
     # only make the API call if a valid url is present
     if QA_API != NO_API_SET_FLAG:
-        question = json.dumps({'text' : question})
-        response = requests.get(QA_API.rstrip('/') + '/answer', data=question)
+        if mode == "demo":
+            question = json.dumps({'text' : question})
+            response = requests.get(QA_API.rstrip('/') + '/demo_qa', data=question)
+        elif mode == "live":
+            payload = json.dumps({'clues' : clues, 'clue_count' : clue_count, 'is_start_of_riddle' : is_start_of_riddle, 'is_end_of_riddle' : is_end_of_riddle})
+            response = requests.get(QA_API.rstrip('/') + '/live_qa', data=payload)
 
         if response.status_code == 200:
-            answer = response.json()['answer']
-            return answer
+            falconAnswer = response.json()['falcon']
+            chatGPTAnswer = ""
+            if mode == "live":
+                chatGPTAnswer = response.json()['chatGPT']
+            return falconAnswer, chatGPTAnswer
 
-def get_tts_audio(text, voice):
+def get_tts_audio(text, voice, mode="demo"):
     TTS_API = get_tts_api()
     # only make the API call if a valid url is present
     if TTS_API != NO_API_SET_FLAG:
         voiceOption = '1' if voice == TTS_VOICE_BANK['voice1'] else '2'
 
         payload = json.dumps({'text' : text, 'voice': voiceOption})
-        response = requests.get(TTS_API.rstrip('/') + '/synthesize_audios', data=payload)
+        if mode == "demo":
+            response = requests.get(TTS_API.rstrip('/') + '/demo_tts', data=payload)
+        elif mode == "live":
+            response = requests.get(TTS_API.rstrip('/') + '/live_tts', data=payload)
 
         outputFileName = "tts_output.wav"
 
@@ -394,7 +409,7 @@ def realtime_audio_file_STT(audio_file_path, labelFlag="hidden"):
             
             # Slicing of the audio file is done. transcribe audio chunks
             time.sleep(2)
-            transcriptText += get_stt_transcript(audio_chunk_temp_file)
+            transcriptText += get_stt_transcript(audio_chunk_temp_file)[0]
             os.remove(audio_chunk_temp_file)
 
             transcriptBox.text_area("Question", transcriptText, key=uuid.uuid4(), label_visibility=labelFlag, height = boxHeight)
@@ -449,34 +464,40 @@ def realtime_audio_recording_STT():
                 
                 if len(sound_chunk) > 0:
                     sound_chunk.export(audio_chunk_temp_file, format ="wav")
-                    transcriptText += get_stt_transcript(audio_chunk_temp_file)
+                    transcriptText += get_stt_transcript(audio_chunk_temp_file)[0]
                     transcriptBox.text_area("", transcriptText)
                     os.remove(audio_chunk_temp_file)
             else:
                 break
 
 # QA PROCESSING
-def realtime_question_answering(riddle, labelFlag="hidden"):
+def realtime_question_answering(riddle, labelFlag="hidden", mode="demo", clues="", clue_count=0, is_start_of_riddle=False, is_end_of_riddle=False):
     answerBoxText = ''
 
     with st.spinner("Working On Answer!"):
         answerBox = st.empty()
         answerBox.text_area("Answer", answerBoxText, height = 10, label_visibility=labelFlag, key=uuid.uuid4())
-        answerBoxText = get_qa_answer(riddle)
+        if mode == "demo":
+            falconAnswer = get_qa_answer(riddle)[0]
+        elif mode == "live":
+            falconAnswer, chatGPTAnswer = get_qa_answer(riddle, mode, clues, clue_count, is_start_of_riddle, is_end_of_riddle)
+        answerBoxText = falconAnswer
     
     answerBox.text_area("Answer", answerBoxText, key=uuid.uuid4())
+    if mode == "live" and len(chatGPTAnswer.strip()) != 0:
+        st.markdown("**:green[ChatGPT's Answer]**: " + "*:green[" + chatGPTAnswer + "]*")
 
     return answerBoxText
 
 # TTS PROCESSING
-def realtime_text_to_speech(text, voice):
+def realtime_text_to_speech(text, voice, mode="demo"):
     outputAudioFile = ''
     with st.spinner('Generating speech...'):
-        outputAudioFile = get_tts_audio(text, voice)
+        outputAudioFile = get_tts_audio(text, voice, mode)
     autoplay_audio(outputAudioFile)
 
 # OVERALL END TO END OPERATION DISPLAY
-def ai_operation(video_file_path, audio_file_path):
+def ai_in_demo_mode(video_file_path, audio_file_path):
     if not check_api_values():
         return
 
@@ -522,20 +543,21 @@ def create_embed_link_from_url(liveVideoURL):
         # convert youtube link to an embed link
         return urljoin("https://www.youtube.com/embed/", query["v"][0])
 
-def get_url_manifest(liveVideoURL):
+def get_url_download_link(liveVideoURL):
     with yt_dlp.YoutubeDL({"quiet": True}) as ydl:
-        stream_info = ydl.extract_info(liveVideoURL, download=False)
-        json_dump_info = json.dumps(ydl.sanitize_info(stream_info))
-        json_loads_resp = json.loads(json_dump_info)
-
-        return json_loads_resp['url']
+        streamInfo = ydl.extract_info(liveVideoURL, download=False)
+        downloadLink = ''
+        isLiveStream = False
+        jsonDumpInfo = json.dumps(ydl.sanitize_info(streamInfo))
+        jsonLoadsResp = json.loads(jsonDumpInfo)
+        if jsonLoadsResp['is_live']:
+            downloadLink = jsonLoadsResp['url']
+            isLiveStream = True
+        else:
+            downloadLink = liveVideoURL
+        return downloadLink, isLiveStream
     
-def extract_audio_from_live_stream(urlManifest):
-    tempDir = tempfile.mkdtemp()
-    runAudioExtractCmd = subprocess.Popen('ffmpeg -i {} -vn -acodec libmp3lame -f segment -segment_time 5 {}'
-                                            .format(urlManifest, os.path.join(tempDir, "audio%03d.mp3")), 
-                                            stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=1, 
-                                            universal_newlines=True, shell=True)
+def ai_in_live_mode(tempDir, processCmd):
     with st.spinner('Transcribing'):
         # creating a placeholder for the fixed sized textbox
         transcriptText = ''
@@ -551,8 +573,9 @@ def extract_audio_from_live_stream(urlManifest):
                 height = boxHeight
             )
 
+        riddleAnswered = False
         while True:
-            line = runAudioExtractCmd.stdout.readline()
+            line = processCmd.stdout.readline()
             audioLineMatch = re.search(r"\baudio\w+.mp3", line)
 
             if audioLineMatch:
@@ -562,9 +585,46 @@ def extract_audio_from_live_stream(urlManifest):
                 fullAudioPath = os.path.join(tempDir, audioChunkFileName)
 
                 if os.path.isfile(fullAudioPath):
-                    transcriptText += get_stt_transcript(fullAudioPath)
+                    transcript, clues, clue_count, is_start_of_riddle, is_end_of_riddle = get_stt_transcript(fullAudioPath)
+                    transcriptText += transcript
                 
                 transcriptBox.text_area("Question", transcriptText, key=uuid.uuid4(), label_visibility=label_flag, height = boxHeight)
 
-        runAudioExtractCmd.communicate()
+                if is_start_of_riddle == True:
+                    riddleAnswered = False
 
+                # only send to QA if STT provided clues
+                answer = ''
+                # send question to QA if clue is present and riddle has not been answered
+                if len(clues.strip()) != 0 and not riddleAnswered:
+                    answer = realtime_question_answering(transcript, "visible", "live", clues, clue_count, is_start_of_riddle, is_end_of_riddle)
+
+                if len(answer.strip()) != 0:
+                    # mark riddle as answered
+                    riddleAnswered = True
+                    st.text('Generated Speech')
+                    realtime_text_to_speech(answer, TTS_VOICE_BANK['voice2'], "live")
+
+def process_youtube_video(downloadLink, isLiveStream):
+    if isLiveStream:
+        extractedAudioTitle = downloadLink
+    else:
+        # create an audio file to contain full extracted audio
+        extractedAudioTitle = 'output.opus'
+        # download full audio of the youtube video
+        with yt_dlp.YoutubeDL({"quiet": True, 'extract_audio': True, 'format': 'bestaudio', 'outtmpl': extractedAudioTitle}) as ydl:
+            ydl.download(downloadLink)
+
+    # in both live stream and non live stream cases, use ffmpeg to convert the extracted audio to mp3 and split into 5s chunks
+    tempDir = tempfile.mkdtemp()
+    runAudioExtractCmd = subprocess.Popen('ffmpeg -i {} -vn -acodec libmp3lame -f segment -segment_time 5 {}'
+                                        .format(extractedAudioTitle, os.path.join(tempDir, "audio%03d.mp3")), 
+                                        stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=1, 
+                                        universal_newlines=True, shell=True)
+    ai_in_live_mode(tempDir, runAudioExtractCmd)
+
+    # cleanup created audio file if we are not in live stream
+    if not isLiveStream:
+        os.remove(extractedAudioTitle)
+    
+    runAudioExtractCmd.communicate()
