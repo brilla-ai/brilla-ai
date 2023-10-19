@@ -11,6 +11,7 @@ CONFIG_FILE = 'config.yaml'
 
 def authenticate():
     print("cwd:", os.getcwd())
+    st.write("cwd:", os.getcwd())
     with open(CONFIG_FILE) as file:
         config = yaml.load(file, Loader=SafeLoader)
 
