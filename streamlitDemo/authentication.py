@@ -7,7 +7,7 @@ from yaml.loader import SafeLoader
 # Admin Flag
 ADMIN_MODE_KEY = 'ADMIN_MODE'
 NOT_ADMIN_MODE_FLAG = '-1'
-CONFIG_FILE = './config.yaml'
+CONFIG_FILE = 'config.yaml'
 
 def authenticate():
     with open(CONFIG_FILE) as file:
