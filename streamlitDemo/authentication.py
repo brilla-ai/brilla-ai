@@ -7,7 +7,12 @@ from yaml.loader import SafeLoader
 # Admin Flag
 ADMIN_MODE_KEY = 'ADMIN_MODE'
 NOT_ADMIN_MODE_FLAG = '-1'
-CONFIG_FILE = 'config.yaml'
+
+CURRENT_DIR =  os.getcwd()
+if "streamlitDemo" in CURRENT_DIR:
+    CONFIG_FILE = os.path.join(CURRENT_DIR, 'config.yaml')
+else:
+    CONFIG_FILE = os.path.join(CURRENT_DIR, 'streamlitDemo/config.yaml')
 
 def authenticate():
     print("cwd:", os.getcwd())
