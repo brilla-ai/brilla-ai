@@ -112,12 +112,11 @@ def get_qa_answer(question, mode="demo", clues="", clue_count=0, is_start_of_rid
             response = requests.get(QA_API.rstrip('/') + '/live_qa', data=payload)
         
         # default values
-        falconAnswer = ''
-        chatGPTAnswer = ''
+        falconAnswer = ""
+        chatGPTAnswer = ""
 
         if response.status_code == 200:
             falconAnswer = response.json()['falcon']
-            chatGPTAnswer = ""
             if mode == "live":
                 chatGPTAnswer = response.json()['chatGPT']
         return falconAnswer, chatGPTAnswer
