@@ -84,19 +84,20 @@ def get_stt_transcript(audioFile):
             # Send GET request to API endpoint
             response = requests.get(STT_TRANSCRIPT_API, data=payload)
 
+            # default values
+            transcript = ''
+            clues = ''
+            clue_count = 0
+            is_start_of_riddle = False
+            is_end_of_riddle = False
+
             if response.status_code == 200:
                 transcript = response.json()['transcript']
                 clues = response.json()['clues']
                 clue_count = response.json()['clue_count']
                 is_start_of_riddle = response.json()['is_start_of_riddle']
                 is_end_of_riddle = response.json()['is_end_of_riddle']
-                print('transcript:',transcript)
-                print('clues:',clues)
-                print('clue_count:',clue_count)
-                print('is_start_of_riddle:',is_start_of_riddle)
-                print('is_end_of_riddle:',is_end_of_riddle)
-
-                return transcript, clues, clue_count, is_start_of_riddle, is_end_of_riddle
+            return transcript, clues, clue_count, is_start_of_riddle, is_end_of_riddle
 
 def get_qa_answer(question, mode="demo", clues="", clue_count=0, is_start_of_riddle=False, is_end_of_riddle=False):
     QA_API = get_qa_api()
@@ -109,13 +110,18 @@ def get_qa_answer(question, mode="demo", clues="", clue_count=0, is_start_of_rid
         elif mode == "live":
             payload = json.dumps({'clues' : clues, 'clue_count' : clue_count, 'is_start_of_riddle' : is_start_of_riddle, 'is_end_of_riddle' : is_end_of_riddle})
             response = requests.get(QA_API.rstrip('/') + '/live_qa', data=payload)
+        
+        # default values
+        falconAnswer = ''
+        chatGPTAnswer = ''
 
         if response.status_code == 200:
             falconAnswer = response.json()['falcon']
             chatGPTAnswer = ""
             if mode == "live":
                 chatGPTAnswer = response.json()['chatGPT']
-            return falconAnswer, chatGPTAnswer
+        return falconAnswer, chatGPTAnswer
+        
 
 def get_tts_audio(text, voice, mode="demo"):
     TTS_API = get_tts_api()
@@ -489,9 +495,10 @@ def realtime_question_answering(riddle, labelFlag="hidden", mode="demo", clues="
             falconAnswer, chatGPTAnswer = get_qa_answer(riddle, mode, clues, clue_count, is_start_of_riddle, is_end_of_riddle)
         answerBoxText = falconAnswer
     
-    answerBox.text_area("Answer", answerBoxText, key=uuid.uuid4())
-    if mode == "live" and len(chatGPTAnswer.strip()) != 0:
-        st.markdown("**:green[ChatGPT's Answer]**: " + "*:green[" + chatGPTAnswer + "]*")
+    if len(falconAnswer.strip()) != 0:
+        answerBox.text_area("Answer", answerBoxText, key=uuid.uuid4())
+        if mode == "live" and len(chatGPTAnswer.strip()) != 0:
+            st.markdown("**:green[ChatGPT's Answer]**: " + "*:green[" + chatGPTAnswer + "]*")
 
     return answerBoxText
 
@@ -578,6 +585,11 @@ def ai_in_live_mode(tempDir, processCmd):
                 label_visibility = label_flag,
                 height = boxHeight
             )
+        
+        # creating a placeholder for QA section
+        answerBoxText = ''
+        answerBox = st.empty()
+        answerBox.text_area("Answer", answerBoxText, height = 10, label_visibility=label_flag, key=uuid.uuid4())
 
         riddleAnswered = False
         while True:
@@ -599,17 +611,22 @@ def ai_in_live_mode(tempDir, processCmd):
                 if is_start_of_riddle == True:
                     riddleAnswered = False
 
-                # only send to QA if STT provided clues
-                answer = ''
-                # send question to QA if clue is present and riddle has not been answered
+                # send question to QA if clues are present and riddle has not been answered
                 if len(clues.strip()) != 0 and not riddleAnswered:
-                    answer = realtime_question_answering(transcript, "visible", "live", clues, clue_count, is_start_of_riddle, is_end_of_riddle)
+                    # with st.spinner("Working On Answer!"):
+                    # transcript here doesn't matter as only clues will be sent
+                    falconAnswer, chatGPTAnswer = get_qa_answer(transcript, "live", clues, clue_count, is_start_of_riddle, is_end_of_riddle)
+                
+                    if len(falconAnswer.strip()) != 0:
+                        answerBoxText = falconAnswer
+                        answerBox.text_area("Answer", answerBoxText, key=uuid.uuid4())
+                        if len(chatGPTAnswer.strip()) != 0:
+                            st.markdown("**:green[ChatGPT's Answer]**: " + "*:green[" + chatGPTAnswer + "]*")
 
-                if len(answer.strip()) != 0:
-                    # mark riddle as answered
-                    riddleAnswered = True
-                    st.text('Generated Speech')
-                    realtime_text_to_speech(answer, TTS_VOICE_BANK['voice2'], "live")
+                        # mark riddle as answered
+                        riddleAnswered = True
+                        st.text('Generated Speech')
+                        realtime_text_to_speech(answerBoxText, TTS_VOICE_BANK['voice2'], "live")
 
 def process_youtube_video(downloadLink, isLiveStream):
     if isLiveStream:
