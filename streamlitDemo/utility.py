@@ -421,7 +421,7 @@ def realtime_audio_file_STT(audio_file_path, labelFlag="hidden"):
             
             # Slicing of the audio file is done. transcribe audio chunks
             time.sleep(2)
-            transcriptText += get_stt_transcript(audio_chunk_temp_file)[0]
+            transcriptText = transcriptText + ' ' + get_stt_transcript(audio_chunk_temp_file)[0]
             os.remove(audio_chunk_temp_file)
 
             transcriptBox.text_area("Question", transcriptText, key=uuid.uuid4(), label_visibility=labelFlag, height = boxHeight)
@@ -476,7 +476,7 @@ def realtime_audio_recording_STT():
                 
                 if len(sound_chunk) > 0:
                     sound_chunk.export(audio_chunk_temp_file, format ="wav")
-                    transcriptText += get_stt_transcript(audio_chunk_temp_file)[0]
+                    transcriptText = transcriptText + ' ' + get_stt_transcript(audio_chunk_temp_file)[0]
                     transcriptBox.text_area("", transcriptText)
                     os.remove(audio_chunk_temp_file)
             else:
@@ -604,7 +604,7 @@ def ai_in_live_mode(tempDir, processCmd):
 
                 if os.path.isfile(fullAudioPath):
                     transcript, clues, clue_count, is_start_of_riddle, is_end_of_riddle = get_stt_transcript(fullAudioPath)
-                    transcriptText += transcript
+                    transcriptText = transcriptText + ' ' + transcript
                 
                 transcriptBox.text_area("Question", transcriptText, key=uuid.uuid4(), label_visibility=label_flag, height = boxHeight)
 
