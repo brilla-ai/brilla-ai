@@ -83,8 +83,8 @@ def crop_video(excel_file, input_file="videos"):
 
             cropped_video = video_clip.subclip(start_seconds, stop_seconds)
 
-            output_video_filename = f"cropped_{start_time.replace(':', '_')}_{stop_time.replace(':', '_')}_{video_name}"
-            output_audio_filename = f"audio_{start_time.replace(':', '_')}_{stop_time.replace(':', '_')}_{video_name}.wav"
+            output_video_filename = f"cropped_{video_name}_{start_time.replace(':', '_')}_{stop_time.replace(':', '_')}"
+            output_audio_filename = f"audio_{video_name}_{start_time.replace(':', '_')}_{stop_time.replace(':', '_')}.wav"
 
             output_video_path = os.path.join(input_file, output_video_filename)
             output_audio_path = os.path.join(input_file, output_audio_filename)
