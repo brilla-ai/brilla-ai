@@ -13,9 +13,9 @@ import os
 import yt_dlp
 import subprocess
 import re
+import logging
 from urllib.parse import urlparse, parse_qs, urljoin
 from authentication import is_prod_mode
-
 
 CURRENT_DIR =  os.getcwd()
 VIDEO_DIR = os.path.join(CURRENT_DIR, 'streamlitDemo/assets/video/' if is_prod_mode() else 'assets/video/')
@@ -27,6 +27,7 @@ DEMO_VIDEO_2_PATH  = VIDEO_DIR  + 'video2.mp4'
 DEMO_VIDEO_3_PATH  = VIDEO_DIR  + 'video3.mp4'
 DEMO_VIDEO_4_PATH  = VIDEO_DIR  + 'video4.mp4'
 DEMO_VIDEO_5_PATH  = VIDEO_DIR  + 'video5.mp4'
+DEMO_VIDEO_6_PATH  = VIDEO_DIR  + 'video6.mp4'
 
 # AUDIO PATHS
 DEMO_AUDIO_1_PATH  = AUDIO_DIR + 'audio_video1.mp3'
@@ -34,6 +35,7 @@ DEMO_AUDIO_2_PATH  = AUDIO_DIR + 'audio_video2.mp3'
 DEMO_AUDIO_3_PATH  = AUDIO_DIR + 'audio_video3.mp3'
 DEMO_AUDIO_4_PATH  = AUDIO_DIR + 'audio_video4.mp3'
 DEMO_AUDIO_5_PATH  = AUDIO_DIR + 'audio_video5.mp3'
+DEMO_AUDIO_6_PATH  = AUDIO_DIR + 'audio_video6.mp3'
 
 # API ENDPOINTS
 STT_API_KEY = 'STT_API'
@@ -66,8 +68,24 @@ TTS_VOICE_BANK = {
 # DEFAULTS FOR REAL TIME AUDIO RECORDING TRANSCRIPTION
 TIMEOUT = 3  # Timeout for getting frames from the audio receiver. Default is 3 seconds.
 
+# utilize caching to only run this function once per app session
+@st.cache_resource
+def configure_logging(file_path='app_output.log', level=logging.INFO):
+    logger = logging.getLogger()
+    logger.setLevel(level)
+
+    file_handler = logging.FileHandler(file_path)
+    file_handler.setLevel(level)
+
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    file_handler.setFormatter(formatter)
+
+    logger.addHandler(file_handler)
+    return logger
+
 # API FUNCTIONS
 def get_stt_transcript(audioFile):
+    logger = configure_logging()
     STT_API = get_stt_api()
 
     # only make the API call if a valid url is present
@@ -82,7 +100,8 @@ def get_stt_transcript(audioFile):
             payload = json.dumps(payload)
 
             # Send GET request to API endpoint
-            response = requests.get(STT_TRANSCRIPT_API, data=payload)
+            logger.info("making call to STT api endpoint")
+            response = requests.get(STT_TRANSCRIPT_API, data=payload, verify=False)
 
             # default values
             transcript = ''
@@ -97,19 +116,32 @@ def get_stt_transcript(audioFile):
                 clue_count = response.json()['clue_count']
                 is_start_of_riddle = response.json()['is_start_of_riddle']
                 is_end_of_riddle = response.json()['is_end_of_riddle']
+            logger.info(f"Received response from STT Model transcript: {transcript} \
+                        clues: {clues} \
+                        clue_count: {clue_count} \
+                        is_start_of_riddle: {is_start_of_riddle} \
+                        is_end_of_riddle: {is_end_of_riddle}")
+
             return transcript, clues, clue_count, is_start_of_riddle, is_end_of_riddle
 
 def get_qa_answer(question, mode="demo", clues="", clue_count=0, is_start_of_riddle=False, is_end_of_riddle=False):
+    logger = configure_logging()
     QA_API = get_qa_api()
 
     # only make the API call if a valid url is present
     if QA_API != NO_API_SET_FLAG:
         if mode == "demo":
             question = json.dumps({'text' : question})
-            response = requests.get(QA_API.rstrip('/') + '/demo_qa', data=question)
+            logger.info(f"making call to QA demo api endpoint with payload: {question}")
+            response = requests.get(QA_API.rstrip('/') + '/demo_qa', data=question, verify=False)
+        elif mode == "live-demo":
+            liveDemoPayload = json.dumps({'clues' : clues, 'clue_count' : clue_count, 'is_start_of_riddle' : is_start_of_riddle, 'is_end_of_riddle' : is_end_of_riddle})
+            logger.info(f"making call to QA live demo api endpoint with payload: {liveDemoPayload}")
+            response = requests.get(QA_API.rstrip('/') + '/live_demo_qa', data=liveDemoPayload, verify=False)
         elif mode == "live":
-            payload = json.dumps({'clues' : clues, 'clue_count' : clue_count, 'is_start_of_riddle' : is_start_of_riddle, 'is_end_of_riddle' : is_end_of_riddle})
-            response = requests.get(QA_API.rstrip('/') + '/live_qa', data=payload)
+            livePayload = json.dumps({'clues' : clues, 'clue_count' : clue_count, 'is_start_of_riddle' : is_start_of_riddle, 'is_end_of_riddle' : is_end_of_riddle})
+            logger.info(f"making call to QA live api endpoint with payload: {livePayload}")
+            response = requests.get(QA_API.rstrip('/') + '/live_qa', data=livePayload, verify=False)
         
         # default values
         falconAnswer = ""
@@ -119,10 +151,13 @@ def get_qa_answer(question, mode="demo", clues="", clue_count=0, is_start_of_rid
             falconAnswer = response.json()['falcon']
             if mode == "live":
                 chatGPTAnswer = response.json()['chatGPT']
+        logger.info(f"Received response from QA Model falconAnswer: {falconAnswer} \
+                      chatGPTAnswer: {chatGPTAnswer}")
         return falconAnswer, chatGPTAnswer
         
 
 def get_tts_audio(text, voice, mode="demo"):
+    logger = configure_logging()
     TTS_API = get_tts_api()
     # only make the API call if a valid url is present
     if TTS_API != NO_API_SET_FLAG:
@@ -130,9 +165,11 @@ def get_tts_audio(text, voice, mode="demo"):
 
         payload = json.dumps({'text' : text, 'voice': voiceOption})
         if mode == "demo":
-            response = requests.get(TTS_API.rstrip('/') + '/demo_tts', data=payload)
+            logger.info(f"making call to TTS demo api endpoint with payload: {payload}")
+            response = requests.get(TTS_API.rstrip('/') + '/demo_tts', data=payload, verify=False)
         elif mode == "live":
-            response = requests.get(TTS_API.rstrip('/') + '/live_tts', data=payload)
+            logger.info(f"making call to TTS live api endpoint with payload: {payload}")
+            response = requests.get(TTS_API.rstrip('/') + '/live_tts', data=payload, verify=False)
 
         outputFileName = "tts_output.wav"
 
@@ -243,7 +280,7 @@ def apiSetupPageOperation(inputType):
         ttsAPIVal = allInOneAPIVal
 
     if st.button('Submit', key=keyVal):
-        with st.spinner('Validating APIs'):
+        with st.spinner('Validating APIs...'):
             # validate APIs
             if is_stt_api_valid(sttAPIVal):
                 partialSuccessMsg += ' STT API endpoint set successfully.'
@@ -332,7 +369,7 @@ def autoplay_live_video(video_url):
 
 # STT PROCESSING
 def realtime_audio_file_STT(audio_file_path, labelFlag="hidden"):
-    with st.spinner('Transcribing'):
+    with st.spinner('Transcribing...'):
         # creating a placeholder for the fixed sized textbox
         transcriptBox = st.empty()
         transcriptText = ''
@@ -446,7 +483,7 @@ def realtime_audio_recording_STT():
     )
 
     # creating a placeholder for the fixed sized textbox
-    with st.spinner("Running..Say Something!"):
+    with st.spinner("Running...Say Something"):
         transcriptBox = st.empty()
         transcriptText = ''
         transcriptBox.text_area(
@@ -485,7 +522,7 @@ def realtime_audio_recording_STT():
 def realtime_question_answering(riddle, labelFlag="hidden", mode="demo", clues="", clue_count=0, is_start_of_riddle=False, is_end_of_riddle=False):
     answerBoxText = ''
 
-    with st.spinner("Working On Answer!"):
+    with st.spinner("Working On Answer..."):
         answerBox = st.empty()
         answerBox.text_area("Answer", answerBoxText, height = 10, label_visibility=labelFlag, key=uuid.uuid4())
         if mode == "demo":
@@ -505,6 +542,7 @@ def realtime_question_answering(riddle, labelFlag="hidden", mode="demo", clues="
 def realtime_text_to_speech(text, voice, mode="demo"):
     outputAudioFile = ''
     with st.spinner('Generating speech...'):
+        st.text('Generated Speech')
         outputAudioFile = get_tts_audio(text, voice, mode)
     autoplay_audio(outputAudioFile)
 
@@ -522,7 +560,6 @@ def ai_in_demo_mode(video_file_path, audio_file_path):
         transcript = realtime_audio_file_STT(audio_file_path, "visible")
         answer = realtime_question_answering(transcript, "visible")
 
-        st.text('Generated Speech')
         realtime_text_to_speech(answer, TTS_VOICE_BANK['voice2'])
 
 def check_api_values():
@@ -569,65 +606,307 @@ def get_url_download_link(liveVideoURL):
             downloadLink = liveVideoURL
         return downloadLink, isLiveStream
     
-def ai_in_live_mode(tempDir, processCmd):
-    with st.spinner('Transcribing'):
-        # creating a placeholder for the fixed sized textbox
+def ai_in_live_mode(liveVideoURL):
+    vidAndTranscriptCol, answerAndVoiceCol = st.columns(2)
+
+    with vidAndTranscriptCol:
+        embedLink = create_embed_link_from_url(liveVideoURL)
+        autoplay_live_video(embedLink)
+
+        # create transcriptbox here and pass object to process
         transcriptText = ''
-        boxHeight = 200
+        transcriptBoxHeight = 200
         label_flag = "visible"
         transcriptBox = st.empty()
+        transcriptBoxTitle = "Transcription"
 
-        transcriptBox.text_area(
-                "Question",
-                transcriptText,
-                key=uuid.uuid4(),
-                label_visibility = label_flag,
-                height = boxHeight
-            )
+        with st.spinner('Transcribing...'):
+            transcriptBox.text_area(
+                    transcriptBoxTitle,
+                    transcriptText,
+                    key=uuid.uuid4(),
+                    label_visibility = label_flag,
+                    height = transcriptBoxHeight
+                )
+    
+    with answerAndVoiceCol:
+        downloadLink, isLiveStream = get_url_download_link(liveVideoURL)
+        # TODO: sanitize output to prevent command injection
+        process_youtube_video(downloadLink, isLiveStream, transcriptBox, transcriptBoxTitle, transcriptBoxHeight, label_flag)
+
+def ai_in_live_demo_mode(videoFilePath, audioFilePath):
+    if not check_api_values():
+        return
+
+    vidAndTranscriptCol, answerAndVoiceCol = st.columns(2)
+
+    with vidAndTranscriptCol:
+        autoplay_video(videoFilePath)
+
+        # create transcriptbox here and pass object to process
+        transcriptText = ''
+        transcriptBoxHeight = 200
+        label_flag = "visible"
+        transcriptBox = st.empty()
+        transcriptBoxTitle = "Transcription"
+
+        with st.spinner('Transcribing...'):
+            transcriptBox.text_area(
+                    transcriptBoxTitle,
+                    transcriptText,
+                    key=uuid.uuid4(),
+                    label_visibility = label_flag,
+                    height = transcriptBoxHeight
+                )
+
+    with answerAndVoiceCol:
+        process_live_demo_mode(audioFilePath, transcriptBox, transcriptBoxTitle, transcriptBoxHeight, label_flag)
+
+def process_live_demo_mode(audioFilePath, transcriptBox, transcriptBoxTitle, transcriptBoxHeight, label_flag):
+    transcriptText = ''
+
+    # creating a placeholder for clues section
+    cluesBoxTitle = "Riddle Clues"
+    cluesBoxText = ''
+    cluesBox = st.empty()
+    cluesBoxHeight = 200
+    cluesBox.text_area(cluesBoxTitle, cluesBoxText, height = cluesBoxHeight, label_visibility=label_flag, key=uuid.uuid4())
+    
+    # creating a placeholder for QA section
+    falconCol, chatGPTCol = st.columns(2)
+    falconBoxTitle = "NSMQ AI Answer"
+    chatGPTBoxTitle = "ChatGPT Answer"
+    answerBoxHeight = 100
+
+    with falconCol:
+        falconAnswerBoxText = ''
+        falconAnswerBox = st.empty()
+    
+    with chatGPTCol:
+        chatGPTAnswerBoxText = ''
+        chatGPTAnswerBox = st.empty()
+    
+    # creating a placeholder for TTS section
+    generatedAudioElement = st.empty()
+    
+    # temp location for audio chunks
+    temp_dir = tempfile.mkdtemp()
+    audio_chunk_temp_file = os.path.join(temp_dir, "temp.wav")
+
+    # majority of audio chunk code referenced from https://www.geeksforgeeks.org/audio-processing-using-pydub-and-google-speechrecognition-api/#
+    
+    # Input audio file to be sliced
+    audio = AudioSegment.from_mp3(audioFilePath)
+
+    # Length of the audiofile in milliseconds
+    n = len(audio)
+
+    # Interval length at which to slice the audio file.
+    # 5seconds proved to be the best interval to make the transcription correspond to the audio which is autoplayed in the UI
+    interval = 5 * 1000
+
+    # Length of audio to overlap.
+    overlap = 0
+
+    # Initialize start and end seconds to 0
+    start = 0
+    end = 0
+    
+    # Flag to keep track of end of file.
+    # When audio reaches its end, flag is set to 1 and we break
+    flag = 0
+
+    # detect riddle answered
+    riddleAnsweredByFalcon = False
+    riddleAnsweredByChatGPT = False
+
+    # Iterate from 0 to end of the file,
+    # with increment = interval
+    for i in range(0, 2 * n, interval):
         
-        # creating a placeholder for QA section
-        answerBoxText = ''
-        answerBox = st.empty()
-        answerBox.text_area("Answer", answerBoxText, height = 10, label_visibility=label_flag, key=uuid.uuid4())
+        # During first iteration,
+        # start is 0, end is the interval
+        if i == 0:
+            start = 0
+            end = interval
+    
+        # All other iterations,
+        # start is the previous end - overlap
+        # end becomes end + interval
+        else:
+            start = end - overlap
+            end = start + interval
+    
+        # When end becomes greater than the file length,
+        # end is set to the file length
+        # flag is set to 1 to indicate break.
+        if end >= n:
+            end = n
+            flag = 1
+    
+        # Storing audio file from the defined start to end
+        sound_chunk = audio[start:end]
 
-        riddleAnswered = False
-        while True:
-            line = processCmd.stdout.readline()
-            audioLineMatch = re.search(r"\baudio\w+.mp3", line)
+        # Store the sliced audio file
+        sound_chunk.export(audio_chunk_temp_file, format ="wav")
+        
+        # Slicing of the audio file is done. transcribe audio chunks
+        time.sleep(2)
+        transcript, clues, clue_count, is_start_of_riddle, is_end_of_riddle = get_stt_transcript(audio_chunk_temp_file)
+        cluesBoxText = clues
+        transcriptText = transcriptText + ' ' + transcript
 
-            if audioLineMatch:
-                # wait for the audio to be written to file before sending 
-                time.sleep(2)
-                audioChunkFileName = audioLineMatch.group()
-                fullAudioPath = os.path.join(tempDir, audioChunkFileName)
+        os.remove(audio_chunk_temp_file)
 
-                if os.path.isfile(fullAudioPath):
-                    transcript, clues, clue_count, is_start_of_riddle, is_end_of_riddle = get_stt_transcript(fullAudioPath)
-                    transcriptText = transcriptText + ' ' + transcript
+        cluesBox.text_area(cluesBoxTitle, cluesBoxText, key=uuid.uuid4(), label_visibility=label_flag, height = cluesBoxHeight)
+        transcriptBox.text_area(transcriptBoxTitle, transcriptText, key=uuid.uuid4(), label_visibility=label_flag, height = transcriptBoxHeight)
+
+        # is_start_of_riddle == True
+        if clue_count == 1:
+            riddleAnsweredByFalcon = False
+            riddleAnsweredByChatGPT = False
+
+            # start new clues
+            cluesBoxText = ""
+            cluesBox.text_area(cluesBoxTitle, cluesBoxText, key=uuid.uuid4(), label_visibility=label_flag, height = cluesBoxHeight)
+
+            # clear up previous answers
+            falconAnswerBoxText = ''
+            falconAnswerBox.text_area(falconBoxTitle, falconAnswerBoxText, height = answerBoxHeight, label_visibility=label_flag, key=uuid.uuid4())
+
+            chatGPTAnswerBoxText = ''
+            chatGPTAnswerBox.text_area(chatGPTBoxTitle, chatGPTAnswerBoxText, height = answerBoxHeight, label_visibility=label_flag, key=uuid.uuid4())
+
+            # remove generated audio
+            generatedAudioElement.empty()
+        
+        # if there are clues and riddle has not been answered byt falcon or by chatGPT proceed to send
+        if len(clues.strip()) != 0:
+            if riddleAnsweredByFalcon is False or riddleAnsweredByChatGPT is False:
+                with st.spinner('Working On Answer...'):
+                    # transcript passed to QA here doesn't matter as much as only clues will be sent
+                    if clue_count == 1:
+                        is_start_of_riddle = True
+                    else:
+                        is_start_of_riddle = False
+                    falconAnswer, chatGPTAnswer = get_qa_answer(transcript, "live-demo", clues, clue_count, is_start_of_riddle, is_end_of_riddle)
+        
+                if len(falconAnswer.strip()) != 0 and riddleAnsweredByFalcon is False:
+                    falconAnswerBoxText = falconAnswer
+                    # display falcon answer
+                    falconAnswerBox.text_area(falconBoxTitle, falconAnswerBoxText, height = answerBoxHeight, label_visibility=label_flag, key=uuid.uuid4())
+
+                    # mark riddle as answered
+                    riddleAnsweredByFalcon = True
+                    generatedAudioElement = st.empty()
+                    realtime_text_to_speech(falconAnswerBoxText, TTS_VOICE_BANK['voice2'], "live")
                 
-                transcriptBox.text_area("Question", transcriptText, key=uuid.uuid4(), label_visibility=label_flag, height = boxHeight)
+                # display chatGPT answer
+                if len(chatGPTAnswer.strip()) != 0 and riddleAnsweredByChatGPT is False:
+                    riddleAnsweredByChatGPT = True
+                    chatGPTAnswerBoxText = chatGPTAnswer
+                    chatGPTAnswerBox.text_area(chatGPTBoxTitle, chatGPTAnswerBoxText, height = answerBoxHeight, label_visibility=label_flag, key=uuid.uuid4())
 
-                if is_start_of_riddle == True:
-                    riddleAnswered = False
+        # Check for flag.
+        # If flag is 1, end of the whole audio reached.
+        if flag == 1:
+            break
 
-                # send question to QA if clues are present and riddle has not been answered
-                if len(clues.strip()) != 0 and not riddleAnswered:
-                    # with st.spinner("Working On Answer!"):
-                    # transcript here doesn't matter as only clues will be sent
-                    falconAnswer, chatGPTAnswer = get_qa_answer(transcript, "live", clues, clue_count, is_start_of_riddle, is_end_of_riddle)
-                
-                    if len(falconAnswer.strip()) != 0:
-                        answerBoxText = falconAnswer
-                        answerBox.text_area("Answer", answerBoxText, key=uuid.uuid4())
-                        if len(chatGPTAnswer.strip()) != 0:
-                            st.markdown("**:green[ChatGPT's Answer]**: " + "*:green[" + chatGPTAnswer + "]*")
+    
+def process_live_mode(tempDir, processCmd, transcriptBox, transcriptBoxTitle, transcriptBoxHeight, label_flag):    
+    transcriptText = ''
+
+    # creating a placeholder for clues section
+    cluesBoxTitle = "Riddle Clues"
+    cluesBoxText = ''
+    cluesBox = st.empty()
+    cluesBoxHeight = 200
+    cluesBox.text_area(cluesBoxTitle, cluesBoxText, height = cluesBoxHeight, label_visibility=label_flag, key=uuid.uuid4())
+    
+    # creating a placeholder for QA section
+    falconCol, chatGPTCol = st.columns(2)
+    falconBoxTitle = "NSMQ AI Answer"
+    chatGPTBoxTitle = "ChatGPT Answer"
+    answerBoxHeight = 100
+
+    with falconCol:
+        falconAnswerBoxText = ''
+        falconAnswerBox = st.empty()
+    
+    with chatGPTCol:
+        chatGPTAnswerBoxText = ''
+        chatGPTAnswerBox = st.empty()
+
+    # creating a placeholder for TTS section
+    generatedAudioElement = st.empty()
+
+    # detect riddle answered
+    riddleAnsweredByFalcon = False
+    riddleAnsweredByChatGPT = False
+
+    while True:
+        line = processCmd.stdout.readline()
+        audioLineMatch = re.search(r"\baudio\w+.mp3", line)
+
+        if audioLineMatch:
+            # wait for the audio to be written to file before sending 
+            time.sleep(2)
+            audioChunkFileName = audioLineMatch.group()
+            fullAudioPath = os.path.join(tempDir, audioChunkFileName)
+
+            if os.path.isfile(fullAudioPath):
+                transcript, clues, clue_count, is_start_of_riddle, is_end_of_riddle = get_stt_transcript(fullAudioPath)
+                cluesBoxText = clues
+                transcriptText = transcriptText + ' ' + transcript
+            
+            cluesBox.text_area(cluesBoxTitle, cluesBoxText, key=uuid.uuid4(), label_visibility=label_flag, height = cluesBoxHeight)
+            transcriptBox.text_area(transcriptBoxTitle, transcriptText, key=uuid.uuid4(), label_visibility=label_flag, height = transcriptBoxHeight)
+
+            if clue_count == 1:
+                riddleAnsweredByFalcon = False
+                riddleAnsweredByChatGPT = False
+
+                # start new clues
+                cluesBoxText = ""
+                cluesBox.text_area(cluesBoxTitle, cluesBoxText, key=uuid.uuid4(), label_visibility=label_flag, height = cluesBoxHeight)
+
+                # clear up previous answers
+                falconAnswerBoxText = ''
+                falconAnswerBox.text_area(falconBoxTitle, falconAnswerBoxText, height = answerBoxHeight, label_visibility=label_flag, key=uuid.uuid4())
+
+                chatGPTAnswerBoxText = ''
+                chatGPTAnswerBox.text_area(chatGPTBoxTitle, chatGPTAnswerBoxText, height = answerBoxHeight, label_visibility=label_flag, key=uuid.uuid4())
+
+                # remove generated audio
+                generatedAudioElement.empty()
+            
+            # if there are clues and riddle has not been answered byt falcon or by chatGPT proceed to send
+            if len(clues.strip()) != 0:
+                if riddleAnsweredByFalcon is False or riddleAnsweredByChatGPT is False:
+                    with st.spinner('Working On Answer...'):
+                        # transcript passed to QA here doesn't matter as much as only clues will be sent
+                        if clue_count == 1:
+                            is_start_of_riddle = True
+                        else:
+                            is_start_of_riddle = False
+                        falconAnswer, chatGPTAnswer = get_qa_answer(transcript, "live", clues, clue_count, is_start_of_riddle, is_end_of_riddle)
+            
+                    if len(falconAnswer.strip()) != 0 and riddleAnsweredByFalcon is False:
+                        falconAnswerBoxText = falconAnswer
+                        # display falcon answer
+                        falconAnswerBox.text_area(falconBoxTitle, falconAnswerBoxText, height = answerBoxHeight, label_visibility=label_flag, key=uuid.uuid4())
 
                         # mark riddle as answered
-                        riddleAnswered = True
-                        st.text('Generated Speech')
-                        realtime_text_to_speech(answerBoxText, TTS_VOICE_BANK['voice2'], "live")
+                        riddleAnsweredByFalcon = True
+                        realtime_text_to_speech(falconAnswerBoxText, TTS_VOICE_BANK['voice2'], "live")
+                    
+                    # display chatGPT answer
+                    if len(chatGPTAnswer.strip()) != 0 and riddleAnsweredByChatGPT is False:
+                        riddleAnsweredByChatGPT = True
+                        chatGPTAnswerBoxText = chatGPTAnswer
+                        chatGPTAnswerBox.text_area(chatGPTBoxTitle, chatGPTAnswerBoxText, height = answerBoxHeight, label_visibility=label_flag, key=uuid.uuid4())
 
-def process_youtube_video(downloadLink, isLiveStream):
+def process_youtube_video(downloadLink, isLiveStream, transcriptBox=st.empty(), transcriptBoxTitle="", boxHeight=400, label_flag="visible"):
     if isLiveStream:
         extractedAudioTitle = downloadLink
     else:
@@ -643,7 +922,7 @@ def process_youtube_video(downloadLink, isLiveStream):
                                         .format(extractedAudioTitle, os.path.join(tempDir, "audio%03d.mp3")), 
                                         stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=1, 
                                         universal_newlines=True, shell=True)
-    ai_in_live_mode(tempDir, runAudioExtractCmd)
+    process_live_mode(tempDir, runAudioExtractCmd, transcriptBox, transcriptBoxTitle, boxHeight, label_flag)
 
     # cleanup created audio file if we are not in live stream
     if not isLiveStream:
