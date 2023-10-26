@@ -1,4 +1,5 @@
 import subprocess
+import os
 
 headerString = '''
 ##################################################
@@ -14,6 +15,10 @@ run_dep.wait()
 
 if run_dep.returncode == 0:
     print("### Step 2: Starting Up App ###")
+    # clear up log file if it exists
+    if os.path.isfile("app_output.log"):
+        open("app_output.log", "w").close()
+
     start_app = subprocess.Popen('streamlit run NSMQ_AI.py', shell= True)
     start_app.wait()
 else:

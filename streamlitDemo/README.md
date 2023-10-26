@@ -32,3 +32,6 @@ Make sure you've completed the setup process for all the ML notebooks and have t
 
 ### Homepage
 ![homepage](./images/homepage.png)
+
+## Logs
+Application logs are written to `app_output.log`
