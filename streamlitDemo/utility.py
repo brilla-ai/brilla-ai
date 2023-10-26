@@ -686,9 +686,6 @@ def process_live_demo_mode(audioFilePath, transcriptBox, transcriptBoxTitle, tra
         chatGPTAnswerBoxText = ''
         chatGPTAnswerBox = st.empty()
     
-    # creating a placeholder for TTS section
-    generatedAudioElement = st.empty()
-    
     # temp location for audio chunks
     temp_dir = tempfile.mkdtemp()
     audio_chunk_temp_file = os.path.join(temp_dir, "temp.wav")
@@ -761,7 +758,6 @@ def process_live_demo_mode(audioFilePath, transcriptBox, transcriptBoxTitle, tra
         cluesBox.text_area(cluesBoxTitle, cluesBoxText, key=uuid.uuid4(), label_visibility=label_flag, height = cluesBoxHeight)
         transcriptBox.text_area(transcriptBoxTitle, transcriptText, key=uuid.uuid4(), label_visibility=label_flag, height = transcriptBoxHeight)
 
-        # is_start_of_riddle == True
         if clue_count == 1:
             riddleAnsweredByFalcon = False
             riddleAnsweredByChatGPT = False
@@ -776,9 +772,6 @@ def process_live_demo_mode(audioFilePath, transcriptBox, transcriptBoxTitle, tra
 
             chatGPTAnswerBoxText = ''
             chatGPTAnswerBox.text_area(chatGPTBoxTitle, chatGPTAnswerBoxText, height = answerBoxHeight, label_visibility=label_flag, key=uuid.uuid4())
-
-            # remove generated audio
-            generatedAudioElement.empty()
         
         # if there are clues and riddle has not been answered byt falcon or by chatGPT proceed to send
         if len(clues.strip()) != 0:
@@ -798,7 +791,6 @@ def process_live_demo_mode(audioFilePath, transcriptBox, transcriptBoxTitle, tra
 
                     # mark riddle as answered
                     riddleAnsweredByFalcon = True
-                    generatedAudioElement = st.empty()
                     realtime_text_to_speech(falconAnswerBoxText, TTS_VOICE_BANK['voice2'], "live")
                 
                 # display chatGPT answer
@@ -837,9 +829,6 @@ def process_live_mode(tempDir, processCmd, transcriptBox, transcriptBoxTitle, tr
         chatGPTAnswerBoxText = ''
         chatGPTAnswerBox = st.empty()
 
-    # creating a placeholder for TTS section
-    generatedAudioElement = st.empty()
-
     # detect riddle answered
     riddleAnsweredByFalcon = False
     riddleAnsweredByChatGPT = False
@@ -876,9 +865,6 @@ def process_live_mode(tempDir, processCmd, transcriptBox, transcriptBoxTitle, tr
 
                 chatGPTAnswerBoxText = ''
                 chatGPTAnswerBox.text_area(chatGPTBoxTitle, chatGPTAnswerBoxText, height = answerBoxHeight, label_visibility=label_flag, key=uuid.uuid4())
-
-                # remove generated audio
-                generatedAudioElement.empty()
             
             # if there are clues and riddle has not been answered byt falcon or by chatGPT proceed to send
             if len(clues.strip()) != 0:
