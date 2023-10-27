@@ -29,6 +29,10 @@ DEMO_VIDEO_4_PATH  = VIDEO_DIR  + 'video4.mp4'
 DEMO_VIDEO_5_PATH  = VIDEO_DIR  + 'video5.mp4'
 DEMO_VIDEO_6_PATH  = VIDEO_DIR  + 'video6.mp4'
 DEMO_VIDEO_7_PATH  = VIDEO_DIR  + 'video7.mp4'
+DEMO_VIDEO_8_PATH  = VIDEO_DIR  + 'video8.mp4'
+DEMO_VIDEO_9_PATH  = VIDEO_DIR  + 'video9.mp4'
+DEMO_VIDEO_10_PATH  = VIDEO_DIR  + 'video10.mp4'
+DEMO_VIDEO_11_PATH  = VIDEO_DIR  + 'video11.mp4'
 
 # AUDIO PATHS
 DEMO_AUDIO_1_PATH  = AUDIO_DIR + 'audio_video1.mp3'
@@ -38,6 +42,11 @@ DEMO_AUDIO_4_PATH  = AUDIO_DIR + 'audio_video4.mp3'
 DEMO_AUDIO_5_PATH  = AUDIO_DIR + 'audio_video5.mp3'
 DEMO_AUDIO_6_PATH  = AUDIO_DIR + 'audio_video6.mp3'
 DEMO_AUDIO_7_PATH  = AUDIO_DIR + 'audio_video7.mp3'
+DEMO_AUDIO_8_PATH  = AUDIO_DIR + 'audio_video8.mp3'
+DEMO_AUDIO_9_PATH  = AUDIO_DIR + 'audio_video9.mp3'
+DEMO_AUDIO_10_PATH  = AUDIO_DIR + 'audio_video10.mp3'
+DEMO_AUDIO_11_PATH  = AUDIO_DIR + 'audio_video11.mp3'
+
 
 # API ENDPOINTS
 STT_API_KEY = 'STT_API'
