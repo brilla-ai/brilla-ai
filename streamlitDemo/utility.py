@@ -29,6 +29,10 @@ DEMO_VIDEO_4_PATH  = VIDEO_DIR  + 'video4.mp4'
 DEMO_VIDEO_5_PATH  = VIDEO_DIR  + 'video5.mp4'
 DEMO_VIDEO_6_PATH  = VIDEO_DIR  + 'video6.mp4'
 DEMO_VIDEO_7_PATH  = VIDEO_DIR  + 'video7.mp4'
+DEMO_VIDEO_8_PATH  = VIDEO_DIR  + 'video8.mp4'
+DEMO_VIDEO_9_PATH  = VIDEO_DIR  + 'video9.mp4'
+DEMO_VIDEO_10_PATH  = VIDEO_DIR  + 'video10.mp4'
+DEMO_VIDEO_11_PATH  = VIDEO_DIR  + 'video11.mp4'
 
 # AUDIO PATHS
 DEMO_AUDIO_1_PATH  = AUDIO_DIR + 'audio_video1.mp3'
@@ -38,6 +42,11 @@ DEMO_AUDIO_4_PATH  = AUDIO_DIR + 'audio_video4.mp3'
 DEMO_AUDIO_5_PATH  = AUDIO_DIR + 'audio_video5.mp3'
 DEMO_AUDIO_6_PATH  = AUDIO_DIR + 'audio_video6.mp3'
 DEMO_AUDIO_7_PATH  = AUDIO_DIR + 'audio_video7.mp3'
+DEMO_AUDIO_8_PATH  = AUDIO_DIR + 'audio_video8.mp3'
+DEMO_AUDIO_9_PATH  = AUDIO_DIR + 'audio_video9.mp3'
+DEMO_AUDIO_10_PATH  = AUDIO_DIR + 'audio_video10.mp3'
+DEMO_AUDIO_11_PATH  = AUDIO_DIR + 'audio_video11.mp3'
+
 
 # API ENDPOINTS
 STT_API_KEY = 'STT_API'
@@ -146,16 +155,16 @@ def get_qa_answer(question, mode="demo", clues="", clue_count=0, is_start_of_rid
             response = requests.get(QA_API.rstrip('/') + '/live_qa', data=livePayload, verify=False)
         
         # default values
-        falconAnswer = ""
+        nsmqaiAnswer = ""
         chatGPTAnswer = ""
 
         if response.status_code == 200:
-            falconAnswer = response.json()['falcon']
-            if mode == "live":
+            nsmqaiAnswer = response.json()['mistral']
+            if mode == "live" or mode == "live-demo":
                 chatGPTAnswer = response.json()['chatGPT']
-        logger.info(f"Received response from QA Model falconAnswer: {falconAnswer} \
+        logger.info(f"Received response from QA Model nsmqaiAnswer: {nsmqaiAnswer} \
                       chatGPTAnswer: {chatGPTAnswer}")
-        return falconAnswer, chatGPTAnswer
+        return nsmqaiAnswer, chatGPTAnswer
         
 
 def get_tts_audio(text, voice, mode="demo"):
@@ -348,7 +357,7 @@ def autoplay_video(video_file_path):
         data = f.read()
         b64 = base64.b64encode(data).decode()
         md = f"""
-            <video width="550" height="400" controls autoplay="true">
+            <video width="747" height="400" controls autoplay="true">
             <source src="data:video/mp4;base64,{b64}" type="video/mp4">
             </video>
             """
@@ -359,7 +368,7 @@ def autoplay_video(video_file_path):
 
 def autoplay_live_video(video_url):
     md = f"""
-        <iframe width="550" height="400" src="{video_url}?autoplay=1&mute=1">
+        <iframe width="747" height="400" src="{video_url}?autoplay=1&mute=1">
         </iframe>
         """
     
@@ -377,7 +386,7 @@ def realtime_audio_file_STT(audio_file_path, labelFlag="hidden"):
         transcriptText = ''
         boxHeight = 200
         transcriptBox.text_area(
-            "Question",
+            "**Question**",
             transcriptText,
             key=uuid.uuid4(),
             label_visibility = labelFlag,
@@ -462,7 +471,7 @@ def realtime_audio_file_STT(audio_file_path, labelFlag="hidden"):
             transcriptText = transcriptText + ' ' + get_stt_transcript(audio_chunk_temp_file)[0]
             os.remove(audio_chunk_temp_file)
 
-            transcriptBox.text_area("Question", transcriptText, key=uuid.uuid4(), label_visibility=labelFlag, height = boxHeight)
+            transcriptBox.text_area("**Question**", transcriptText, key=uuid.uuid4(), label_visibility=labelFlag, height = boxHeight)
 
             # Check for flag.
             # If flag is 1, end of the whole audio reached.
@@ -489,7 +498,7 @@ def realtime_audio_recording_STT():
         transcriptBox = st.empty()
         transcriptText = ''
         transcriptBox.text_area(
-            "Real time transcription",
+            "**Real time transcription**",
             transcriptText,
             label_visibility  = 'hidden',
             key=uuid.uuid4()
@@ -526,17 +535,15 @@ def realtime_question_answering(riddle, labelFlag="hidden", mode="demo", clues="
 
     with st.spinner("Working On Answer..."):
         answerBox = st.empty()
-        answerBox.text_area("Answer", answerBoxText, height = 10, label_visibility=labelFlag, key=uuid.uuid4())
+        answerBox.text_area("**Answer**", answerBoxText, height = 10, label_visibility=labelFlag, key=uuid.uuid4())
         if mode == "demo":
-            falconAnswer = get_qa_answer(riddle)[0]
+            nsmqaiAnswer = get_qa_answer(riddle)[0]
         elif mode == "live":
-            falconAnswer, chatGPTAnswer = get_qa_answer(riddle, mode, clues, clue_count, is_start_of_riddle, is_end_of_riddle)
-        answerBoxText = falconAnswer
+            nsmqaiAnswer, chatGPTAnswer = get_qa_answer(riddle, mode, clues, clue_count, is_start_of_riddle, is_end_of_riddle)
+        answerBoxText = nsmqaiAnswer
     
-    if len(falconAnswer.strip()) != 0:
-        answerBox.text_area("Answer", answerBoxText, key=uuid.uuid4())
-        if mode == "live" and len(chatGPTAnswer.strip()) != 0:
-            st.markdown("**:green[ChatGPT's Answer]**: " + "*:green[" + chatGPTAnswer + "]*")
+    if len(nsmqaiAnswer.strip()) != 0:
+        answerBox.text_area("**Answer**", answerBoxText, key=uuid.uuid4())
 
     return answerBoxText
 
@@ -544,7 +551,7 @@ def realtime_question_answering(riddle, labelFlag="hidden", mode="demo", clues="
 def realtime_text_to_speech(text, voice, mode="demo"):
     outputAudioFile = ''
     with st.spinner('Generating speech...'):
-        st.text('Generated Speech')
+        st.markdown('**Generated Speech**')
         outputAudioFile = get_tts_audio(text, voice, mode)
     autoplay_audio(outputAudioFile)
 
@@ -620,7 +627,7 @@ def ai_in_live_mode(liveVideoURL):
         transcriptBoxHeight = 200
         label_flag = "visible"
         transcriptBox = st.empty()
-        transcriptBoxTitle = "Transcription"
+        transcriptBoxTitle = "**Transcription**"
 
         with st.spinner('Transcribing...'):
             transcriptBox.text_area(
@@ -650,7 +657,7 @@ def ai_in_live_demo_mode(videoFilePath, audioFilePath):
         transcriptBoxHeight = 200
         label_flag = "visible"
         transcriptBox = st.empty()
-        transcriptBoxTitle = "Transcription"
+        transcriptBoxTitle = "**Transcription**"
 
         with st.spinner('Transcribing...'):
             transcriptBox.text_area(
@@ -668,21 +675,21 @@ def process_live_demo_mode(audioFilePath, transcriptBox, transcriptBoxTitle, tra
     transcriptText = ''
 
     # creating a placeholder for clues section
-    cluesBoxTitle = "Riddle Clues"
+    cluesBoxTitle = "**Riddle Clues**"
     cluesBoxText = ''
     cluesBox = st.empty()
     cluesBoxHeight = 200
     cluesBox.text_area(cluesBoxTitle, cluesBoxText, height = cluesBoxHeight, label_visibility=label_flag, key=uuid.uuid4())
     
     # creating a placeholder for QA section
-    falconCol, chatGPTCol = st.columns(2)
-    falconBoxTitle = "NSMQ AI Answer"
-    chatGPTBoxTitle = "ChatGPT Answer"
+    nsmqaiCol, chatGPTCol = st.columns(2)
+    nsmqaiBoxTitle = "**NSMQ AI Answer**"
+    chatGPTBoxTitle = "**ChatGPT Answer**"
     answerBoxHeight = 100
 
-    with falconCol:
-        falconAnswerBoxText = ''
-        falconAnswerBox = st.empty()
+    with nsmqaiCol:
+        nsmqaiAnswerBoxText = ''
+        nsmqaiAnswerBox = st.empty()
     
     with chatGPTCol:
         chatGPTAnswerBoxText = ''
@@ -716,7 +723,7 @@ def process_live_demo_mode(audioFilePath, transcriptBox, transcriptBoxTitle, tra
     flag = 0
 
     # detect riddle answered
-    riddleAnsweredByFalcon = False
+    riddleAnsweredByNsmqai = False
     riddleAnsweredByChatGPT = False
 
     # Iterate from 0 to end of the file,
@@ -752,16 +759,12 @@ def process_live_demo_mode(audioFilePath, transcriptBox, transcriptBoxTitle, tra
         # Slicing of the audio file is done. transcribe audio chunks
         time.sleep(2)
         transcript, clues, clue_count, is_start_of_riddle, is_end_of_riddle = get_stt_transcript(audio_chunk_temp_file)
-        cluesBoxText = clues
-        transcriptText = transcriptText + ' ' + transcript
 
         os.remove(audio_chunk_temp_file)
 
-        cluesBox.text_area(cluesBoxTitle, cluesBoxText, key=uuid.uuid4(), label_visibility=label_flag, height = cluesBoxHeight)
-        transcriptBox.text_area(transcriptBoxTitle, transcriptText, key=uuid.uuid4(), label_visibility=label_flag, height = transcriptBoxHeight)
-
-        if clue_count == 1:
-            riddleAnsweredByFalcon = False
+        # clear out fields if it's a new riddle
+        if is_start_of_riddle is True:
+            riddleAnsweredByNsmqai = False
             riddleAnsweredByChatGPT = False
 
             # start new clues
@@ -769,34 +772,44 @@ def process_live_demo_mode(audioFilePath, transcriptBox, transcriptBoxTitle, tra
             cluesBox.text_area(cluesBoxTitle, cluesBoxText, key=uuid.uuid4(), label_visibility=label_flag, height = cluesBoxHeight)
 
             # clear up previous answers
-            falconAnswerBoxText = ''
-            falconAnswerBox.text_area(falconBoxTitle, falconAnswerBoxText, height = answerBoxHeight, label_visibility=label_flag, key=uuid.uuid4())
+            nsmqaiAnswerBoxText = ''
+            nsmqaiAnswerBox.text_area(nsmqaiBoxTitle, nsmqaiAnswerBoxText, height = answerBoxHeight, label_visibility=label_flag, key=uuid.uuid4())
 
             chatGPTAnswerBoxText = ''
             chatGPTAnswerBox.text_area(chatGPTBoxTitle, chatGPTAnswerBoxText, height = answerBoxHeight, label_visibility=label_flag, key=uuid.uuid4())
         
-        # if there are clues and riddle has not been answered byt falcon or by chatGPT proceed to send
+        # if there's a transcript display it
+        if len(transcript.strip()) != 0:
+            transcriptText = transcriptText + ' ' + transcript
+            transcriptBox.text_area(transcriptBoxTitle, transcriptText, key=uuid.uuid4(), label_visibility=label_flag, height = transcriptBoxHeight)
+        
+        # if there are clues display it.
         if len(clues.strip()) != 0:
-            if riddleAnsweredByFalcon is False or riddleAnsweredByChatGPT is False:
+            cluesBoxText = clues
+            cluesBox.text_area(cluesBoxTitle, cluesBoxText, key=uuid.uuid4(), label_visibility=label_flag, height = cluesBoxHeight)
+
+            # If riddle has not been answered by nsmqai or by chatGPT proceed to send
+            if riddleAnsweredByNsmqai is False or riddleAnsweredByChatGPT is False:
                 with st.spinner('Working On Answer...'):
                     # transcript passed to QA here doesn't matter as much as only clues will be sent
                     if clue_count == 1:
                         is_start_of_riddle = True
                     else:
                         is_start_of_riddle = False
-                    falconAnswer, chatGPTAnswer = get_qa_answer(transcript, "live-demo", clues, clue_count, is_start_of_riddle, is_end_of_riddle)
-        
-                if len(falconAnswer.strip()) != 0 and riddleAnsweredByFalcon is False:
-                    falconAnswerBoxText = falconAnswer
-                    # display falcon answer
-                    falconAnswerBox.text_area(falconBoxTitle, falconAnswerBoxText, height = answerBoxHeight, label_visibility=label_flag, key=uuid.uuid4())
+                    nsmqaiAnswer, chatGPTAnswer = get_qa_answer(transcript, "live-demo", clues, clue_count, is_start_of_riddle, is_end_of_riddle)
 
-                    # mark riddle as answered
-                    riddleAnsweredByFalcon = True
-                    realtime_text_to_speech(falconAnswerBoxText, TTS_VOICE_BANK['voice2'], "live")
+                # display nsmqai answer
+                if len(nsmqaiAnswer.strip()) != 0 and riddleAnsweredByNsmqai is False:
+                    # mark riddle as answered by NSMQAI
+                    riddleAnsweredByNsmqai = True
+                    nsmqaiAnswerBoxText = nsmqaiAnswer
+                    nsmqaiAnswerBox.text_area(nsmqaiBoxTitle, nsmqaiAnswerBoxText, height = answerBoxHeight, label_visibility=label_flag, key=uuid.uuid4())
+
+                    realtime_text_to_speech(nsmqaiAnswerBoxText, TTS_VOICE_BANK['voice2'], "live")
                 
                 # display chatGPT answer
                 if len(chatGPTAnswer.strip()) != 0 and riddleAnsweredByChatGPT is False:
+                    # mark riddle as answered by ChatGPT
                     riddleAnsweredByChatGPT = True
                     chatGPTAnswerBoxText = chatGPTAnswer
                     chatGPTAnswerBox.text_area(chatGPTBoxTitle, chatGPTAnswerBoxText, height = answerBoxHeight, label_visibility=label_flag, key=uuid.uuid4())
@@ -811,28 +824,28 @@ def process_live_mode(tempDir, processCmd, transcriptBox, transcriptBoxTitle, tr
     transcriptText = ''
 
     # creating a placeholder for clues section
-    cluesBoxTitle = "Riddle Clues"
+    cluesBoxTitle = "**Riddle Clues**"
     cluesBoxText = ''
     cluesBox = st.empty()
     cluesBoxHeight = 200
     cluesBox.text_area(cluesBoxTitle, cluesBoxText, height = cluesBoxHeight, label_visibility=label_flag, key=uuid.uuid4())
     
     # creating a placeholder for QA section
-    falconCol, chatGPTCol = st.columns(2)
-    falconBoxTitle = "NSMQ AI Answer"
-    chatGPTBoxTitle = "ChatGPT Answer"
+    nsmqaiCol, chatGPTCol = st.columns(2)
+    nsmqaiBoxTitle = "**NSMQ AI Answer**"
+    chatGPTBoxTitle = "**ChatGPT Answer**"
     answerBoxHeight = 100
 
-    with falconCol:
-        falconAnswerBoxText = ''
-        falconAnswerBox = st.empty()
+    with nsmqaiCol:
+        nsmqaiAnswerBoxText = ''
+        nsmqaiAnswerBox = st.empty()
     
     with chatGPTCol:
         chatGPTAnswerBoxText = ''
         chatGPTAnswerBox = st.empty()
 
     # detect riddle answered
-    riddleAnsweredByFalcon = False
+    riddleAnsweredByNsmqai = False
     riddleAnsweredByChatGPT = False
 
     while True:
@@ -847,14 +860,10 @@ def process_live_mode(tempDir, processCmd, transcriptBox, transcriptBoxTitle, tr
 
             if os.path.isfile(fullAudioPath):
                 transcript, clues, clue_count, is_start_of_riddle, is_end_of_riddle = get_stt_transcript(fullAudioPath)
-                cluesBoxText = clues
-                transcriptText = transcriptText + ' ' + transcript
-            
-            cluesBox.text_area(cluesBoxTitle, cluesBoxText, key=uuid.uuid4(), label_visibility=label_flag, height = cluesBoxHeight)
-            transcriptBox.text_area(transcriptBoxTitle, transcriptText, key=uuid.uuid4(), label_visibility=label_flag, height = transcriptBoxHeight)
 
-            if clue_count == 1:
-                riddleAnsweredByFalcon = False
+            # clear out fields if it's a new riddle
+            if is_start_of_riddle is True:
+                riddleAnsweredByNsmqai = False
                 riddleAnsweredByChatGPT = False
 
                 # start new clues
@@ -862,34 +871,44 @@ def process_live_mode(tempDir, processCmd, transcriptBox, transcriptBoxTitle, tr
                 cluesBox.text_area(cluesBoxTitle, cluesBoxText, key=uuid.uuid4(), label_visibility=label_flag, height = cluesBoxHeight)
 
                 # clear up previous answers
-                falconAnswerBoxText = ''
-                falconAnswerBox.text_area(falconBoxTitle, falconAnswerBoxText, height = answerBoxHeight, label_visibility=label_flag, key=uuid.uuid4())
+                nsmqaiAnswerBoxText = ''
+                nsmqaiAnswerBox.text_area(nsmqaiBoxTitle, nsmqaiAnswerBoxText, height = answerBoxHeight, label_visibility=label_flag, key=uuid.uuid4())
 
                 chatGPTAnswerBoxText = ''
                 chatGPTAnswerBox.text_area(chatGPTBoxTitle, chatGPTAnswerBoxText, height = answerBoxHeight, label_visibility=label_flag, key=uuid.uuid4())
             
-            # if there are clues and riddle has not been answered byt falcon or by chatGPT proceed to send
+            # if there's a transcript display it
+            if len(transcript.strip()) != 0:
+                transcriptText = transcriptText + ' ' + transcript
+                transcriptBox.text_area(transcriptBoxTitle, transcriptText, key=uuid.uuid4(), label_visibility=label_flag, height = transcriptBoxHeight)
+            
+            # if there are clues display it.
             if len(clues.strip()) != 0:
-                if riddleAnsweredByFalcon is False or riddleAnsweredByChatGPT is False:
+                cluesBoxText = clues
+                cluesBox.text_area(cluesBoxTitle, cluesBoxText, key=uuid.uuid4(), label_visibility=label_flag, height = cluesBoxHeight)
+
+                # If riddle has not been answered by nsmqai or by chatGPT proceed to send
+                if riddleAnsweredByNsmqai is False or riddleAnsweredByChatGPT is False:
                     with st.spinner('Working On Answer...'):
                         # transcript passed to QA here doesn't matter as much as only clues will be sent
                         if clue_count == 1:
                             is_start_of_riddle = True
                         else:
                             is_start_of_riddle = False
-                        falconAnswer, chatGPTAnswer = get_qa_answer(transcript, "live", clues, clue_count, is_start_of_riddle, is_end_of_riddle)
-            
-                    if len(falconAnswer.strip()) != 0 and riddleAnsweredByFalcon is False:
-                        falconAnswerBoxText = falconAnswer
-                        # display falcon answer
-                        falconAnswerBox.text_area(falconBoxTitle, falconAnswerBoxText, height = answerBoxHeight, label_visibility=label_flag, key=uuid.uuid4())
+                        nsmqaiAnswer, chatGPTAnswer = get_qa_answer(transcript, "live-demo", clues, clue_count, is_start_of_riddle, is_end_of_riddle)
 
-                        # mark riddle as answered
-                        riddleAnsweredByFalcon = True
-                        realtime_text_to_speech(falconAnswerBoxText, TTS_VOICE_BANK['voice2'], "live")
+                    # display nsmqai answer
+                    if len(nsmqaiAnswer.strip()) != 0 and riddleAnsweredByNsmqai is False:
+                        # mark riddle as answered by NSMQAI
+                        riddleAnsweredByNsmqai = True
+                        nsmqaiAnswerBoxText = nsmqaiAnswer
+                        nsmqaiAnswerBox.text_area(nsmqaiBoxTitle, nsmqaiAnswerBoxText, height = answerBoxHeight, label_visibility=label_flag, key=uuid.uuid4())
+
+                        realtime_text_to_speech(nsmqaiAnswerBoxText, TTS_VOICE_BANK['voice2'], "live")
                     
                     # display chatGPT answer
                     if len(chatGPTAnswer.strip()) != 0 and riddleAnsweredByChatGPT is False:
+                        # mark riddle as answered by ChatGPT
                         riddleAnsweredByChatGPT = True
                         chatGPTAnswerBoxText = chatGPTAnswer
                         chatGPTAnswerBox.text_area(chatGPTBoxTitle, chatGPTAnswerBoxText, height = answerBoxHeight, label_visibility=label_flag, key=uuid.uuid4())
