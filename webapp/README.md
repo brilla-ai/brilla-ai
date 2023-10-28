@@ -1,4 +1,6 @@
-# NSMQ AI Web application
+# BrillAI Web application
+
+Latest Information on app deployment and setup can be found [here](./streamlitDemo/README.md)
 
 ## Frontend
 
