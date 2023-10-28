@@ -6,7 +6,7 @@ st.set_page_config(page_title="Question Answering", page_icon="❔", layout="wid
 st.markdown("# Question Answering Demo❔")
 st.write(
     """
-    This demo illustrates a real time operation of the Question Answering Model of the NSMQ AI.
+    This demo illustrates a real time operation of the Question Answering Model of BrillAI.
     """
 )
 

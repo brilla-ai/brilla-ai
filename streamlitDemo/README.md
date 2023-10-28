@@ -1,4 +1,4 @@
-# NSMQ AI Web App Environment Setup
+# BrillAI Web App Environment Setup
 
 ### Prerequites
 1. Python 3 

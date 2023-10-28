@@ -6,7 +6,7 @@ st.set_page_config(page_title="Speech To Text Demo", page_icon="🎙️", layout
 st.markdown("# Speech To Text Demo🎙️")
 st.write(
     """
-    This demo illustrates a real time transcription of the Speech To Text Model of the NSMQ AI. 
+    This demo illustrates a real time transcription of the Speech To Text Model of BrillAI. 
     Try out an audio sample or test with a live recording of your own voice!
     """
 )

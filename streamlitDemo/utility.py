@@ -683,7 +683,7 @@ def process_live_demo_mode(audioFilePath, transcriptBox, transcriptBoxTitle, tra
     
     # creating a placeholder for QA section
     nsmqaiCol, chatGPTCol = st.columns(2)
-    nsmqaiBoxTitle = "**NSMQ AI Answer**"
+    nsmqaiBoxTitle = "**BrillAI Answer**"
     chatGPTBoxTitle = "**ChatGPT Answer**"
     answerBoxHeight = 100
 
@@ -832,7 +832,7 @@ def process_live_mode(tempDir, processCmd, transcriptBox, transcriptBoxTitle, tr
     
     # creating a placeholder for QA section
     nsmqaiCol, chatGPTCol = st.columns(2)
-    nsmqaiBoxTitle = "**NSMQ AI Answer**"
+    nsmqaiBoxTitle = "**BrillAI Answer**"
     chatGPTBoxTitle = "**ChatGPT Answer**"
     answerBoxHeight = 100
 

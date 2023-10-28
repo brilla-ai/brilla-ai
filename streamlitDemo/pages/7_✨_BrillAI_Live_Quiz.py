@@ -2,12 +2,12 @@ import streamlit as st
 from utility import ai_in_live_mode, check_api_values
 from authentication import is_user_authorized
 
-st.set_page_config(page_title="NSMQ AI Live Quiz", page_icon="✨", layout="wide")
+st.set_page_config(page_title="BrillAI Live Quiz", page_icon="✨", layout="wide")
 
-st.markdown("# NSMQ AI Live Quiz ✨")
+st.markdown("# BrillAI Live Quiz ✨")
 st.write(
     """
-    See the NSMQ AI in action against a live quiz!
+    See BrillAI in action against a live quiz!
     """
 )
 

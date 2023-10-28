@@ -6,7 +6,7 @@ st.set_page_config(page_title="Text To Speech", page_icon="🔉", layout="wide")
 st.markdown("# Text To Speech Demo🔉")
 st.write(
     """
-    This demo illustrates a real time operation of the Text To Speech Model of the NSMQ AI.
+    This demo illustrates a real time operation of the Text To Speech Model of BrillAI.
     """
 )
 

@@ -1,6 +1,6 @@
-# nsmqai
+# BrillAI
 
-"Can an AI win Ghana’S National Science and Maths Quiz?". This is the question posed by the NSMQ AI Grand Challenge which is an AI Grand Challenge for Education using Ghana’s National Science and Maths Quiz competition (NSMQ) as a case study. The goal of nsmqai is build an AI to compete live in the NSMQ competition and win — performing better than the best contestants in all rounds and stages of the competition.
+"Can an AI win Ghana’S National Science and Maths Quiz?". This is the question posed by the NSMQ AI Grand Challenge which is an AI Grand Challenge for Education using Ghana’s National Science and Maths Quiz competition (NSMQ) as a case study. The goal of BrillAI is build an AI to compete live in the NSMQ competition and win — performing better than the best contestants in all rounds and stages of the competition.
 
 Read more details in the [paper](https://arxiv.org/abs/2301.13089) outlining the motivations and methods of the grand challenge.
 

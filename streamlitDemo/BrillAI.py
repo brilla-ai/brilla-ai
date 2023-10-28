@@ -2,7 +2,7 @@ import streamlit as st
 from authentication import authenticate
 
 st.set_page_config(
-    page_title="NSMQ AI",
+    page_title="BrillAI",
     page_icon="👋",
     layout="wide"
 )
@@ -10,7 +10,7 @@ st.set_page_config(
 welcomeCol, loginCol = st.columns([4,1])
 
 with welcomeCol:
-    st.write("# Welcome to NSMQ AI Demo! 👋")
+    st.write("# Welcome to BrillAI Demo! 👋")
 
     st.divider()
 
@@ -22,11 +22,11 @@ with welcomeCol:
         which is an AI Grand Challenge for Education using Ghana’s National 
         Science and Maths Quiz competition (NSMQ) as a case study. 
         
-        The goal of nsmqai is to build an AI to compete live in the NSMQ competition 
+        The goal of BrillAI is to build an AI to compete live in the NSMQ competition 
         and win — performing better than the best contestants in all rounds and stages of the competition.
 
         **👈 Select a demo from the dropdown on the left** to see some examples
-        of what NSMQ AI can do!
+        of what BrillAI can do!
         """
     )
 
