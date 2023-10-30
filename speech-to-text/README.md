@@ -10,6 +10,16 @@ Follow the description below:
 ## Introduction
 This script allows you to create a public API that enables audio file transcription and/or real-time transcription in our Streamlit-built application. The API can be easily integrated into the Streamlit application, providing a seamless and user-friendly experience for transcribing audio.
 
+## Revisioning
+The earlier version of the STT_Inference_API_Server notebook performed only transcription of audios. However, Version 2 incorporates a number of functionalities in addition to audio transcription, specific to the NSMQ competition. The different functionalities are briefly described below:\
+a) Start of new riddle detector\
+b) Riddle clue classifier\
+c) Place holder for all identified riddle clues within a riddle\
+d) Counter for individual clues in transcripts\
+e) End of current riddle detector\
+
+Version 2 workflow seeks to now transcribe a given audio, then, determine whether there is any indicator of a new riddle. Once a new riddle is identified, the subsequent transcripts will be filtered for clues. The clues will be concatenated with any other captured clues in the subsequent transcripts until the start of a new riddle is identified. The sequence is repeated for every new riddle until the end of the contest. The counter and end of riddle detector features enable functionality within the Question-Answering model.
+
 ## Requirements
 Before running the script, you will need to have the following:
 
