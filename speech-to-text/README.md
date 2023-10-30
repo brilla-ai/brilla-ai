@@ -16,7 +16,7 @@ a) Start of new riddle detector\
 b) Riddle clue classifier\
 c) Place holder for all identified riddle clues within a riddle\
 d) Counter for individual clues in transcripts\
-e) End of current riddle detector\
+e) End of current riddle detector
 
 Version 2 workflow seeks to now transcribe a given audio, then, determine whether there is any indicator of a new riddle. Once a new riddle is identified, the subsequent transcripts will be filtered for clues. The clues will be concatenated with any other captured clues in the subsequent transcripts until the start of a new riddle is identified. The sequence is repeated for every new riddle until the end of the contest. The counter and end of riddle detector features enable functionality within the Question-Answering model.
 
