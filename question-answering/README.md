@@ -30,7 +30,7 @@ The system uses the Mistral model to generate answers for the provided riddles.
 The answers are displayed within the application.
 
 ## Requirements
-Before using the QA system, you will need have checked the following:
+To use the QA System, you will need the following:
 
 1. A valid [ngrok](https://ngrok.com/) account.
 2. An authentication token provided by ngrok, which you will copy into the code.
