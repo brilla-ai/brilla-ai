@@ -3,7 +3,7 @@ text-to-speech team works on:
 - Text-to-speech system that works well for science and math text and speaks with a Ghanaian accent
 - Baseline results of at least 5 state-of-the-art models
 - Trained model, code, and evaluation results
-- 
+  
 
 
 ## Introduction
@@ -24,4 +24,5 @@ Follow these steps to set up the TTS API:
 2. Copy the authentication token provided by ngrok and paste it into the designated section of the code. 
 3. Run the entire script and copy the generated public URL.
 4. Paste the URL into the "Text To Speech" section of the the API Setup Page, as shown below.
-![image]()
+![image](https://github.com/nsmq-ai/nsmqai/assets/69251896/3ac27f75-2f94-4988-a7e4-a4a5ab77c95f)
+)
