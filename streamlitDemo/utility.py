@@ -122,16 +122,22 @@ def get_stt_transcript(audioFile):
             is_end_of_riddle = False
 
             if response.status_code == 200:
-                transcript = response.json()['transcript']
-                clues = response.json()['clues']
-                clue_count = response.json()['clue_count']
-                is_start_of_riddle = response.json()['is_start_of_riddle']
-                is_end_of_riddle = response.json()['is_end_of_riddle']
-            logger.info(f"Received response from STT Model transcript: {transcript} \
-                        clues: {clues} \
-                        clue_count: {clue_count} \
-                        is_start_of_riddle: {is_start_of_riddle} \
-                        is_end_of_riddle: {is_end_of_riddle}")
+                logger.info(f"response: {response.json()}")
+                checkTranscript = response.json().get('transcript')
+                if checkTranscript is not None:
+                    transcript = response.json()['transcript']
+                    clues = response.json()['clues']
+                    clue_count = response.json()['clue_count']
+                    is_start_of_riddle = response.json()['is_start_of_riddle']
+                    is_end_of_riddle = response.json()['is_end_of_riddle']
+                    logger.info(f"Received response from STT Model, transcript: {transcript} \
+                                clues: {clues} \
+                                clue_count: {clue_count} \
+                                is_start_of_riddle: {is_start_of_riddle} \
+                                is_end_of_riddle: {is_end_of_riddle}")
+                else:
+                    error = response.json().get('error')
+                    logger.info(f"Received error from STT Model, {error}")
 
             return transcript, clues, clue_count, is_start_of_riddle, is_end_of_riddle
 
@@ -682,18 +688,18 @@ def process_live_demo_mode(audioFilePath, transcriptBox, transcriptBoxTitle, tra
     cluesBox.text_area(cluesBoxTitle, cluesBoxText, height = cluesBoxHeight, label_visibility=label_flag, key=uuid.uuid4())
     
     # creating a placeholder for QA section
-    nsmqaiCol, chatGPTCol = st.columns(2)
+    # nsmqaiCol, chatGPTCol = st.columns(2)
     nsmqaiBoxTitle = "**BrillAI Answer**"
-    chatGPTBoxTitle = "**ChatGPT Answer**"
+    # chatGPTBoxTitle = "**ChatGPT Answer**"
     answerBoxHeight = 100
 
-    with nsmqaiCol:
-        nsmqaiAnswerBoxText = ''
-        nsmqaiAnswerBox = st.empty()
+    # with nsmqaiCol:
+    nsmqaiAnswerBoxText = ''
+    nsmqaiAnswerBox = st.empty()
     
-    with chatGPTCol:
-        chatGPTAnswerBoxText = ''
-        chatGPTAnswerBox = st.empty()
+    # with chatGPTCol:
+    #     chatGPTAnswerBoxText = ''
+    #     chatGPTAnswerBox = st.empty()
     
     # temp location for audio chunks
     temp_dir = tempfile.mkdtemp()
@@ -724,7 +730,7 @@ def process_live_demo_mode(audioFilePath, transcriptBox, transcriptBoxTitle, tra
 
     # detect riddle answered
     riddleAnsweredByNsmqai = False
-    riddleAnsweredByChatGPT = False
+    # riddleAnsweredByChatGPT = False
 
     # Iterate from 0 to end of the file,
     # with increment = interval
@@ -765,7 +771,7 @@ def process_live_demo_mode(audioFilePath, transcriptBox, transcriptBoxTitle, tra
         # clear out fields if it's a new riddle
         if is_start_of_riddle is True:
             riddleAnsweredByNsmqai = False
-            riddleAnsweredByChatGPT = False
+            # riddleAnsweredByChatGPT = False
 
             # start new clues
             cluesBoxText = ""
@@ -775,8 +781,8 @@ def process_live_demo_mode(audioFilePath, transcriptBox, transcriptBoxTitle, tra
             nsmqaiAnswerBoxText = ''
             nsmqaiAnswerBox.text_area(nsmqaiBoxTitle, nsmqaiAnswerBoxText, height = answerBoxHeight, label_visibility=label_flag, key=uuid.uuid4())
 
-            chatGPTAnswerBoxText = ''
-            chatGPTAnswerBox.text_area(chatGPTBoxTitle, chatGPTAnswerBoxText, height = answerBoxHeight, label_visibility=label_flag, key=uuid.uuid4())
+            # chatGPTAnswerBoxText = ''
+            # chatGPTAnswerBox.text_area(chatGPTBoxTitle, chatGPTAnswerBoxText, height = answerBoxHeight, label_visibility=label_flag, key=uuid.uuid4())
         
         # if there's a transcript display it
         if len(transcript.strip()) != 0:
@@ -789,7 +795,8 @@ def process_live_demo_mode(audioFilePath, transcriptBox, transcriptBoxTitle, tra
             cluesBox.text_area(cluesBoxTitle, cluesBoxText, key=uuid.uuid4(), label_visibility=label_flag, height = cluesBoxHeight)
 
             # If riddle has not been answered by nsmqai or by chatGPT proceed to send
-            if riddleAnsweredByNsmqai is False or riddleAnsweredByChatGPT is False:
+            # or riddleAnsweredByChatGPT is False
+            if riddleAnsweredByNsmqai is False:
                 with st.spinner('Working On Answer...'):
                     # transcript passed to QA here doesn't matter as much as only clues will be sent
                     if clue_count == 1:
@@ -808,11 +815,11 @@ def process_live_demo_mode(audioFilePath, transcriptBox, transcriptBoxTitle, tra
                     realtime_text_to_speech(nsmqaiAnswerBoxText, TTS_VOICE_BANK['voice2'], "live")
                 
                 # display chatGPT answer
-                if len(chatGPTAnswer.strip()) != 0 and riddleAnsweredByChatGPT is False:
-                    # mark riddle as answered by ChatGPT
-                    riddleAnsweredByChatGPT = True
-                    chatGPTAnswerBoxText = chatGPTAnswer
-                    chatGPTAnswerBox.text_area(chatGPTBoxTitle, chatGPTAnswerBoxText, height = answerBoxHeight, label_visibility=label_flag, key=uuid.uuid4())
+                # if len(chatGPTAnswer.strip()) != 0 and riddleAnsweredByChatGPT is False:
+                #     # mark riddle as answered by ChatGPT
+                #     riddleAnsweredByChatGPT = True
+                #     chatGPTAnswerBoxText = chatGPTAnswer
+                #     chatGPTAnswerBox.text_area(chatGPTBoxTitle, chatGPTAnswerBoxText, height = answerBoxHeight, label_visibility=label_flag, key=uuid.uuid4())
 
         # Check for flag.
         # If flag is 1, end of the whole audio reached.
@@ -831,22 +838,22 @@ def process_live_mode(tempDir, processCmd, transcriptBox, transcriptBoxTitle, tr
     cluesBox.text_area(cluesBoxTitle, cluesBoxText, height = cluesBoxHeight, label_visibility=label_flag, key=uuid.uuid4())
     
     # creating a placeholder for QA section
-    nsmqaiCol, chatGPTCol = st.columns(2)
+    # nsmqaiCol, chatGPTCol = st.columns(2)
     nsmqaiBoxTitle = "**BrillAI Answer**"
-    chatGPTBoxTitle = "**ChatGPT Answer**"
+    # chatGPTBoxTitle = "**ChatGPT Answer**"
     answerBoxHeight = 100
 
-    with nsmqaiCol:
-        nsmqaiAnswerBoxText = ''
-        nsmqaiAnswerBox = st.empty()
+    # with nsmqaiCol:
+    nsmqaiAnswerBoxText = ''
+    nsmqaiAnswerBox = st.empty()
     
-    with chatGPTCol:
-        chatGPTAnswerBoxText = ''
-        chatGPTAnswerBox = st.empty()
+    # with chatGPTCol:
+    #     chatGPTAnswerBoxText = ''
+    #     chatGPTAnswerBox = st.empty()
 
     # detect riddle answered
     riddleAnsweredByNsmqai = False
-    riddleAnsweredByChatGPT = False
+    # riddleAnsweredByChatGPT = False
 
     while True:
         line = processCmd.stdout.readline()
@@ -864,7 +871,7 @@ def process_live_mode(tempDir, processCmd, transcriptBox, transcriptBoxTitle, tr
             # clear out fields if it's a new riddle
             if is_start_of_riddle is True:
                 riddleAnsweredByNsmqai = False
-                riddleAnsweredByChatGPT = False
+                # riddleAnsweredByChatGPT = False
 
                 # start new clues
                 cluesBoxText = ""
@@ -874,8 +881,8 @@ def process_live_mode(tempDir, processCmd, transcriptBox, transcriptBoxTitle, tr
                 nsmqaiAnswerBoxText = ''
                 nsmqaiAnswerBox.text_area(nsmqaiBoxTitle, nsmqaiAnswerBoxText, height = answerBoxHeight, label_visibility=label_flag, key=uuid.uuid4())
 
-                chatGPTAnswerBoxText = ''
-                chatGPTAnswerBox.text_area(chatGPTBoxTitle, chatGPTAnswerBoxText, height = answerBoxHeight, label_visibility=label_flag, key=uuid.uuid4())
+                # chatGPTAnswerBoxText = ''
+                # chatGPTAnswerBox.text_area(chatGPTBoxTitle, chatGPTAnswerBoxText, height = answerBoxHeight, label_visibility=label_flag, key=uuid.uuid4())
             
             # if there's a transcript display it
             if len(transcript.strip()) != 0:
@@ -888,7 +895,8 @@ def process_live_mode(tempDir, processCmd, transcriptBox, transcriptBoxTitle, tr
                 cluesBox.text_area(cluesBoxTitle, cluesBoxText, key=uuid.uuid4(), label_visibility=label_flag, height = cluesBoxHeight)
 
                 # If riddle has not been answered by nsmqai or by chatGPT proceed to send
-                if riddleAnsweredByNsmqai is False or riddleAnsweredByChatGPT is False:
+                # or riddleAnsweredByChatGPT is False
+                if riddleAnsweredByNsmqai is False:
                     with st.spinner('Working On Answer...'):
                         # transcript passed to QA here doesn't matter as much as only clues will be sent
                         if clue_count == 1:
@@ -907,17 +915,19 @@ def process_live_mode(tempDir, processCmd, transcriptBox, transcriptBoxTitle, tr
                         realtime_text_to_speech(nsmqaiAnswerBoxText, TTS_VOICE_BANK['voice2'], "live")
                     
                     # display chatGPT answer
-                    if len(chatGPTAnswer.strip()) != 0 and riddleAnsweredByChatGPT is False:
-                        # mark riddle as answered by ChatGPT
-                        riddleAnsweredByChatGPT = True
-                        chatGPTAnswerBoxText = chatGPTAnswer
-                        chatGPTAnswerBox.text_area(chatGPTBoxTitle, chatGPTAnswerBoxText, height = answerBoxHeight, label_visibility=label_flag, key=uuid.uuid4())
+                    # if len(chatGPTAnswer.strip()) != 0 and riddleAnsweredByChatGPT is False:
+                    #     # mark riddle as answered by ChatGPT
+                    #     riddleAnsweredByChatGPT = True
+                    #     chatGPTAnswerBoxText = chatGPTAnswer
+                    #     chatGPTAnswerBox.text_area(chatGPTBoxTitle, chatGPTAnswerBoxText, height = answerBoxHeight, label_visibility=label_flag, key=uuid.uuid4())
 
 def process_youtube_video(downloadLink, isLiveStream, transcriptBox=st.empty(), transcriptBoxTitle="", boxHeight=400, label_flag="visible"):
     if isLiveStream:
         extractedAudioTitle = downloadLink
     else:
         # create an audio file to contain full extracted audio
+        if os.path.isfile('output.opus'):
+            os.remove('output.opus')
         extractedAudioTitle = 'output.opus'
         # download full audio of the youtube video
         with yt_dlp.YoutubeDL({"quiet": True, 'extract_audio': True, 'format': 'bestaudio', 'outtmpl': extractedAudioTitle}) as ydl:
