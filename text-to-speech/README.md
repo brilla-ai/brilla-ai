@@ -9,7 +9,9 @@ text-to-speech team works on:
 ## Introduction
 The TTS API notebook allows you to create a REST API that enables you to perform speech synthesis in our Streamlit-built application. The API can be easily integrated into the Streamlit application, providing a seamless and user-friendly experience for transcribing audio. 
 
-Note: Due to privacy issues, we show steps on how to use publicly available TTS models from CoquiTTS and do not make available the exact Ghanaian voice models used in our streamlit application
+Note:
+1. Due to privacy issues, we show steps on how to use publicly available TTS models from CoquiTTS and do not make available the exact Ghanaian voice models used in our streamlit application.
+2. Version 2 of the notebook is optimized to run faster and reduce latency. 
 
 ## Requirements
 Before running the script, you will need to have the following:
