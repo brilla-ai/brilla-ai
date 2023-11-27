@@ -17,6 +17,9 @@ import logging
 from urllib.parse import urlparse, parse_qs, urljoin
 from authentication import is_prod_mode
 
+# App Name
+APP_NAME = "Brilla AI"
+
 CURRENT_DIR =  os.getcwd()
 VIDEO_DIR = os.path.join(CURRENT_DIR, 'streamlitDemo/assets/video/' if is_prod_mode() else 'assets/video/')
 AUDIO_DIR = os.path.join(CURRENT_DIR, 'streamlitDemo/assets/audio/' if is_prod_mode() else 'assets/audio/')
@@ -689,7 +692,7 @@ def process_live_demo_mode(audioFilePath, transcriptBox, transcriptBoxTitle, tra
     
     # creating a placeholder for QA section
     # nsmqaiCol, chatGPTCol = st.columns(2)
-    nsmqaiBoxTitle = "**BrillAI Answer**"
+    nsmqaiBoxTitle = f"**{APP_NAME} Answer**"
     # chatGPTBoxTitle = "**ChatGPT Answer**"
     answerBoxHeight = 100
 
@@ -839,7 +842,7 @@ def process_live_mode(tempDir, processCmd, transcriptBox, transcriptBoxTitle, tr
     
     # creating a placeholder for QA section
     # nsmqaiCol, chatGPTCol = st.columns(2)
-    nsmqaiBoxTitle = "**BrillAI Answer**"
+    nsmqaiBoxTitle = f"**{APP_NAME} Answer**"
     # chatGPTBoxTitle = "**ChatGPT Answer**"
     answerBoxHeight = 100
 

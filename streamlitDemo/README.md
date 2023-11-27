@@ -1,4 +1,4 @@
-# BrillAI Web App Environment Setup
+# Brilla AI Web App Environment Setup
 
 ### Prerequites
 1. Python 3 
@@ -12,7 +12,7 @@ Select an environment manager of your choice to establish your virtual environme
 
 ### Is your virtual environment ready? If so, execute this command in your terminal which will set up the web application.
 ```bash
-python start_nsmqai.py
+python start_webapp.py
 ```
 
 Now, the web application will be running and accessible through the following URL: ```http://localhost:8501/```

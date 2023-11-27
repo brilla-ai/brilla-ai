@@ -1,4 +1,4 @@
-# BrillAI Web application
+# Brilla AI Web application
 
 Latest Information on app deployment and setup can be found [here](./streamlitDemo/README.md)
 

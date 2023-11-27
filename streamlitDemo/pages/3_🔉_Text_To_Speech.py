@@ -1,12 +1,12 @@
 import streamlit as st
-from utility import get_tts_api, realtime_text_to_speech, TTS_VOICE_BANK, NO_API_SET_FLAG
+from utility import APP_NAME, get_tts_api, realtime_text_to_speech, TTS_VOICE_BANK, NO_API_SET_FLAG
 
 st.set_page_config(page_title="Text To Speech", page_icon="🔉", layout="wide")
 
 st.markdown("# Text To Speech Demo🔉")
 st.write(
-    """
-    This demo illustrates a real time operation of the Text To Speech Model of BrillAI.
+    f"""
+    This demo illustrates a real time operation of the Text To Speech Model of {APP_NAME}.
     """
 )
 
