@@ -1,12 +1,12 @@
 import streamlit as st
-from utility import QA_QUESTION_BANK, NO_API_SET_FLAG, realtime_question_answering, get_qa_api
+from utility import APP_NAME, QA_QUESTION_BANK, NO_API_SET_FLAG, realtime_question_answering, get_qa_api
 
 st.set_page_config(page_title="Question Answering", page_icon="❔", layout="wide")
 
 st.markdown("# Question Answering Demo❔")
 st.write(
-    """
-    This demo illustrates a real time operation of the Question Answering Model of BrillAI.
+    f"""
+    This demo illustrates a real time operation of the Question Answering Model of {APP_NAME}.
     """
 )
 
