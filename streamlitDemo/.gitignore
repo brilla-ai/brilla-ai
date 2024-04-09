@@ -1,2 +1,10 @@
-/__pycache__
-/audioChunk
+__pycache__/
+
+# app log file
+app_output.log
+
+# audio file output
+output.opus
+
+# config file
+config.yaml
