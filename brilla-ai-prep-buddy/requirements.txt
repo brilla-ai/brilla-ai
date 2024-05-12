@@ -1,0 +1,4 @@
+requests
+streamlit==1.34.0
+python-dotenv==1.0.1
+pyaudio==0.2.14
