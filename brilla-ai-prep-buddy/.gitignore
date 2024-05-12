@@ -1,0 +1,7 @@
+env
+.env
+__pycache__
+*/__pycache__
+launch_app.py
+tts_output.wav
+state-docs
