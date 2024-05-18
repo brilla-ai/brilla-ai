@@ -1,4 +1,4 @@
-# Contributing To nsmqai
+# Contributing To brilla-ai
 Contributions to the project are always welcome! Please see issue specific guidelines below.
 
 ## Bug Reports
@@ -19,7 +19,7 @@ Please see the guidelines for common languages used in the project.
 - Javascript - https://github.com/airbnb/javascript
 
 ### Formatters
-nsmqai uses opinionated formatters in code editors to automate code formatting and enforce the coding guidelines. See formatters below:
+brilla-ai uses opinionated formatters in code editors to automate code formatting and enforce the coding guidelines. See formatters below:
 - Ruff for Python: 
 https://github.com/charliermarsh/ruff
 https://marketplace.visualstudio.com/items?itemName=charliermarsh.ruff
