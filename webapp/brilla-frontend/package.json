@@ -20,6 +20,7 @@
     "next": "14.2.3",
     "react": "^18",
     "react-dom": "^18",
+    "react-player": "^2.16.0",
     "tailwind-merge": "2.3.0",
     "tailwindcss-animate": "1.0.7",
     "typeface-poppins": "1.1.13"
