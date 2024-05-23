@@ -9,5 +9,9 @@
   "heroText": "Ghana's First Educational AI Platform ",
   "logoText": "Brilla AI",
 
-  "demoFooterText": "Powered by Brilla AI"
+  "quizFooterText": "Powered by Brilla AI",
+  "resources": "Resources",
+  "demos": "Demos",
+  "contributors": "Open Source Contributors",
+  "copyright": "©2023 Copyright BillaAI."
 }

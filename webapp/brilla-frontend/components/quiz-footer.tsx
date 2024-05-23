@@ -1,7 +1,7 @@
 "use client";
 import translations from "../public/i18n/en.json";
 
-const DemoFooter = () => {
+const QuizFooter = () => {
   return (
     <footer className="mx-auto px-4 sm:px6 lg:px-8 w-full bg-white shadow-lg py-6 flex justify-between items-center">
       <div className="flex-shrink-0">
@@ -9,9 +9,9 @@ const DemoFooter = () => {
           {translations["logoText"]}
         </a>
       </div>
-      <p>{translations["demoFooterText"]}</p>
+      <p>{translations["quizFooterText"]}</p>
     </footer>
   );
 };
 
-export default DemoFooter;
+export default QuizFooter;

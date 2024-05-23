@@ -1,4 +1,3 @@
-import DemoFooter from "@/components/demo-footer";
 import Footer from "@/components/footer";
 import Navbar from "@/components/navbar";
 
@@ -7,8 +6,6 @@ export default function Home() {
     <main className="flex min-h-screen flex-col">
       <Navbar gradientBg={false} />
       <div>Live is meant to be easy, bruh!</div>
-
-      <DemoFooter />
 
       <Footer />
     </main>
