@@ -1,5 +1,0 @@
-env
-.env
-tts_output.wav
-__pycache__
-*/__pycache__

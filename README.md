@@ -9,7 +9,8 @@ See more details in the research papers below:
 
 ## Getting Started
 
-Information on app deployment and setup can be found [here](./streamlitDemo/README.md)
+- Information on app deployment and setup can be found [here](./streamlitDemo/README.md)
+- Examples of projects that utilize our work can be found [here](./examples/)
 
 ## Contributing
 
@@ -36,7 +37,7 @@ Below are the contributors (both past and present) to the project:
 - Nana Sam Yeboah: @Nanayeb34
 - Kojo Andrew: @kojomensahonums 
 - Naafi Dasana: @naafidasana
-- Kevin Takyi Yeboah: quaku21
+- Kevin Takyi Yeboah: @quaku21
 - William Edor: @wsedor
 - Samuel John: @KutuDev
 - Mark Owusu Ayim: @markowusu
@@ -57,12 +58,10 @@ Below are the contributors (both past and present) to the project:
 - Samuel Theophilus
 - Mareh Williams
 - Theophilus Wereko Acheampong
-- Jeremy Acquaah
 - Halimat Amzat
 - Eyram Dela
 - Marc Donald Nguekeng
 - Philemon Badu
-- Theophilus Wereko Acheampong
 - Patrick Agyeman-Budu
 - Samuel Theophilus Ansah
 - Reginald Nyarko
