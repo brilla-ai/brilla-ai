@@ -4,6 +4,9 @@ Speech-To-Text (STT) team works on:
 - Baseline results of at least 5 state-of-the-art models using the transcript from the Data Curation team and audios from the Data Preprocessing team
 - Trained model, code, and evaluation results
 
+## Using the STT Starter notebook
+The notebook simulates how to perform speech transcription using distil-whisper. The notebook demonstrates two methods of transcribing, one suitable for short-length audios and the other for long-length audios. The audio files referred to in the notebook can be found in the "Starter notebook audios" folder. Ensure you have downloaded the audios and loaded them into your notebook to run.
+
 ## Using the STT_Inference_API_Server notebook
 Follow the description below: 
 
