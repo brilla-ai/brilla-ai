@@ -7,7 +7,7 @@ A small tkinter application students can use to practice for the riddles section
 1. **Clone the Repository:**
 
     ```bash
-    git clone https://github.com/brilla-ai/brilla-ai.git
+    git clone https://github.com/brill-ai/brill-ai.git
     cd your-repo-name
     ```
 
@@ -15,7 +15,7 @@ A small tkinter application students can use to practice for the riddles section
 
     First, cd into the project directory: 
     ```bash
-    cd examples/riddle-prep-buddy-v2
+    cd riddle-prep-buddy-v2
     ```
 
     On macOS and Linux:
@@ -40,9 +40,7 @@ A small tkinter application students can use to practice for the riddles section
 
 1. **Run the Server Notebook:**
 
-    - Make a copy of [this notebook](https://colab.research.google.com/drive/1-1s5k-mjOhEuuMJBDbd_ei5KRxrgOOKS?usp=sharing) in Google Colab
-    - Follow the instructions to start the server
-    - Copy the output `ngrok` URL.
+    Open the `[Release] Riddle Prep App Server.ipynb` file, preferably in Colab if you don't have a GPU on your, follow the instructions to start the server, and copy the `ngrok` URL.
 
 2. **Update `app.py`:**
 
