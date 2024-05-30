@@ -23,7 +23,7 @@ Before running the script, you will need to have the following:
 Follow these steps to set up the TTS API:
 
 1. Create an account on [ngrok](https://ngrok.com/) to obtain your authentication token.
-2. Copy the authentication token provided by ngrok and paste it into the designated section of the code. 
+2. Copy the authentication token provided by ngrok and add it to your secrets key if using colab. 
 3. Run the entire script and copy the generated public URL.
 4. Paste the URL into the "Text To Speech" section of the the API Setup Page, as shown below.
 ![image](https://github.com/nsmq-ai/nsmqai/assets/69251896/3ac27f75-2f94-4988-a7e4-a4a5ab77c95f)
