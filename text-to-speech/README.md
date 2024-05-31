@@ -27,6 +27,5 @@ Follow these steps to set up the TTS API:
 ![image](https://github.com/brilla-ai/brilla-ai/assets/69251896/3ac27f75-2f94-4988-a7e4-a4a5ab77c95f)
 
 
-
 ## AfricAIED 24 Hackathon
 The starter notebook for AfricAIED 24 can be located [here](https://github.com/brilla-ai/brilla-ai/blob/nanayeb_add_tts_starter_notebook/text-to-speech/TTS_inference_API_notebook.ipynb)
