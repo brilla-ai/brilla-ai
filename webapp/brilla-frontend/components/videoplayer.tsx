@@ -1,7 +1,6 @@
 "use client";
-import React, { FC, useState, useEffect } from "react";
+import React, { FC, useState } from "react";
 import dynamic from "next/dynamic";
-// import Spinner from "./ui/spinner";
 import Shimmer from "./ui/shimmer";
 
 interface VideoPlayerProps {
@@ -21,7 +20,6 @@ const VideoPlayer: FC<VideoPlayerProps> = ({ url }) => {
 
   return (
     <div className="flex flex-col md:flex-row md:max-w-[45vw] h-[28vh] relative">
-      {/* {loading && <Spinner />} */}
       {loading && <Shimmer />}
       <ReactPlayer
         url={url}
