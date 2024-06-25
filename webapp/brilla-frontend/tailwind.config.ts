@@ -21,6 +21,12 @@ const config = {
       },
     },
     extend: {
+
+      scrollBehavior: {
+        'no-scrollbar': {
+          'scrollbar-width': 'none',  // Firefox
+        }
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -77,7 +83,19 @@ const config = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [require("tailwindcss-animate"),
+  function({ addUtilities }) {
+    addUtilities({
+      '.no-scrollbar::-webkit-scrollbar': {
+        display: 'none',  // Chrome, Safari, Opera
+      },
+      '.no-scrollbar': {
+        '-ms-overflow-style': 'none',  // Internet Explorer 10+
+        'scrollbar-width': 'none',  // Firefox
+      }
+    });
+  }
+],
 } satisfies Config
 
 export default config

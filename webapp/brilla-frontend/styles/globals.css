@@ -99,5 +99,46 @@
     animation: flicker 0.5s infinite;
     margin-bottom: 4px;
   }
+  .pulsate {
+    animation: pulsate 1s infinite;
+  }
+
+
+  .animate-pulse-custom {
+    animation: pulse-blue-to-red 1.5s infinite;
+  }
+
+  @keyframes pulse-blue-to-red {
+    0%, 100% {
+      background-color: rgba(0, 0, 255, 0.5);
+    }
+    50% {
+      background-color: rgba(255, 0, 0, 0.5);
+    }
+  }
+  
+  @keyframes pulsate {
+    0%, 100% {
+      border-color: rgba(255, 0, 0, 0.5); /* Light red */
+    }
+    50% {
+      border-color: rgba(0, 0, 255, 0.5); /* Light blue */
+    }
+  }
+
+  @keyframes gradient-border {
+    0% {
+      border-image-source: linear-gradient(45deg, blue, red);
+    }
+    50% {
+      border-image-source: linear-gradient(45deg, red, blue);
+    }
+    100% {
+      border-image-source: linear-gradient(45deg, blue, red);
+    }
+  }
+
+
+  
 
   @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
