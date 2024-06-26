@@ -1,6 +1,5 @@
 import {
   FontAwesomeIcon,
-  FontAwesomeIconProps,
 } from "@fortawesome/react-fontawesome";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
