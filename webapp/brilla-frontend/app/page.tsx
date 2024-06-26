@@ -1,5 +1,4 @@
 import AnswerBox from "@/components/answer-box";
-// import QuizFooter from "@/components/footer";
 import Navbar from "@/components/navbar";
 import QuizFooter from "@/components/quiz-footer";
 import VideoPlayer from "@/components/videoplayer";
