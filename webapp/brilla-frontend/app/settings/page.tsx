@@ -1,6 +1,7 @@
 import RootLayout from "../layout";
 import Sidebar from "@/components/sidebar";
 import Navbar from "@/components/navbar";
+import LiveVideoUrlForm from "@/components/live-video-url-form";
 
 const SettingsPage = () => {
   return (
@@ -10,6 +11,9 @@ const SettingsPage = () => {
         <Sidebar />
         <div className="p-8 space-y-8">
           <h1 className="text-3xl font-bold">Settings</h1>
+          <div className="self-center border border-[#CBD5E1] rounded-lg p-6 max-w-[435px]">
+            <LiveVideoUrlForm />
+          </div>
         </div>
       </div>
     </RootLayout>
