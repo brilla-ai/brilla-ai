@@ -14,7 +14,10 @@ const Sidebar = () => {
       } transition-width duration-300 bg-gray-100 p-1`}
     >
       <div className="flex flex-col w-full space-y-4 p-2">
-        <button className="self-start p-2" onClick={() => setIsOpen(!isOpen)}>
+        <button
+          className="self-start p-2 hidden sm:block"
+          onClick={() => setIsOpen(!isOpen)}
+        >
           {isOpen ? (
             <svg
               xmlns="http://www.w3.org/2000/svg"
