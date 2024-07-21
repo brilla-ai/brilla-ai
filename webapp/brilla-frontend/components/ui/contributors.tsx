@@ -1,10 +1,35 @@
+"use client";
+import { useState, useEffect } from "react";
 import { getContributors } from "@/apis/contributors";
 import { Avatar, AvatarImage } from "./avatar";
-const Contributors = async () => {
-  const data = await getContributors();
+  const Contributors =  () => {
+  // const data = await getContributors();
+  const [contributors, setContributors] = useState([]);
+  const [error, setError] = useState(null);
 
-  const contributors: Record<string, any>[] = data?.slice(0, 6);
+  useEffect(() => {
+    const fetchContributors = async () => {
+      try {
+        const data = await getContributors();
+        setContributors(data?.slice(0,6));
+      } catch (err) {
+        setError(err.message);
+      }
+    };
+
+    fetchContributors();
+  }, []);
+
+  if (error) {
+    return  <a
+    href="https://github.com/brilla-ai/brilla-ai/graphs/contributors"
+    className="bg-white w-11 h-11 rounded-full text-black text-2xl  items-center  mt-2 grid place-items-center relative z-10 mx-auto"
+    data-testid="contributors-link"
+  >+ </a>;
+  }
+
   return (
+
     <div className="mt-4">
       <div className="flex">
         {contributors?.map((contributor, index: number) => (
