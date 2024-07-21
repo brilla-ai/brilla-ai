@@ -59,8 +59,12 @@ const LiveVideoUrlForm = () => {
             </div>
           </div>
         </Expandable>
-
-        <Button className="max-w-[126px] self-end">Save changes</Button>
+        <Button
+          type="button"
+          className="max-w-[126px] self-end"
+        >
+          Save changes
+        </Button>
       </form>
     </div>
   );
