@@ -11,7 +11,7 @@ const SettingsPage = () => {
       <Navbar gradientBg={false} />
       <div className="flex h-full">
         <Sidebar />
-        <div className="p-8 space-y-8">
+        <div className="p-8 space-y-8 w-full">
           <h1 className="text-3xl font-bold">Settings</h1>
           <AIOperations />
           <div className="flex gap-12 flex-col md:flex-row">
