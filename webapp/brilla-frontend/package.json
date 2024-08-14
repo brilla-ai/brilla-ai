@@ -28,7 +28,8 @@
     "react-shimmer-effects": "1.0.3",
     "tailwind-merge": "2.3.0",
     "tailwindcss-animate": "1.0.7",
-    "typeface-poppins": "1.1.13"
+    "typeface-poppins": "1.1.13",
+    "zustand": "^4.5.4"
   },
   "devDependencies": {
     "@next/swc-darwin-x64": "^14.2.5",
