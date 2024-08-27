@@ -11,6 +11,7 @@
   "dependencies": {
     "@fortawesome/free-brands-svg-icons": "6.5.2",
     "@fortawesome/react-fontawesome": "0.2.0",
+    "@hookform/resolvers": "^3.9.0",
     "@radix-ui/react-avatar": "1.0.4",
     "@radix-ui/react-dialog": "^1.1.1",
     "@radix-ui/react-dropdown-menu": "^2.1.1",
@@ -24,11 +25,13 @@
     "next": "14.2.3",
     "react": "^18",
     "react-dom": "^18",
+    "react-hook-form": "^7.52.2",
     "react-player": "^2.16.0",
     "react-shimmer-effects": "1.0.3",
     "tailwind-merge": "2.3.0",
     "tailwindcss-animate": "1.0.7",
     "typeface-poppins": "1.1.13",
+    "zod": "^3.23.8",
     "zustand": "^4.5.4"
   },
   "devDependencies": {

@@ -73,7 +73,7 @@ const Input = React.forwardRef(
             innerClassName,
             "flex items-center bg-base-100 p-2 px-4 rounded-lg border border-[#CBD5E1]",
             "focus-within:ring-1 focus-within:ring-[#CBD5E1]",
-            { "ring-1 ring-error": !!error }
+            { "ring-1 ring-destructive": !!error }
           )}
         >
           {prefix}
@@ -100,7 +100,7 @@ const Input = React.forwardRef(
           ) : null}
         </div>
         {/*ERROR MESSAGE */}
-        <p>{error}</p>
+        <p className="text-sm text-destructive">{error}</p>
       </div>
     );
   }

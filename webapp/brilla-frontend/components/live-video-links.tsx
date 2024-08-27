@@ -6,34 +6,13 @@ import React from "react";
 import { DialogClose } from "./ui/dialog";
 import { Button } from "./ui/button";
 import LiveVideoUrlForm from "./live-video-url-form";
+import { useVideosStore, Video } from "@/stores";
 
 const LiveVideoLinks = () => {
-  const links = [
-    {
-      id: 1,
-      link: "https://youtube.com/brillaai/watch?v=1214",
-      status: "Live",
-      schedule_date: null,
-      schedule_time: null,
-      tags: "Quarter Finals",
-    },
-    {
-      id: 2,
-      link: "https://youtube.com/brillaai/watch?v=1234",
-      status: "Scheduled",
-      schedule_date: "2024-10-11",
-      schedule_time: "13:15",
-      tags: "Semi Finals",
-    },
-    {
-      id: 3,
-      link: "https://youtube.com/brillaai/watch?v=1256",
-      status: "Scheduled",
-      schedule_date: "2024-10-12",
-      schedule_time: "13:15",
-      tags: "Finals",
-    },
-  ];
+  const { videoLinks } = useVideosStore();
+
+  const links = React.useMemo(() => videoLinks, [videoLinks]);
+
   return (
     <>
       <div className="border border-[#ADB5BD] rounded py-4 px-7 max-w-[604px] w-full h-max">
@@ -67,6 +46,12 @@ const ActionCell = ({ video }: { video: any }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const [isStopLiveModalOpen, setIsStopLiveModalOpen] = React.useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = React.useState(false);
+  const [videoToEdit, setVideoToEdit] = React.useState<
+    Video | null | undefined
+  >(null);
+
+  const { setLiveVideo, removeVideo } = useVideosStore();
+
   const sharedAction = [
     {
       action: "Delete",
@@ -84,10 +69,20 @@ const ActionCell = ({ video }: { video: any }) => {
   const scheduledActions = [
     {
       action: "Edit",
-      onClickFn: () => setIsEditModalOpen(true),
+      onClickFn: () => {
+        setVideoToEdit(video);
+        setIsEditModalOpen(true);
+      },
     },
     ...sharedAction,
   ];
+
+  const handleStopLiveVideo = () => {
+    setLiveVideo("");
+    removeVideo(video.id);
+    if (isStopLiveModalOpen) setIsStopLiveModalOpen(false);
+    if (isOpen) setIsOpen(false);
+  };
 
   const actions = video.status === "Live" ? liveActions : scheduledActions;
   return (
@@ -107,7 +102,12 @@ const ActionCell = ({ video }: { video: any }) => {
               Cancel
             </Button>
           </DialogClose>
-          <Button className="max-w-[126px] self-end bg-red-600">Proceed</Button>
+          <Button
+            className="max-w-[126px] self-end bg-red-600"
+            onClick={handleStopLiveVideo}
+          >
+            Proceed
+          </Button>
         </div>
       </Modal>
       <Modal
@@ -122,12 +122,17 @@ const ActionCell = ({ video }: { video: any }) => {
               Cancel
             </Button>
           </DialogClose>
-          <Button className="max-w-[126px] self-end">Proceed</Button>
+          <Button
+            className="max-w-[126px] self-end"
+            onClick={handleStopLiveVideo}
+          >
+            Proceed
+          </Button>
         </div>
       </Modal>
       <Modal isOpen={isEditModalOpen} setIsOpen={setIsEditModalOpen}>
         <div className="bg-white p-4 flex gap-4 items-center justify-center rounded-b-lg">
-          <LiveVideoUrlForm />
+          <LiveVideoUrlForm isEditing video={videoToEdit!} />
         </div>
       </Modal>
     </>
