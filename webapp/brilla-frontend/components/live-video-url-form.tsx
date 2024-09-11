@@ -23,11 +23,13 @@ type Schema = z.infer<typeof schema>;
 type LiveVideoUrlFormProps = {
   isEditing?: boolean;
   video?: Video;
+  closeModal?: () => void;
 };
 
 const LiveVideoUrlForm = ({
   isEditing = false,
   video,
+  closeModal,
 }: LiveVideoUrlFormProps) => {
   const [checked, setChecked] = React.useState(false);
   const minDate = new Date();
@@ -71,6 +73,7 @@ const LiveVideoUrlForm = ({
       }
     }
     reset();
+    closeModal?.();
   };
 
   return (

@@ -46,7 +46,14 @@ const videoStore: StateCreator<State & Actions> = (set, get) => ({
     set({ videoLinks });
   },
   editVideo: (video: Video) => {
-    const videoLinks = get().videoLinks.map((v) => (v.id === video.id ? video : v));
+    const videoLinks = get().videoLinks.map((v) => {
+      if (v.id === video.id) {
+        return video;
+      }
+      return v;
+    });
+    console.log("video", video);
+    console.log("videoLinks", videoLinks);
     set({ videoLinks });
   },
 });

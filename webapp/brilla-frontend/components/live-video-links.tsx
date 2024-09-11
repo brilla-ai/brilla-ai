@@ -13,6 +13,14 @@ const LiveVideoLinks = () => {
 
   const links = React.useMemo(() => videoLinks, [videoLinks]);
 
+  const formatTime = (time: string) => {
+    return new Date(`2000-01-01T${time}`).toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    });
+  };
+
   return (
     <>
       <div className="border border-[#ADB5BD] rounded py-4 px-7 max-w-[604px] w-full h-max">
@@ -29,6 +37,10 @@ const LiveVideoLinks = () => {
                 <p>{video.tags}</p>
                 <div className="flex justify-between">
                   <p>{video.status}</p>
+                  <p>{video.schedule_date}</p>
+                  <p>
+                    {video.schedule_time ? formatTime(video.schedule_time) : ""}
+                  </p>
                   <ActionCell video={video} />
                 </div>
               </div>
@@ -132,7 +144,11 @@ const ActionCell = ({ video }: { video: any }) => {
       </Modal>
       <Modal isOpen={isEditModalOpen} setIsOpen={setIsEditModalOpen}>
         <div className="bg-white p-4 flex gap-4 items-center justify-center rounded-b-lg">
-          <LiveVideoUrlForm isEditing video={videoToEdit!} />
+          <LiveVideoUrlForm
+            isEditing
+            video={videoToEdit!}
+            closeModal={() => setIsEditModalOpen(false)}
+          />
         </div>
       </Modal>
     </>
