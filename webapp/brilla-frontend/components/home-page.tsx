@@ -43,14 +43,14 @@ export default function HomeBase() {
             We are on the journey to win Ghana NSMQ with an open source AI
             software, looking forward to a better context with our AI software
           </p>
-          <div className="flex md:gap-x-4 justify-between md:justify-normal mb-6">
+          <div className="flex md:gap-x-4 justify-center gap-3 md:justify-normal mb-6">
             <button
               onClick={handleOpenModal}
-              className="bg-gradient-to-r from-blue-800 to-blue-400 text-white md:px-6 md:py-3 px-3 py-2 rounded-full"
+              className="bg-gradient-to-r from-blue-800 to-blue-400 text-white md:px-6 md:py-3 px-3 py-2 rounded-full text-sm"
             >
               Join the waitlist
             </button>
-            <button onClick={handleContributeButton} className="bg-gray-100 text-black md:px-6 md:py-3 rounded-full px-3 py-2">
+            <button onClick={handleContributeButton} className="bg-gray-100 text-black md:px-6 md:py-3 rounded-full px-3 py-2 text-sm">
               Contribute on GitHub
             </button>
           </div>
