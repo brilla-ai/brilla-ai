@@ -28,7 +28,7 @@ const WaitlistForm = () => {
       />
       <button
         type="submit"
-        className="w-full bg-purple-700 text-white py-2 rounded-lg hover:bg-[#0C0315]"
+        className="w-full bg-gradient-to-r from-purple-600 via-purple-800 to-indigo-500 text-white py-2 rounded-lg hover:bg-bg-gradient-to-l hover:from-purple-700 hover:via-purple-900/100 hover:to-indigo-600"
       >
         Submit
       </button>
