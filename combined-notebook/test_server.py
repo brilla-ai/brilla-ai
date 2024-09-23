@@ -45,7 +45,7 @@ def test_stt() -> None:
     }
 
     # Send the request with JSON payload to the /get-transcript endpoint
-    response = requests.get(
+    response = requests.post(
         f"{URL.rstrip('/')}/get-transcript",
         json=payload  # Sending payload as JSON
     )
