@@ -36,7 +36,7 @@ export default function HomeBase() {
               Brilla AI:
             </p>
             <h1 className="md:text-5xl text-3xl font-bold text-[#0C0315]">
-              An Educational AI to win Ghana’s NSMQ
+              An AI Contestant to win Ghana’s NSMQ
             </h1>
           </div>
           <p className="text-lg md:w-[80%] text-gray-700 mb-8">
@@ -44,13 +44,16 @@ export default function HomeBase() {
             software, looking forward to a better context with our AI software
           </p>
           <div className="flex md:gap-x-4 justify-center gap-3 md:justify-normal mb-6">
-            <button
+            {/* <button
               onClick={handleOpenModal}
               className="bg-gradient-to-r from-blue-800 to-blue-400 text-white md:px-6 md:py-3 px-3 py-2 rounded-full text-sm"
             >
               Join the waitlist
-            </button>
-            <button onClick={handleContributeButton} className="bg-gray-100 text-black md:px-6 md:py-3 rounded-full px-3 py-2 text-sm">
+            </button> */}
+            <button
+              onClick={handleContributeButton}
+              className="bg-gray-100 text-black md:px-6 md:py-3 rounded-full px-3 py-2 text-sm"
+            >
               Contribute on GitHub
             </button>
           </div>
@@ -73,12 +76,12 @@ export default function HomeBase() {
           <Card
             icon={<FaMicrophone size={40} />}
             title="Speech-to-text model"
-            description="Transcribes Ghanaian-accented speech of scientific riddles"
+            description="Transcribes Ghanaian-accented English for spoken scientific content"
           />
           <Card
             icon={<FaQuestionCircle size={40} />}
             title="Question Extraction model"
-            description="Extracts relevant portions of the riddles (clues) by inferring the start and end of each riddle and segmenting the clues"
+            description="Extracts the questions (e.g. round 5 riddle clues and true/false statements) from the transcript"
           />
           <Card
             icon={<FaCommentAlt size={40} />}
