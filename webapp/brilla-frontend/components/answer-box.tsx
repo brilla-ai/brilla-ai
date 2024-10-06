@@ -11,7 +11,7 @@ const AnswerBox = ({ chatHistory }: ChatContainerProps) => {
   const [displayResponse, setDisplayResponse] = useState("");
   const [completedTyping, setCompletedTyping] = useState(false);
   const [isPulsating, setIsPulsating] = useState(false);
-  const lastMessageRef = useRef(null);
+  const lastMessageRef =  useRef<HTMLDivElement>(null);
   const containerRef = useRef(null);
 
   const [textValue, setTextValue] = useState('Rigid Body');
