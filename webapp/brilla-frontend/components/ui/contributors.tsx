@@ -12,7 +12,7 @@ import { Avatar, AvatarImage } from "./avatar";
       try {
         const data = await getContributors();
         setContributors(data?.slice(0,6));
-      } catch (err) {
+      } catch (err: any) {
         setError(err.message);
       }
     };
@@ -32,7 +32,7 @@ import { Avatar, AvatarImage } from "./avatar";
 
     <div className="mt-4">
       <div className="flex">
-        {contributors?.map((contributor, index: number) => (
+        {contributors?.map((contributor: any, index: number) => (
           <Avatar
             className="z-10 -ml-3"
             title={contributor.login}
