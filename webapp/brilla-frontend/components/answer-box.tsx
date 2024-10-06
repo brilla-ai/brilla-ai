@@ -19,7 +19,7 @@ const AnswerBox = ({ chatHistory }: ChatContainerProps) => {
   const handleIconClick = () => {
     // Access the value of the textarea
     
-    const text = document?.getElementById('textInput').value;
+    const text = (document?.getElementById('textInput') as HTMLInputElement)?.value || '';
 
     // Use the Web Speech API for text-to-speech
     const speech = new SpeechSynthesisUtterance(text);
