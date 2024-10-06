@@ -242,7 +242,7 @@ export function AdminUser() {
         <Input
           placeholder="Search by name..." 
           value={(table.getColumn("email_address")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
+          onChange={(event: any) =>
             table.getColumn("email_address")?.setFilterValue(event.target.value)
           }
           className="ml-32" // Ensure enough padding for the placeholder text
