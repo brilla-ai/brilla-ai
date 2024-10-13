@@ -32,7 +32,6 @@ class UserService:
 
     def authenticate_user(self, email: str, password: str):
         authenticated_user = self._authicate_user(email, password)
-        print(authenticated_user.email, "authenticated_user")
         if not authenticated_user:
             raise HTTPException(
             status_code=401,
@@ -47,7 +46,6 @@ class UserService:
     
     def _authicate_user( self, email: str, password: str):
         user_with_hashed_password = self.get_hashed_password_by_email(email=email)
-        print(user_with_hashed_password.hashed_password)
         if not user_with_hashed_password:
             return False
         if not verify_password(password, user_with_hashed_password.hashed_password):

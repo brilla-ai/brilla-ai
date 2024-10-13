@@ -8,7 +8,9 @@ from uuid import uuid4
 from uuid import UUID as type_uuid
 from pydantic import BaseModel
 from datetime import datetime, timedelta
-from  enum import Enum 
+from  enum import Enum
+
+from .BaseModel import DefaultData 
 
 
 
@@ -19,13 +21,7 @@ class Role(str, Enum):
     user = "user"
     moderator = "moderator"
 
-#  Database models
 
-class DefaultData:
-    id = Column(UUID(as_uuid=True), default=uuid4, primary_key=True, index=True)
-    created_at = Column(DateTime , default=datetime.utcnow())
-    deleted_at = Column(DateTime, default=None, nullable=True)
-    updated_at = Column(DateTime , default=datetime.utcnow())
 
 
 class User(Base, DefaultData):
