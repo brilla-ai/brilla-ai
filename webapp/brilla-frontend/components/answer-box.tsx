@@ -11,7 +11,7 @@ const AnswerBox = ({ chatHistory }: ChatContainerProps) => {
   const [displayResponse, setDisplayResponse] = useState("");
   const [completedTyping, setCompletedTyping] = useState(false);
   const [isPulsating, setIsPulsating] = useState(false);
-  const lastMessageRef = useRef(null);
+  const lastMessageRef =  useRef<HTMLDivElement>(null);
   const containerRef = useRef(null);
 
   const [textValue, setTextValue] = useState('Rigid Body');
@@ -19,7 +19,7 @@ const AnswerBox = ({ chatHistory }: ChatContainerProps) => {
   const handleIconClick = () => {
     // Access the value of the textarea
     
-    const text = document?.getElementById('textInput').value;
+    const text = (document?.getElementById('textInput') as HTMLInputElement)?.value || '';
 
     // Use the Web Speech API for text-to-speech
     const speech = new SpeechSynthesisUtterance(text);
