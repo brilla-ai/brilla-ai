@@ -23,7 +23,6 @@ class Role(str, Enum):
 
 
 
-
 class User(Base, DefaultData):
     __tablename__ = "users"
     email = Column(String, unique=True, index=True)
