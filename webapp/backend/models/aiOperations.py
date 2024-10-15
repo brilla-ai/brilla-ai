@@ -43,3 +43,7 @@ class AIOperationsUpdateModel(BaseModel):
     class Config: 
         from_attributes = True
 
+
+
+class VideoUrl(BaseModel):
+    video_url: str

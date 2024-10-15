@@ -10,6 +10,8 @@ from .interface.IConnection_manager import IConnectionManager
 
 from .websocket_command_handler import CommandHandler
 
+import re
+
 class ConnectionManager( IConnectionManager):
     def __init__(self) -> None:
         self.active_connections: Dict[str, List[WebSocket]] = {}  # Group-based connections
@@ -102,14 +104,27 @@ class ConnectionManager( IConnectionManager):
             websocket = self.client_connections[client_id]
             await websocket.send_text(message)
 
-    async def send_message_to_group(self, group_name: str, message: str):
+    async def send_message_to_group(self, group_name: str, message: str, type: str = "json"):
+        print("Sending message")
+        pattern = r"^send_"
+        connection_type = ""
+
+        if re.match(pattern, type):
+            connection_type = type
+        else:
+            connection_type = "send_" + type
+
         if group_name in self.active_connections:
             print(self.active_connections[group_name], "name of the group " + group_name)
             for connection in self.active_connections[group_name]:
                 print(connection, "connection")
                 try:
-                    await connection.send_json(message)
+                    method = getattr(connection, connection_type, None)
+                    if not (method and callable(method)):
+                        await connection.send_text("Connection type not supported")
+                    await method(message)
                 except Exception as e:
                     print(f"Error sending message to connection: {connection}, error: {e}")
+        
 
     
