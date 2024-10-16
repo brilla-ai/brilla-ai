@@ -54,4 +54,4 @@ jobs:
 
      
       - name: Deploy Subdirectory to Heroku
-        run: git subtree push --prefix webapp/backend heroku main
+        run: git subtree push  -f --prefix webapp/backend heroku main
