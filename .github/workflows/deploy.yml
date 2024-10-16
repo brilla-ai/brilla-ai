@@ -59,4 +59,6 @@ jobs:
 
      
       - name: Deploy Subdirectory to Heroku
-        run: git subtree push --prefix webapp/backend --force  heroku main || echo "Deployment failed"
+        run: |
+            git subtree pull --prefix webapp/backend heroku main || echo "Pull and merge failed"
+            git subtree push --prefix webapp/backend heroku main || echo "Deployment failed"
