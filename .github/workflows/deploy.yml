@@ -31,14 +31,22 @@ jobs:
             echo "HEROKU_APP_NAME=${{ secrets.HEROKU_APP_NAME_DEV }}" >> $GITHUB_ENV
           fi
 
-     
-      - name: Install Heroku CLI
-        run: curl https://cli-assets.heroku.com/install.sh | sh
 
-      - name: Login to Heroku
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-        run: echo $HEROKU_API_KEY | heroku auth:token
+      - uses: akhileshns/heroku-deploy@v3.13.15 # This is the action
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: ${{ env.HEROKU_APP_NAME }}
+          heroku_email: "nsmq.kwame.ai@gmail.com"
+          justlogin: true
+      - run: heroku auth:whoami
+      
+      # - name: Install Heroku CLI
+      #   run: curl https://cli-assets.heroku.com/install.sh | sh
+
+      # - name: Login to Heroku
+      #   env:
+      #     HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+      #   run: echo $HEROKU_API_KEY | heroku auth:token
 
       
       - name: Add Heroku Remote
@@ -46,4 +54,4 @@ jobs:
 
      
       - name: Deploy Subdirectory to Heroku
-        run: git subtree push --prefix webapp/backend https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git main
+        run: git subtree push --prefix webapp/backend heroku main
