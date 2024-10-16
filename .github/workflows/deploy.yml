@@ -1,0 +1,46 @@
+name: Deploy to Heroku
+
+on:
+  push:
+    branches:
+      - develop    
+      - main   
+  pull_request:
+    branches:
+      - main   
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Set Heroku App Name
+        id: heroku-app
+        run: |
+          if [ "${{ github.ref_name }}" == "main" ]; then
+            echo "HEROKU_APP_NAME=${{ secrets.HEROKU_APP_NAME_PROD }}" >> $GITHUB_ENV
+          elif [ "${{ github.ref_name }}" == "develop" ]; then
+            echo "HEROKU_APP_NAME=${{ secrets.HEROKU_APP_NAME_DEV }}" >> $GITHUB_ENV
+          fi
+
+     
+      - name: Login to Heroku
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: heroku auth:token
+
+      
+      - name: Add Heroku Remote
+        run: heroku git:remote -a ${{ env.HEROKU_APP_NAME }}
+
+     
+      - name: Deploy Subdirectory to Heroku
+        run: git subtree push --prefix webapp/backend heroku main
