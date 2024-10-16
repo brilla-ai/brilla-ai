@@ -59,7 +59,4 @@ jobs:
 
      
       - name: Deploy Subdirectory to Heroku
-        run: |
-          git fetch heroku main || echo "No remote to fetch"
-          git pull heroku main --rebase || echo "Could not pull remote changes"
-          git subtree push --prefix webapp/backend heroku main || echo "Deployment failed"
+        run: git subtree push --prefix webapp/backend --force  heroku main || echo "Deployment failed"
