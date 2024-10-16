@@ -61,5 +61,5 @@ jobs:
       - name: Deploy Subdirectory to Heroku
         run: |
           git fetch heroku main || echo "No remote to fetch"
-          git rebase heroku/main || echo "Rebase failed; please resolve conflicts."
+          git pull heroku main --rebase || echo "Could not pull remote changes"
           git subtree push --prefix webapp/backend heroku main || echo "Deployment failed"
