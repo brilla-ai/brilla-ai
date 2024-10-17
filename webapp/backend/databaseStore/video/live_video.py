@@ -9,7 +9,7 @@ from fastapi import Depends
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
 
-from models.liveVideo import LiveVideo, LiveVideoCreateModel, LiveVideoReadModel, LiveVideoUpdateStopStatusModel
+from models.liveVideo import LiveVideo, LiveVideoCreateModel, LiveVideoReadModel, LiveVideoUpdateStopStatusModel, VideoStatus
 
 from database import get_db
 
@@ -68,3 +68,7 @@ class LiveVideoRepository:
         self.db.query(LiveVideo).filter(LiveVideo.id == id, LiveVideo.deleted_at == None).update({'deleted_at': datetime.utcnow()}, synchronize_session='evaluate')
         self.db.commit()
         return True
+    
+    def get_live_video_status(self, status: VideoStatus) -> Optional[LiveVideoReadModel]:
+        live_video = self.db.query(LiveVideo).filter(LiveVideo.status == status).first()
+        return jsonable_encoder(LiveVideoReadModel.from_orm(live_video))

@@ -13,6 +13,9 @@ import glob
 import re
 import time
 
+
+current_round = 4
+
 # Function to split audio into chunks and transcribe them
 def transcribe_in_chunks(audio_path: str, base_url: str, chunk_duration_ms: int = 10000):
     audio = AudioSegment.from_file(audio_path)
@@ -82,7 +85,7 @@ def send_audio_to_ML_layer(process_cmd: str, audio_chunks_dir_path: str, base_ur
                     bytes_data = base64.b64encode(audio_bytes).decode()
 
                     #TODO: request the actual round here
-                    payload = {"data": bytes_data, "filename": os.path.basename(full_audio_path), "current_round": 5}
+                    payload = {"data": bytes_data, "filename": os.path.basename(full_audio_path), "current_round": current_round}
                     response = requests.post(ML_API_ENDPOINT, json=payload)
 
                     if response.status_code == 200:
