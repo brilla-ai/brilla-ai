@@ -37,20 +37,21 @@ const Navbar = ({ gradientBg = true }) => {
                 {translations["about"]}
               </a>
               <a
-                href={githubRepo} target="_blank"
+                href={githubRepo}
+                target="_blank"
                 className="text-gray-800 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
               >
                 {translations["github"]}
               </a>
-              {/* Hide live button when on live page */}
-              {pathname !== "/live" && (
+              {/* Hide live button when on live page and homepage for now */}
+              {/* {pathname !== "/live" && pathname !== "/" && (
                 <Button
                   className="rounded-3xl font-sans font-medium text-sm"
                   onClick={handleTryLive}
                 >
                   {translations["trybrillaAiLive"]}
                 </Button>
-              )}
+              )} */}
             </div>
           </div>
           <div className="-mr-2 flex md:hidden">
@@ -100,20 +101,21 @@ const Navbar = ({ gradientBg = true }) => {
             {translations["about"]}
           </a>
           <a
-            href={githubRepo} target="_blank"
+            href={githubRepo}
+            target="_blank"
             className="text-gray-800 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
           >
             {translations["github"]}
           </a>
-          {/* Hide live button when on live page */}
-          {pathname !== "/live" && (
+          {/* Hide live button when on live page and home page */}
+          {/* {pathname !== "/live" && pathname !== "/" && (
             <Button
               className="rounded-3xl font-sans font-medium text-sm"
               onClick={handleTryLive}
             >
               {translations["trybrillaAiLive"]}
             </Button>
-          )}
+          )} */}
         </div>
       </div>
     </nav>
