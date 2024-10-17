@@ -84,7 +84,7 @@ const config = {
     },
   },
   plugins: [require("tailwindcss-animate"),
-  function({ addUtilities }) {
+  function({ addUtilities }: { addUtilities: (utilities: Record<string, any>) => void }) {
     addUtilities({
       '.no-scrollbar::-webkit-scrollbar': {
         display: 'none',  // Chrome, Safari, Opera
