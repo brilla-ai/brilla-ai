@@ -6,34 +6,17 @@ import React from "react";
 import { DialogClose } from "./ui/dialog";
 import { Button } from "./ui/button";
 import LiveVideoUrlForm from "./live-video-url-form";
+import { useVideosStore } from "@/stores";
+import useWebSocket from "react-use-websocket";
+import { useVideoLinks } from "@/hooks/requests/use-video-links";
+import { Video } from "@/types";
+import { formatTime } from "@/utils/helpers";
 
 const LiveVideoLinks = () => {
-  const links = [
-    {
-      id: 1,
-      link: "https://youtube.com/brillaai/watch?v=1214",
-      status: "Live",
-      schedule_date: null,
-      schedule_time: null,
-      tags: "Quarter Finals",
-    },
-    {
-      id: 2,
-      link: "https://youtube.com/brillaai/watch?v=1234",
-      status: "Scheduled",
-      schedule_date: "2024-10-11",
-      schedule_time: "13:15",
-      tags: "Semi Finals",
-    },
-    {
-      id: 3,
-      link: "https://youtube.com/brillaai/watch?v=1256",
-      status: "Scheduled",
-      schedule_date: "2024-10-12",
-      schedule_time: "13:15",
-      tags: "Finals",
-    },
-  ];
+  const { data, isLoading } = useVideoLinks();
+
+  const links = React.useMemo(() => data?.data ?? [], [data]);
+
   return (
     <>
       <div className="border border-[#ADB5BD] rounded py-4 px-7 max-w-[604px] w-full h-max">
@@ -44,12 +27,14 @@ const LiveVideoLinks = () => {
           <p className="text-lg text-[#0F172A] font-semibold">Status</p>
         </div>
         <div className="grid gap-8 mt-8">
-          {links.map((video) => {
+          {links.map((video: Video) => {
             return (
               <div key={video.id} className="grid lg:grid-cols-2">
-                <p>{video.tags}</p>
+                <p>{video.tag}</p>
                 <div className="flex justify-between">
-                  <p>{video.status}</p>
+                  <p>{video.schedule ? "Scheduled" : "Live"}</p>
+                  <p>{video.start_time}</p>
+                  <p>{video.end_time ? formatTime(video.end_time) : ""}</p>
                   <ActionCell video={video} />
                 </div>
               </div>
@@ -67,6 +52,13 @@ const ActionCell = ({ video }: { video: any }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const [isStopLiveModalOpen, setIsStopLiveModalOpen] = React.useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = React.useState(false);
+  const [videoToEdit, setVideoToEdit] = React.useState<
+    Video | null | undefined
+  >(null);
+
+  const { setLiveVideo, removeVideo } = useVideosStore();
+  const { sendMessage } = useWebSocket("ws://localhost:8000/links");
+
   const sharedAction = [
     {
       action: "Delete",
@@ -84,10 +76,25 @@ const ActionCell = ({ video }: { video: any }) => {
   const scheduledActions = [
     {
       action: "Edit",
-      onClickFn: () => setIsEditModalOpen(true),
+      onClickFn: () => {
+        setVideoToEdit(video);
+        setIsEditModalOpen(true);
+      },
     },
     ...sharedAction,
   ];
+
+  const handleDeleteVideo = () => {
+    sendMessage(`delete:${video.id}`);
+    if (isOpen) setIsOpen(false);
+  };
+
+  const handleStopLiveVideo = () => {
+    setLiveVideo("");
+    removeVideo(video.id);
+    if (isStopLiveModalOpen) setIsStopLiveModalOpen(false);
+    if (isOpen) setIsOpen(false);
+  };
 
   const actions = video.status === "Live" ? liveActions : scheduledActions;
   return (
@@ -107,7 +114,12 @@ const ActionCell = ({ video }: { video: any }) => {
               Cancel
             </Button>
           </DialogClose>
-          <Button className="max-w-[126px] self-end bg-red-600">Proceed</Button>
+          <Button
+            className="max-w-[126px] self-end bg-red-600"
+            onClick={handleDeleteVideo}
+          >
+            Proceed
+          </Button>
         </div>
       </Modal>
       <Modal
@@ -122,12 +134,21 @@ const ActionCell = ({ video }: { video: any }) => {
               Cancel
             </Button>
           </DialogClose>
-          <Button className="max-w-[126px] self-end">Proceed</Button>
+          <Button
+            className="max-w-[126px] self-end"
+            onClick={handleStopLiveVideo}
+          >
+            Proceed
+          </Button>
         </div>
       </Modal>
       <Modal isOpen={isEditModalOpen} setIsOpen={setIsEditModalOpen}>
         <div className="bg-white p-4 flex gap-4 items-center justify-center rounded-b-lg">
-          <LiveVideoUrlForm />
+          <LiveVideoUrlForm
+            isEditing
+            video={videoToEdit!}
+            closeModal={() => setIsEditModalOpen(false)}
+          />
         </div>
       </Modal>
     </>

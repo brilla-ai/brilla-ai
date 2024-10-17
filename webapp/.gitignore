@@ -1,98 +1,35 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
 # dependencies
 /node_modules
 /.pnp
 .pnp.js
+
 # testing
 /coverage
+
 # next.js
 /.next/
 /out/
+
 # production
 /build
+
 # misc
 .DS_Store
 *.pem
+
 # debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
 # local env files
 .env*.local
+
 # vercel
 .vercel
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-# python ignores
-# Byte-compiled / optimized / DLL files
-__pycache__/
-*.py[cod]
-*$py.class
-# C extensions
-*.so
-# Virtual environment
-venv/
-env/
-.venv/
-# Pip dependency files
-pip-log.txt
-pip-delete-this-directory.txt
-# Pyre type checker
-.pyre/
-# FastAPI-related
-# Local SQLite database (if you're using SQLite)
-*.db
-# Logs
-logs/
-*.log
-*.out
-# Test and coverage results
-.coverage
-.tox/
-.cache/
-nosetests.xml
-coverage.xml
-*.cover
-*.py,cover
-.hypothesis/
-.pytest_cache/
-# mypy
-.mypy_cache/
-.dmypy.json
-dmypy.json
-# Pydantic-related
-*.json
-# Jupyter notebooks
-.ipynb_checkpoints
-# IDEs and editors
-.vscode/
-.idea/
-*.sublime-workspace
-# macOS
-.DS_Store
-# Docker
-docker-compose.override.yml
-.dockerignore
-# PyCharm
-*.iml
-.idea/
-# Generated documentation
-/docs/_build/
-# Local environments
-.env
-.env.*
-# PyInstaller
-#  Usually these files are written by a Python script from a template
-*.manifest
-*.spec
-# Build and distribution artifacts
-build/
-dist/
-*.egg-info/
-.eggs/
-MANIFEST
-# Unit test / coverage reports
-htmlcov/
-# Local development settings
-.settings/

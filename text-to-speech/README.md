@@ -9,9 +9,7 @@ text-to-speech team works on:
 ## Introduction
 The TTS API notebook allows you to create a REST API that enables you to perform speech synthesis in our Streamlit-built application. The API can be easily integrated into the Streamlit application, providing a seamless and user-friendly experience for transcribing audio. 
 
-Note:
-1. Due to privacy issues, we show steps on how to use publicly available TTS models from CoquiTTS and do not make available the exact Ghanaian voice models used in our streamlit application.
-2. Version 2 of the notebook is optimized to run faster and reduce latency. 
+Note: Due to privacy issues, we show steps on how to use publicly available TTS models from CoquiTTS and do not make available the exact Ghanaian voice models used in our streamlit application
 
 ## Requirements
 Before running the script, you will need to have the following:
@@ -23,11 +21,8 @@ Before running the script, you will need to have the following:
 Follow these steps to set up the TTS API:
 
 1. Create an account on [ngrok](https://ngrok.com/) to obtain your authentication token.
-2. Copy the authentication token provided by ngrok and add it to your secrets key if using colab. 
+2. Copy the authentication token provided by ngrok and paste it into the designated section of the code. 
 3. Run the entire script and copy the generated public URL.
 4. Paste the URL into the "Text To Speech" section of the the API Setup Page, as shown below.
-![image](https://github.com/brilla-ai/brilla-ai/assets/69251896/3ac27f75-2f94-4988-a7e4-a4a5ab77c95f)
-
-
-## AfricAIED 24 Hackathon
-The starter notebook for AfricAIED 24 can be located [here](https://github.com/brilla-ai/brilla-ai/blob/nanayeb_add_tts_starter_notebook/text-to-speech/TTS_inference_API_notebook.ipynb)
+![image](https://github.com/nsmq-ai/nsmqai/assets/69251896/3ac27f75-2f94-4988-a7e4-a4a5ab77c95f)
+)

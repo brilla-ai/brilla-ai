@@ -18,7 +18,7 @@ conda env create -f environment.yml
 ## Activate environment
 
 ```bash
-conda activate brilla-ai
+conda activate nsmqai
 ```
 
 ## Deactivate environment

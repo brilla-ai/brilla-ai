@@ -10,7 +10,7 @@ Frontend is using NextJS. To deploy the frontend locally, run the development se
 npm run dev
 ```
 
-Open `http://localhost:3000` with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 ![homepage](./frontend/public/homepage.png)
 
@@ -40,7 +40,7 @@ npm run start
 npm run watch
 ```
 
-Visit `https://localhost:5000` with your browser to see the result.
+Visit <https://localhost:5000> with your browser to see the result.
 
 ### Testing
 

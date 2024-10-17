@@ -33,7 +33,7 @@ The answers are displayed within the application.
 To use the QA System, you will need the following:
 
 1. A valid [ngrok](https://ngrok.com/) account.
-2. An authentication token provided by ngrok, which you should put in the secrets section of the notebook.
+2. An authentication token provided by ngrok, which you will copy into the code.
 3. [Optional] An API Key from OpenAI (https://platform.openai.com/account/api-keys) if you wish to use ChatGPT as well.
 4. Refer to the Web App documentation for steps on how to start and use the Web App.
 

@@ -19,9 +19,9 @@ Now, the web application will be running and accessible through the following UR
 
 ## API Setup 
 Here is the list of APIs that must be running to access the complete functionality of the web application. Note that each of these APIs is contained within their respective notebooks, and you need to have them running:
-- [Speech-to-Text API](https://github.com/brilla-ai/brilla-ai/blob/main/speech-to-text/STT_Inference_API_Server_Colab_Notebook.ipynb)
-- [Text-to-Speech API](https://github.com/brilla-ai/brilla-ai/blob/main/text-to-speech/TTS_inference_API_notebook.ipynb)
-- [Question-Answering API](https://github.com/brilla-ai/brilla-ai/blob/main/question-answering/QAML_Inference_API_Notebook.ipynb)
+- [Speech-to-Text API](https://github.com/nsmq-ai/nsmqai/blob/main/speech-to-text/STT_Inference_API_Server_Colab_Notebook.ipynb)
+- [Text-to-Speech API](https://github.com/nsmq-ai/nsmqai/blob/main/text-to-speech/TTS_inference_API_notebook.ipynb)
+- [Question-Answering API](https://github.com/nsmq-ai/nsmqai/blob/main/question-answering/QAML_Inference_API_Notebook.ipynb)
 
 
 
