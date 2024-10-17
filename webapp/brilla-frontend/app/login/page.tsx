@@ -1,9 +1,39 @@
+"use client";
+
 import QuizFooter from "@/components/quiz-footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useLoginMutation } from "@/hooks/requests/use-login";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { EyeOpenIcon } from "@radix-ui/react-icons";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+
+const schema = z.object({
+  username: z.string().email(),
+  password: z.string().min(8),
+});
+
+type LoginForm = z.infer<typeof schema>;
 
 const Login = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid },
+  } = useForm<LoginForm>({
+    resolver: zodResolver(schema),
+  });
+
+  const { mutate, isPending } = useLoginMutation();
+
+  const onSubmit = (data: LoginForm) => {
+    const formData = new URLSearchParams();
+    formData.append("username", data.username);
+    formData.append("password", data.password);
+    mutate(formData);
+  };
+
   return (
     <div className="bg-white h-screen">
       <div className="flex flex-col items-center justify-center p-5 md:py-[127px] md:px-[173px]">
@@ -18,17 +48,29 @@ const Login = () => {
             </p>
           </div>
 
-          <form className="mt-6 flex flex-col gap-6">
+          <form
+            className="mt-6 flex flex-col gap-6"
+            onSubmit={handleSubmit(onSubmit)}
+          >
             <div className="items-center">
               <label htmlFor="email">Email Address*</label>
-              <Input id="email" />
+              <Input
+                id="email"
+                {...register("username")}
+                error={errors.username?.message}
+              />
             </div>
             <div className="items-center">
               <label htmlFor="password">Password</label>
-              <Input id="password" type="password" />
+              <Input
+                id="password"
+                type="password"
+                {...register("password")}
+                error={errors.password?.message}
+              />
             </div>
 
-            <Button>Login</Button>
+            <Button disabled={isPending || !isValid}>Login</Button>
           </form>
         </div>
       </div>

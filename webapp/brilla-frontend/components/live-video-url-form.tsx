@@ -9,13 +9,16 @@ import { Button } from "./ui/button";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useVideosStore, Video } from "@/stores";
+import { useVideosStore } from "@/stores";
+import useWebSocket from "react-use-websocket";
+import { useVideoLinkMutation } from "@/hooks/requests/use-video-links";
+import { Video } from "@/types";
 
 const schema = z.object({
-  link: z.string().min(1, "Link is required").url("Must be a valid URL"),
-  tags: z.string().min(1, "Tags are required"),
-  schedule_date: z.string().optional(),
-  schedule_time: z.string().optional(),
+  video_link: z.string().min(1, "Link is required").url("Must be a valid URL"),
+  tag: z.string().min(1, "Tags are required"),
+  start_time: z.string().optional(),
+  end_time: z.string().optional(),
 });
 
 type Schema = z.infer<typeof schema>;
@@ -48,31 +51,46 @@ const LiveVideoUrlForm = ({
     resolver: zodResolver(schema),
     mode: "onChange",
     defaultValues: {
-      link: video?.link,
-      tags: video?.tags,
-      schedule_date: video?.schedule_date,
-      schedule_time: video?.schedule_time,
+      video_link: video?.video_link,
+      tag: video?.tag,
+      start_time: video?.start_time,
+      end_time: video?.end_time,
     },
   });
 
+  const { mutate, isPending } = useVideoLinkMutation();
+
+  // const webSocket = new WebSocket("ws://localhost:8000/links");
+
+  // const { sendJsonMessage } = useWebSocket("ws://localhost:8000/links");
+
   const onSubmit = (data: Schema) => {
-    console.log("data", data);
+    // console.log("data", data);
     const dataToStore = {
-      ...data,
-      id: Math.floor(Math.random() * 1000),
-      schedule_date: checked ? data.schedule_date! : "",
-      schedule_time: checked ? data.schedule_time! : "",
-      status: data.schedule_date ? "Scheduled" : "Live",
+      video_link: data.video_link,
+      schedule: checked,
+      tag: data.tag,
+      start_time: data.start_time!,
+      end_time: data.end_time!,
     };
-    if (isEditing) {
-      editVideo(dataToStore);
-    } else {
-      setVideo(dataToStore);
-      if (!dataToStore.schedule_date || !dataToStore.schedule_time) {
-        setLiveVideo(data.link);
-      }
-    }
-    reset();
+
+    mutate(dataToStore);
+
+    // sendJsonMessage(JSON.stringify(dataToStore));
+
+    // Check if WebSocket is open before sending
+    // if (webSocket.readyState === WebSocket.OPEN) {
+    //   webSocket.send(JSON.stringify(dataToStore));
+    //   console.log("WebSocket is open. Data sent:", JSON.stringify(dataToStore));
+    // } else {
+    //   console.error(
+    //     "WebSocket is not open. Current state:",
+    //     webSocket.readyState
+    //   );
+    // }
+
+    reset({ video_link: "", tag: "", start_time: "", end_time: "" });
+    setChecked(false);
     closeModal?.();
   };
 
@@ -88,11 +106,14 @@ const LiveVideoUrlForm = ({
       <form className="flex flex-col gap-8">
         <div className="grid md:grid-cols-[82px,calc(100%_-_82px)] ">
           <label htmlFor="link-input">Video link</label>
-          <Input {...register("link")} error={errors.link?.message} />
+          <Input
+            {...register("video_link")}
+            error={errors.video_link?.message}
+          />
         </div>
         <div className="grid md:grid-cols-[82px,calc(100%_-_82px)] ">
           <label htmlFor="tags-input">Tags</label>
-          <Input {...register("tags")} error={errors.tags?.message} />
+          <Input {...register("tag")} error={errors.tag?.message} />
         </div>
         <div className="grid md:grid-cols-[82px,calc(100%_-_82px)] ">
           <label htmlFor="">Schedule</label>
@@ -105,22 +126,22 @@ const LiveVideoUrlForm = ({
         <Expandable open={checked}>
           <div className="flex flex-col md:flex-row md:items-center justify-between">
             <div className="flex flex-col gap-2">
-              <label htmlFor="date-picker">Select date</label>
+              <label htmlFor="date-picker">Start date</label>
               <Input
                 type="date"
                 innerClassName="!bg-[#F3F4F6]"
                 min={minDateString}
-                {...register("schedule_date")}
-                error={errors.schedule_date?.message}
+                {...register("start_time")}
+                error={errors.start_time?.message}
               />
             </div>
             <div className="flex flex-col gap-2">
-              <label htmlFor="time-picker">Select time</label>
+              <label htmlFor="time-picker">End time</label>
               <Input
-                type="time"
+                type="date"
                 innerClassName="!bg-[#F3F4F6]"
-                {...register("schedule_time")}
-                error={errors.schedule_time?.message}
+                {...register("end_time")}
+                error={errors.end_time?.message}
               />
             </div>
           </div>
@@ -129,7 +150,7 @@ const LiveVideoUrlForm = ({
           type="button"
           className="max-w-[126px] self-end"
           onClick={handleSubmit(onSubmit)}
-          // disabled={!isValid}
+          disabled={isPending}
         >
           Save changes
         </Button>

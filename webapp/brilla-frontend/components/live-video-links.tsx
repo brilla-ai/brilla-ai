@@ -6,20 +6,16 @@ import React from "react";
 import { DialogClose } from "./ui/dialog";
 import { Button } from "./ui/button";
 import LiveVideoUrlForm from "./live-video-url-form";
-import { useVideosStore, Video } from "@/stores";
+import { useVideosStore } from "@/stores";
+import useWebSocket from "react-use-websocket";
+import { useVideoLinks } from "@/hooks/requests/use-video-links";
+import { Video } from "@/types";
+import { formatTime } from "@/utils/helpers";
 
 const LiveVideoLinks = () => {
-  const { videoLinks } = useVideosStore();
+  const { data, isLoading } = useVideoLinks();
 
-  const links = React.useMemo(() => videoLinks, [videoLinks]);
-
-  const formatTime = (time: string) => {
-    return new Date(`2000-01-01T${time}`).toLocaleTimeString("en-US", {
-      hour: "numeric",
-      minute: "2-digit",
-      hour12: true,
-    });
-  };
+  const links = React.useMemo(() => data?.data ?? [], [data]);
 
   return (
     <>
@@ -31,16 +27,14 @@ const LiveVideoLinks = () => {
           <p className="text-lg text-[#0F172A] font-semibold">Status</p>
         </div>
         <div className="grid gap-8 mt-8">
-          {links.map((video) => {
+          {links.map((video: Video) => {
             return (
               <div key={video.id} className="grid lg:grid-cols-2">
-                <p>{video.tags}</p>
+                <p>{video.tag}</p>
                 <div className="flex justify-between">
-                  <p>{video.status}</p>
-                  <p>{video.schedule_date}</p>
-                  <p>
-                    {video.schedule_time ? formatTime(video.schedule_time) : ""}
-                  </p>
+                  <p>{video.schedule ? "Scheduled" : "Live"}</p>
+                  <p>{video.start_time}</p>
+                  <p>{video.end_time ? formatTime(video.end_time) : ""}</p>
                   <ActionCell video={video} />
                 </div>
               </div>
@@ -63,6 +57,7 @@ const ActionCell = ({ video }: { video: any }) => {
   >(null);
 
   const { setLiveVideo, removeVideo } = useVideosStore();
+  const { sendMessage } = useWebSocket("ws://localhost:8000/links");
 
   const sharedAction = [
     {
@@ -88,6 +83,11 @@ const ActionCell = ({ video }: { video: any }) => {
     },
     ...sharedAction,
   ];
+
+  const handleDeleteVideo = () => {
+    sendMessage(`delete:${video.id}`);
+    if (isOpen) setIsOpen(false);
+  };
 
   const handleStopLiveVideo = () => {
     setLiveVideo("");
@@ -116,7 +116,7 @@ const ActionCell = ({ video }: { video: any }) => {
           </DialogClose>
           <Button
             className="max-w-[126px] self-end bg-red-600"
-            onClick={handleStopLiveVideo}
+            onClick={handleDeleteVideo}
           >
             Proceed
           </Button>
