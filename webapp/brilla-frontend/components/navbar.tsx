@@ -3,9 +3,15 @@ import { useState } from "react";
 import translations from "../public/i18n/en.json";
 import { Button } from "./ui/button";
 import classNames from "classnames";
+import { usePathname } from "next/navigation";
+import Link from "next/link";
 const Navbar = ({ gradientBg = true }) => {
   const [isOpen, setIsOpen] = useState(false);
-
+  const handleTryLive = () => {
+    window.location.href = "/live";
+  }
+  const pathname = usePathname();
+  const githubRepo = "https://github.com/brilla-ai/brilla-ai";
   return (
     <nav
       className={classNames(
@@ -18,9 +24,9 @@ const Navbar = ({ gradientBg = true }) => {
       <div className=" mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex-shrink-0">
-            <a href="#" className="font-bold text-xl text-gray-800">
+            <Link href="/" className="font-bold text-xl text-gray-800">
               {translations["logoText"]}
-            </a>
+            </Link>
           </div>
           <div className="hidden md:block">
             <div className="ml-4 flex items-center md:ml-6 gap-4">
@@ -31,14 +37,21 @@ const Navbar = ({ gradientBg = true }) => {
                 {translations["about"]}
               </a>
               <a
-                href="https://github.com/brilla-ai/brilla-ai"
+                href={githubRepo}
+                target="_blank"
                 className="text-gray-800 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
               >
                 {translations["github"]}
               </a>
-              <Button className="rounded-3xl font-sans font-medium text-sm">
-                {translations["trybrillaAiLive"]}
-              </Button>
+              {/* Hide live button when on live page and homepage for now */}
+              {/* {pathname !== "/live" && pathname !== "/" && (
+                <Button
+                  className="rounded-3xl font-sans font-medium text-sm"
+                  onClick={handleTryLive}
+                >
+                  {translations["trybrillaAiLive"]}
+                </Button>
+              )} */}
             </div>
           </div>
           <div className="-mr-2 flex md:hidden">
@@ -88,14 +101,21 @@ const Navbar = ({ gradientBg = true }) => {
             {translations["about"]}
           </a>
           <a
-            href="#"
+            href={githubRepo}
+            target="_blank"
             className="text-gray-800 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
           >
             {translations["github"]}
           </a>
-          <Button className="rounded-3xl font-sans font-medium text-sm">
-            {translations["trybrillaAiLive"]}
-          </Button>
+          {/* Hide live button when on live page and home page */}
+          {/* {pathname !== "/live" && pathname !== "/" && (
+            <Button
+              className="rounded-3xl font-sans font-medium text-sm"
+              onClick={handleTryLive}
+            >
+              {translations["trybrillaAiLive"]}
+            </Button>
+          )} */}
         </div>
       </div>
     </nav>

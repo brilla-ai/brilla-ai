@@ -18,7 +18,10 @@ export default function HomeBase() {
   const handleOpenModal = () => {
     setIsModalOpen(true);
   };
-
+  //handle go to live page
+  const handleGoToLive = () => {
+    window.location.href = "/live";
+  }
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
@@ -44,17 +47,17 @@ export default function HomeBase() {
             software, looking forward to a better context with our AI software
           </p>
           <div className="flex md:gap-x-4 justify-center gap-3 md:justify-normal mb-6">
-            {/* <button
-              onClick={handleOpenModal}
+            <button
+              onClick={handleGoToLive}
               className="bg-gradient-to-r from-blue-800 to-blue-400 text-white md:px-6 md:py-3 px-3 py-2 rounded-full text-sm"
             >
-              Join the waitlist
-            </button> */}
+              View Live Quiz
+            </button>
             <button
               onClick={handleContributeButton}
               className="bg-gray-100 text-black md:px-6 md:py-3 rounded-full px-3 py-2 text-sm"
             >
-              Contribute on GitHub
+              Contribute On GitHub
             </button>
           </div>
         </div>
