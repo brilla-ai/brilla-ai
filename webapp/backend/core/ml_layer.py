@@ -53,7 +53,7 @@ def transcribe_audio_chunk(audio_file: str, base_url: str) -> str:
         bytes_data = base64.b64encode(audio_bytes).decode()
 
         #TODO: request the actual round here
-        payload = {"data": bytes_data, "filename": os.path.basename(audio_file), "current_round": 5}
+        payload = {"data": bytes_data, "filename": os.path.basename(audio_file), "current_round": current_round}
         response = requests.post(STT_API_ENDPOINT, json=payload)
 
         transcript = ""

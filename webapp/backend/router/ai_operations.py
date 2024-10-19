@@ -24,6 +24,7 @@ import logging
 import os
 
 
+
 ai_operations = APIRouter(tags=["ai_operations"], prefix="/operations")
 
 BASE_URL = os.getenv("ML_API_URL")

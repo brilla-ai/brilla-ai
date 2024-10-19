@@ -12,6 +12,14 @@ ecdsa==0.19.0
 email_validator==2.2.0
 fastapi==0.115.0
 fastapi-cli==0.0.5
+Brotli==1.1.0
+cached-property==1.5.2
+certifi==2024.8.30
+charset-normalizer==3.4.0
+click==8.1.7
+ecdsa==0.19.0
+fastapi==0.115.0
+gunicorn==23.0.0
 h11==0.14.0
 httpcore==1.0.6
 httptools==0.6.1
@@ -25,6 +33,9 @@ MarkupSafe==2.1.5
 mdurl==0.1.2
 mutagen==1.47.0
 mypy-extensions==1.0.0
+mutagen==1.47.0
+mypy-extensions==1.0.0
+packaging==24.1
 passlib==1.7.4
 psycopg2==2.9.9
 psycopg2-binary==2.9.9
@@ -34,6 +45,10 @@ pydantic==2.9.2
 pydantic_core==2.23.4
 pydub==0.25.1
 Pygments==2.18.0
+pycryptodomex==3.21.0
+pydantic==2.9.2
+pydantic_core==2.23.4
+pydub==0.25.1
 python-dotenv==1.0.1
 python-jose==3.3.0
 python-multipart==0.0.12

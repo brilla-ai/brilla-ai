@@ -1,0 +1,10 @@
+certifi==2024.2.2
+charset-normalizer==3.3.2
+customtkinter==5.2.2
+darkdetect==0.8.0
+idna==3.7
+packaging==24.0
+PyAudio==0.2.14
+pydub==0.25.1
+requests==2.31.0
+urllib3==2.2.1
