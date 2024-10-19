@@ -8,7 +8,7 @@ from core.ml_layer import process_audio_from_video
 from models.aiOperations import AIOperationsUpdateModel, VideoUrl
 
 from services.aiOperationsService.ai_operations import AIOperationsService
-from services.videoService.video_service import VideoService
+from services.videoService.video_service import LiveVideoService
 
 from services.userService.oauth import get_current_user
 
@@ -47,7 +47,7 @@ def update_ai_operations(id: UUID, ai_operations : AIOperationsUpdateModel, ai_o
 
 
 @ai_operations.get("/start-audio-processsing")
-def start_audio_processing(video_service: Annotated[VideoService, Depends(VideoService)]):
+def start_audio_processing(video_service: Annotated[LiveVideoService, Depends(LiveVideoService)]):
     try:
         # extract audio from video
         # video_to_process = videos[0]
