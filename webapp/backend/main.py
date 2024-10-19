@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from uvicorn import run
+from router.ml_layer import ml_layer
 from  router.user import user_router
 from router.live_video import live_video
 from router.live_video_edit_logs import live_video_edit_logs
@@ -29,6 +30,7 @@ app.include_router(live_video)
 app.include_router(live_video_edit_logs)
 app.include_router(ai_operations)
 
+app.include_router(ml_layer)
 #  adding websocket route configuration
 app.include_router(websocket_router)
 
