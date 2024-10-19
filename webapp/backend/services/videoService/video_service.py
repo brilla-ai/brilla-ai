@@ -99,6 +99,11 @@ class  LiveVideoService(ILiveVideoService):
         return error_response
     
 
+    def  update_live_video_status(self, id: UUID, status: VideoStatus):
+        live_video_response  =  self.live_video_repository.update_live_video_status(id, status) 
+        if( live_video_response ):
+            return  BaseResponseModel.create_response(live_video_response, "Live video updated successfully",status.HTTP_200_OK)
+        return  BaseResponseModel.create_response (None,"Live video not found",status.HTTP_404_NOT_FOUND)
 
     def __create_live_video_log(self, user_id : UUID, live_video_id  : UUID):
          #  add an entry to the log 
@@ -110,3 +115,10 @@ class  LiveVideoService(ILiveVideoService):
                 logging.info("Create_Live_Video: Could not create audit log")
 
             logging.info("Create_Live_Video: Audit log created successfully")
+
+
+    def get_status_live_video(self, video_status: VideoStatus):
+        status_live_video = self.live_video_repository.get_live_video_status(video_status)
+        if (not status_live_video):
+            return BaseResponseModel.create_response(None, "Live video not found", status.HTTP_404_NOT_FOUND)
+        return BaseResponseModel.create_response(status_live_video, "Live video fetched successfully",status.HTTP_200_OK)

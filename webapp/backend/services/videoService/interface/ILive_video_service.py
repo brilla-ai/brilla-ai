@@ -34,3 +34,7 @@ class ILiveVideoService(ABC):
     def stop_live_video_update(self, id: UUID, user_id: UUID, stop_status: Any) -> Any:
         """Stop updates for a live video."""
         pass
+    @abstractmethod
+    def   update_live_video_status(self, id: UUID, status: Any) -> Any:
+        """Update the status of a live video."""
+        pass
