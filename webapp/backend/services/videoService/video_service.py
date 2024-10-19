@@ -99,6 +99,11 @@ class  LiveVideoService(ILiveVideoService):
         return error_response
     
 
+    def  update_live_video_status(self, id: UUID, status: VideoStatus):
+        live_video_response  =  self.live_video_repository.update_live_video_status(id, status) 
+        if( live_video_response ):
+            return  BaseResponseModel.create_response(live_video_response, "Live video updated successfully",status.HTTP_200_OK)
+        return  BaseResponseModel.create_response (None,"Live video not found",status.HTTP_404_NOT_FOUND)
 
     def __create_live_video_log(self, user_id : UUID, live_video_id  : UUID):
          #  add an entry to the log 
