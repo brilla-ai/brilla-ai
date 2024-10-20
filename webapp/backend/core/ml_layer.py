@@ -68,7 +68,7 @@ def send_audio_to_ML_layer(process_cmd: str, audio_chunks_dir_path: str, base_ur
 
     while True:
         line = process_cmd.stdout.readline()
-        audio_line_match = re.search(r"\baudio\w+.mp3", line)
+        audio_line_match = re.search(r"\baudio\w+.wav", line)
 
         if audio_line_match:
             # wait for the audio to be written to file before sending 
@@ -131,26 +131,22 @@ def process_audio_from_video(video_url, audio_chunks_dir_path, base_url):
         extractedAudioTitle = downloadLink
     else:
         # create an audio file to contain full extracted audio
-        if os.path.isfile('output.opus'):
-            os.remove('output.opus')
-        extractedAudioTitle = 'output.opus'
+        if os.path.isfile('output.wav'):
+            os.remove('output.wav')
+        
         # download full audio of the youtube video
-        with yt_dlp.YoutubeDL({"quiet": True, 'extract_audio': True, 'format': 'bestaudio', 'outtmpl': extractedAudioTitle}) as ydl:
+        with yt_dlp.YoutubeDL({"quiet": True, 'extract_audio': True, 'format': 'bestaudio', 'postprocessors': [{'key': 'FFmpegExtractAudio','preferredcodec': 'wav'}], 'outtmpl': 'output.%(ext)s'}) as ydl:
             ydl.download(downloadLink)
 
-    # in both live stream and non live stream cases, use ffmpeg to convert the extracted audio to mp3 and split into 5s chunks
-    runAudioExtractCmd = subprocess.Popen('ffmpeg -i {} -vn -acodec libmp3lame -f segment -segment_time 5 {}'
-                                        .format(extractedAudioTitle, os.path.join(audio_chunks_dir_path, "audio%03d.mp3")), 
+        extractedAudioTitle = 'output.wav'
+
+    # in live stream, call fmpeg to extract the audio from the manifest youtube url and break into 5s chunks
+    # in non-live stream, call ffmpeg to break the full audio into 5s chunks
+    runAudioExtractCmd = subprocess.Popen('ffmpeg -i {} -vn -f segment -segment_time 5 {}'
+                                        .format(extractedAudioTitle, os.path.join(audio_chunks_dir_path, 'audio%03d.wav')), 
                                         stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=1, 
                                         universal_newlines=True, shell=True, text=True)
     
     send_audio_to_ML_layer(runAudioExtractCmd, audio_chunks_dir_path, base_url)
-    # runAudioExtractCmd = subprocess.Popen("python3 core/send_to_ML_layer.py", 
-    #                                     stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=1, 
-    #                                     universal_newlines=True, shell=True, text=True)
-
-    # cleanup created audio file if we are not in live stream
-    if not isLiveStream:
-        os.remove(extractedAudioTitle)
     
     runAudioExtractCmd.communicate()
