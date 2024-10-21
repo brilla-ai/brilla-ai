@@ -8,25 +8,26 @@ from core.ml_layer import process_audio_from_video
 from models.aiOperations import AIOperationsUpdateModel, VideoUrl
 
 from services.aiOperationsService.ai_operations import AIOperationsService
+from services.videoService.video_service import LiveVideoService
 
 from services.userService.oauth import get_current_user
 
 from models.user import ReadUserModel, Role
 from core.websocket_connection_manager import get_connection_manager
+from models.liveVideo import VideoStatus
 from websocket.websocket import ConnectionManager
 
 from fastapi.encoders import jsonable_encoder
 
 import base64
 import logging
+import os
 
 
 
 ai_operations = APIRouter(tags=["ai_operations"], prefix="/operations")
 
-videos = ["https://www.youtube.com/watch?v=2AUpiVB6zA4&ab_channel=NSMQAI"]
-
-BASE_URL = "https://3143-34-87-17-167.ngrok-free.app/"
+BASE_URL = os.getenv("ML_API_URL")
 
 AUDIO_CHUNKS_DIR_PATH = "cache/audio_chunks"
 
@@ -47,12 +48,18 @@ def update_ai_operations(id: UUID, ai_operations : AIOperationsUpdateModel, ai_o
 
 
 @ai_operations.get("/start-audio-processsing")
-def start_audio_processing():
+def start_audio_processing(video_service: Annotated[LiveVideoService, Depends(LiveVideoService)]):
     try:
         # extract audio from video
         # video_to_process = videos[0]
         # process and send to ML layer
-        process_audio_from_video(videos[0], AUDIO_CHUNKS_DIR_PATH, BASE_URL)
+        video = video_service.get_status_live_video(VideoStatus.live)
+        if(video.get("status_code") != 200):
+            return video
+        process_audio_from_video(video.get("data").get("video_link"), AUDIO_CHUNKS_DIR_PATH, BASE_URL)
+        
+
+
 
     except Exception as e:
         return {"message": str(e)}
