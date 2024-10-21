@@ -11,14 +11,14 @@ from fastapi.middleware.cors import CORSMiddleware
 import os 
 from database import Base, engine, get_db
 from dotenv import load_dotenv
-from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.interval import IntervalTrigger
 from helper.seed_data import Seed
 from job.video_job import check_and_update_live_video_status
 
 app = FastAPI()
 
-scheduler = BackgroundScheduler()
+scheduler = AsyncIOScheduler()
 scheduler.add_job( check_and_update_live_video_status, IntervalTrigger(seconds=60))
 scheduler.start()
 
