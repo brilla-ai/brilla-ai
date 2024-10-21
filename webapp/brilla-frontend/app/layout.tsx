@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import translations from "../public/i18n/en.json";
 import "../styles/globals.css";
+import QueryProvider from "@/components/query-client";
 
 
 export const metadata: Metadata = {
@@ -14,8 +15,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body >{children}</body>
-    </html>
+    <QueryProvider>
+      <html lang="en">
+        <body>{children}</body>
+      </html>
+    </QueryProvider>
   );
 }
