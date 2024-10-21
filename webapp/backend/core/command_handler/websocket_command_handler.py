@@ -2,6 +2,8 @@ from services.aiOperationsService.interface.IAi_operations import IAIOperationsS
 from services.videoService.interface.ILive_video_service import ILiveVideoService
 from websocket.interface.IConnection_manager import IConnectionManager
 
+from models.liveVideo import VideoStatus
+from fastapi.encoders import jsonable_encoder
 
 class WebSocketCommands:
 
@@ -22,6 +24,7 @@ class WebSocketCommands:
         
         response  = self.live_video_service.get_all_live_video()
         await self.websocket_connection_manager.send_message_to_group("live_video", response)
+        await self.websocket_connection_manager.send_message_to_group("admin_videos", response)
     
     async  def  get_ai_operations(self):
         
@@ -46,6 +49,17 @@ class WebSocketCommands:
                         print(f"Added WebSocket to group '{group_name}', total connections now: {len(self.websocket_connection_manager.active_connections[group_name])}")
                         print("Current active connections:", self.websocket_connection_manager.active_connections) 
                         await  websocket.send_json({"type": 1, "target": "handshake", "success": "WebSocket added to group", "version": "1.0.0", "protocol": "json"})
+
+                        if(group_name == "live_video"):
+                            video =  self.live_video_service.get_status_live_video(VideoStatus.live)
+                            print("Video",video)
+                            if(video.get("data")):
+                                await  websocket.send_json({"video_link": video.get("data").get("video_link")})
+
+                        if(group_name == "admin_videos"):
+                            videos = self.live_video_service.get_all_live_video()
+                            ai_operations = self.ai_operations_service.get_ai_operation()
+                            await  websocket.send_json({"videos": videos.get("data"), "ai_operations": ai_operations.get("data")})
                           
                     else: 
                         print("websocket already in group")
