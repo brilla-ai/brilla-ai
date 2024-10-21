@@ -38,3 +38,8 @@ next-env.d.ts
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+
+.env
+package-lock.json
+yarn.lock

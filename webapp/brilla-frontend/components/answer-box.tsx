@@ -3,23 +3,29 @@ import { useState, useEffect, useRef } from "react";
 import CursorSVG from "./icons";
 import translation from "../public/i18n/en.json";
 
-interface ChatContainerProps {
-  chatHistory: string[]; // Change the type to an array of strings
-}
-
-const AnswerBox = ({ chatHistory }: ChatContainerProps) => {
+const AnswerBox = ({
+  lastMessage,
+}: {
+  lastMessage: MessageEvent<any> | null;
+}) => {
   const [displayResponse, setDisplayResponse] = useState("");
   const [completedTyping, setCompletedTyping] = useState(false);
   const [isPulsating, setIsPulsating] = useState(false);
   const lastMessageRef =  useRef<HTMLDivElement>(null);
   const containerRef = useRef(null);
 
-  const [textValue, setTextValue] = useState('Rigid Body');
+  const [textValue, setTextValue] = useState("");
+  const [chat, setChat] = useState("");
+
+  // const { lastMessage, sendJsonMessage, lastJsonMessage } = useWebSocket(
+  //   ENV_VARS.WS_BASE_URL || "" // Provide a fallback empty string
+  // );
 
   const handleIconClick = () => {
-    // Access the value of the textarea
-    
-    const text = (document?.getElementById('textInput') as HTMLInputElement)?.value || '';
+    const textInput = document?.getElementById(
+      "textInput"
+    ) as HTMLTextAreaElement; // Cast to HTMLTextAreaElement
+    const text = textInput ? textInput.value : ""; // Ensure textInput is not null
 
     // Use the Web Speech API for text-to-speech
     const speech = new SpeechSynthesisUtterance(text);
@@ -34,14 +40,14 @@ const AnswerBox = ({ chatHistory }: ChatContainerProps) => {
   }
 
   useEffect(() => {
-    if (!chatHistory?.length) {
+    if (!chat?.length) {
       return;
     }
 
     setCompletedTyping(false);
 
     let i = 0;
-    const stringResponse = chatHistory[chatHistory.length - 1];
+    const stringResponse = chat[chat.length - 1];
 
     const intervalId = setInterval(() => {
       setDisplayResponse(stringResponse.slice(0, i));
@@ -55,14 +61,37 @@ const AnswerBox = ({ chatHistory }: ChatContainerProps) => {
     }, 60);
 
     return () => clearInterval(intervalId);
-  }, [chatHistory]);
+  }, [chat]);
 
   useEffect(() => {
     // Scroll to the last message when typing is completed or when a new message is added
     if (lastMessageRef.current) {
       lastMessageRef.current.scrollIntoView({ behavior: "auto" });
     }
-  }, [chatHistory, completedTyping]);
+  }, [chat, completedTyping]);
+
+  useEffect(() => {
+    if (lastMessage) {
+      const message = JSON.parse(lastMessage.data);
+
+      if (message.answer_text) {
+        console.log("message.answer_text", message.answer_text);
+        setTextValue(message.answer_text);
+      }
+
+      if (message.extracted_question) {
+        setChat(message.extracted_question);
+      }
+
+      // if (message.connection_id) {
+      //   sendJsonMessage({
+      //     type: 1,
+      //     target: "add_to_group",
+      //     arguments: [message.connection_id, "live_video"],
+      //   });
+      // }
+    }
+  }, [lastMessage]);
 
   return (
     <div className="flex flex-col h-full relative no-scrollbar">
@@ -79,13 +108,11 @@ const AnswerBox = ({ chatHistory }: ChatContainerProps) => {
             <div className="w-3 h-3 bg-blue-400 rounded-full border-blue-200 ml-2 mt-3"></div>
           )}
           <div className="overflow-y-auto h-[40vh] no-scrollbar">
-            {chatHistory.map((chat, index) => (
+            
               <div
-                key={index}
-                ref={index === chatHistory.length - 1 ? lastMessageRef : null}
                 className="px-2 py-2 mb-2"
               >
-                {index === chatHistory.length - 1 && !completedTyping ? (
+                {!completedTyping ? (
                   <div className="flex justify-start">
                     <span className="chat-bubble bg-gradient-to-r from-blue-400 to-violet-400 text-white rounded-lg p-2 whitespace-normal">
                       {displayResponse}
@@ -100,7 +127,7 @@ const AnswerBox = ({ chatHistory }: ChatContainerProps) => {
                   </div>
                 )}
               </div>
-            ))}
+            
           </div>
         </div>
       </div>
