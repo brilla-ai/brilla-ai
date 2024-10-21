@@ -26,9 +26,10 @@ def get_live_video_by_id(id:  UUID, live_video_service:  Annotated[LiveVideoServ
 
 
 @live_video.delete("/{id}")
-def delete_live_video(id:  UUID, live_video_service:  Annotated[LiveVideoService, Depends(LiveVideoService)], current_user:  ReadUserModel = Depends(get_current_user)):
+async def delete_live_video(id:  UUID, live_video_service:  Annotated[LiveVideoService, Depends(LiveVideoService)], current_user:  ReadUserModel = Depends(get_current_user)):
     if( current_user.role == Role.admin or  current_user.role == Role.moderator):
-        return live_video_service.delete_live_video(id,  current_user.id)
+        live_video_response = await live_video_service.delete_live_video(id,  current_user.id)
+        return live_video_response
     raise HTTPException(status_code=401, detail="Unauthorized")
 
 @live_video.post("/{id}/stop")
@@ -38,9 +39,9 @@ async def stop_live_video_update(id:  UUID, status: bool ,  live_video_service: 
     raise HTTPException(status_code=401, detail="Unauthorized")
 
 @live_video.put("/{id}")
-def update_live_video(live_video_data: LiveVideoUpdateModel, live_video_service:  Annotated[LiveVideoService, Depends(LiveVideoService)], current_user:  ReadUserModel = Depends(get_current_user)):
+async def update_live_video(live_video_data: LiveVideoUpdateModel, live_video_service:  Annotated[LiveVideoService, Depends(LiveVideoService)], current_user:  ReadUserModel = Depends(get_current_user)):
     if( current_user.role == Role.admin or  current_user.role == Role.moderator):
-        return live_video_service.update_live_video(live_video_data.id, live_video_data, current_user.id)
+        return await live_video_service.update_live_video(live_video_data.id, live_video_data, current_user.id)
     raise HTTPException(status_code=401, detail="Unauthorized")
 
 @live_video.post("/create")

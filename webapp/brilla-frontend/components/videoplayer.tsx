@@ -1,9 +1,11 @@
 "use client";
 import React, { useState } from "react";
-import dynamic from 'next/dynamic';
+import dynamic from "next/dynamic";
 import ShimmerPlaceholder from "./shimmer";
+import Image from "next/image";
+import ImagePlaceholder from "@/assets/images/image-placeholder.jpg";
 
-const ReactPlayer = dynamic(() => import('react-player'), { ssr: false });
+const ReactPlayer = dynamic(() => import("react-player"), { ssr: false });
 
 interface VideoPlayerProps {
   url: string;
@@ -23,7 +25,7 @@ const VideoPlayer = ({ url }: VideoPlayerProps) => {
   };
 
   const toggleMute = () => {
-    setIsMuted(!isMuted);  // Toggle between mute and unmute
+    setIsMuted(!isMuted); // Toggle between mute and unmute
   };
 
   return (

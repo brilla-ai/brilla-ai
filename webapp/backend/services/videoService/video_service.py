@@ -44,7 +44,7 @@ class  LiveVideoService(ILiveVideoService):
             
             return  BaseResponseModel.create_response(live_video_response, "Live video created successfully",status.HTTP_201_CREATED)
         
-    def  update_live_video(self, id: UUID, live_video : LiveVideoUpdateModel, user_id : UUID):
+    async def  update_live_video(self, id: UUID, live_video : LiveVideoUpdateModel, user_id : UUID):
         live_video = filter_none_values(live_video.model_dump())
         print(live_video.pop("id"), "live_video")
         live_video_response  =  self.live_video_repository.update_live_video(id, live_video) 
@@ -55,8 +55,9 @@ class  LiveVideoService(ILiveVideoService):
             self.__create_live_video_log(user_id, id)
 
             response =  BaseResponseModel.create_response(live_video_response, "Live video updated successfully",status.HTTP_200_OK)
+            await self.connection_manager.send_message_to_group("admin_videos", {"type": 1, "target": "update_video", "arguments": response})
             if(live_video.get("status") == VideoStatus.live):
-                self.connection_manager.send_message_to_group("live_video", response)
+                await self.connection_manager.send_message_to_group("admin_videos", {"type": 1, "target": "update_video", "arguments": response})
             return response 
 
     def  get_live_video_by_id(self, id: UUID):
@@ -76,11 +77,11 @@ class  LiveVideoService(ILiveVideoService):
         if( delete_reponse ):
             self.__create_live_video_log(user_id, id)
             delete_reponse = BaseResponseModel.create_response (None,"Live video deleted successfully",status.HTTP_200_OK)  
-            self.connection_manager.send_message_to_group("live_video", delete_reponse)
+            await self.connection_manager.send_message_to_group("admin_videos", {"type": 1, "target": "delete_video", "arguments": delete_reponse})
             return delete_reponse
         delete_response_error =  BaseResponseModel.create_response (None,"Live video not found",status.HTTP_404_NOT_FOUND) 
-        await self.connection_manager.send_message_to_group("live_video", delete_reponse)
-        return delete_response_error
+        await self.connection_manager.send_message_to_group("admin_videos", {"type": 1, "target": "delete_video", "arguments": delete_response_error})
+        return delete_reponse
     
 
     async def  stop_live_video_update(self, id: UUID, user_id : UUID, stop_status: LiveVideoUpdateStopStatusModel):
@@ -92,13 +93,18 @@ class  LiveVideoService(ILiveVideoService):
             self.__create_live_video_log(user_id, id)
 
             response =   BaseResponseModel.create_response(live_video_response, "Live video updated successfully",status.HTTP_200_OK)
-            await self.connection_manager.send_message_to_group("live_video", response)
+            await self.connection_manager.send_message_to_group("admin_videos", {"type": 1, "target": "stop_video", "arguments": response})
             return response
         error_response = BaseResponseModel.create_response(None, "Live video not found", status.HTTP_404_NOT_FOUND)
-        await self.connection_manager.send_message_to_group("live_video", error_response)
+        await self.connection_manager.send_message_to_group("admin_videos", {"type": 1, "target": "stop_video", "arguments": error_response})
         return error_response
     
 
+    def  update_live_video_status(self, id: UUID, status: VideoStatus):
+        live_video_response  =  self.live_video_repository.update_live_video_status(id, status) 
+        if( live_video_response ):
+            return  BaseResponseModel.create_response(live_video_response, "Live video updated successfully",status.HTTP_200_OK)
+        return  BaseResponseModel.create_response (None,"Live video not found",status.HTTP_404_NOT_FOUND)
 
     def __create_live_video_log(self, user_id : UUID, live_video_id  : UUID):
          #  add an entry to the log 
@@ -110,3 +116,10 @@ class  LiveVideoService(ILiveVideoService):
                 logging.info("Create_Live_Video: Could not create audit log")
 
             logging.info("Create_Live_Video: Audit log created successfully")
+
+
+    def get_status_live_video(self, video_status: VideoStatus):
+        status_live_video = self.live_video_repository.get_live_video_status(video_status)
+        if (not status_live_video):
+            return BaseResponseModel.create_response(None, "Live video not found", status.HTTP_404_NOT_FOUND)
+        return BaseResponseModel.create_response(status_live_video, "Live video fetched successfully",status.HTTP_200_OK)

@@ -19,7 +19,9 @@ class AIOperationsRepository:
     def  update_ai_operations(self, id: UUID, ai_operations : dict ) -> AIOperationsReadModel:
         self.db.query(AIOperations).filter(AIOperations.id == id).update( ai_operations, synchronize_session='evaluate')
         self.db.commit()
-        return ai_operations  
+
+        ai_response = self.db.query(AIOperations).filter(AIOperations.id == id).first()
+        return jsonable_encoder((AIOperationsReadModel.from_orm(ai_response).dict()))  
 
     def get_ai_operation(self) -> AIOperationsReadModel:
         response  =  self.db.query(AIOperations).where(AIOperations.deleted_at == None).first()  

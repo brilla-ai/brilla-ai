@@ -9,7 +9,7 @@ import { socialLinks } from "../mocks/social-links";
 
 const Footer = () => {
   return (
-    <footer className="bg-[#0C0315] text-white py-8 w-full px-5 md:px-10 flex flex-col gap-4 md:flex-row justify-between">
+    <footer className="bg-[#0C0315] text-white py-8 w-full px-5 md:px-10 flex flex-col gap-4 md:flex-row justify-between absolute bottom-0">
       <div className="  flex flex-col items-start">
         <span className="text-2xl font-medium mb-4">
           {translation["logoText"]}{" "}
