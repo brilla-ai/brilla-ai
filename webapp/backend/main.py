@@ -19,7 +19,7 @@ from job.video_job import check_and_update_live_video_status
 app = FastAPI()
 
 scheduler = AsyncIOScheduler()
-scheduler.add_job( check_and_update_live_video_status, IntervalTrigger(seconds=1))
+scheduler.add_job( check_and_update_live_video_status, IntervalTrigger(seconds=60))
 scheduler.start()
 
 app.add_middleware(
