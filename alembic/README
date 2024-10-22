@@ -1,8 +1,0 @@
-Generic single-database configuration.
-
-<!-- Create a revision  -->
--- alembic revision --autogenerate -m "#revision name and reaoson with changes(descriptive)"
-
-
-<!--  Allpy revison -->
-alembic upgreade head 
