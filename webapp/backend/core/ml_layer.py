@@ -14,8 +14,6 @@ import re
 import time
 
 
-current_round = 4
-
 # Function to split audio into chunks and transcribe them
 def transcribe_in_chunks(audio_path: str, base_url: str, chunk_duration_ms: int = 10000):
     audio = AudioSegment.from_file(audio_path)
@@ -53,7 +51,7 @@ def transcribe_audio_chunk(audio_file: str, base_url: str) -> str:
         bytes_data = base64.b64encode(audio_bytes).decode()
 
         #TODO: request the actual round here
-        payload = {"data": bytes_data, "filename": os.path.basename(audio_file), "current_round": current_round}
+        payload = {"data": bytes_data, "filename": os.path.basename(audio_file), "current_round": 4}
         response = requests.post(STT_API_ENDPOINT, json=payload)
 
         transcript = ""
@@ -64,7 +62,7 @@ def transcribe_audio_chunk(audio_file: str, base_url: str) -> str:
 
     return transcript
 
-def send_audio_to_ML_layer(process_cmd: str, audio_chunks_dir_path: str, base_url: str):
+def send_audio_to_ML_layer(process_cmd: str, audio_chunks_dir_path: str, base_url: str, current_round: int):
 
     while True:
         line = process_cmd.stdout.readline()
@@ -123,7 +121,7 @@ def cleanup_audio_files(directory_path):
             os.remove(file_path)
             print(f"Deleted: {file_path}")
 
-def process_audio_from_video(video_url, audio_chunks_dir_path, base_url):
+def process_audio_from_video(video_url, audio_chunks_dir_path, base_url, current_round):
 
     downloadLink, isLiveStream = get_manifest_url_download_link(video_url)
 
@@ -147,6 +145,8 @@ def process_audio_from_video(video_url, audio_chunks_dir_path, base_url):
                                         stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=1, 
                                         universal_newlines=True, shell=True, text=True)
     
+
     send_audio_to_ML_layer(runAudioExtractCmd, audio_chunks_dir_path, base_url)
+
     
     runAudioExtractCmd.communicate()

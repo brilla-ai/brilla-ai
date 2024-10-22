@@ -42,7 +42,8 @@ class LiveVideoRepository:
         self.db.commit()
         
         # self.db.refresh(live_video)
-        response  =  jsonable_encoder(LiveVideoReadModel.from_orm(live_video))
+        live_video_response = self.db.query(LiveVideo).filter(LiveVideo.id == id, LiveVideo.deleted_at == None).first()
+        response  =  jsonable_encoder(LiveVideoReadModel.from_orm(live_video_response))
         return response
     
 
@@ -85,4 +86,6 @@ class LiveVideoRepository:
     
     def get_live_video_status(self, status: VideoStatus) -> Optional[LiveVideoReadModel]:
         live_video = self.db.query(LiveVideo).filter(LiveVideo.status == status).first()
+        if not live_video:
+            return None
         return jsonable_encoder(LiveVideoReadModel.from_orm(live_video))
