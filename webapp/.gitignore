@@ -96,3 +96,5 @@ MANIFEST
 htmlcov/
 # Local development settings
 .settings/
+
+output.opus

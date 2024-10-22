@@ -107,6 +107,7 @@ class LiveVideoCreateModel(BaseModel):
     tag: str
     start_time: Optional[datetime]  = None
     end_time: Optional[datetime]
+    status: Optional[VideoStatus] = VideoStatus.live
 
     
 
