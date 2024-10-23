@@ -1,53 +1,113 @@
-# Brilla AI Web application
 
-Latest Information on app deployment and setup can be found [here](./streamlitDemo/README.md)
+# Brilla AI web application
 
-## Frontend
+This repository contains both the frontend and backend for the Brilla web application. The frontend is developed using the [Next.js](https://nextjs.org/) framework, while the backend is built with [FastAPI](https://fastapi.tiangolo.com/) and requires a PostgreSQL database.
 
-Frontend is using NextJS. To deploy the frontend locally, run the development server from `webapp/frontend`:
+## Project Structure
 
-```bash
-npm run dev
-```
+- **brilla-frontend/** - The frontend codebase (Next.js).
+- **backend/** - The backend codebase (FastAPI).
+- **webapp/** - Main folder containing both frontend and backend projects.
 
-Open `http://localhost:3000` with your browser to see the result.
+## Getting Started
 
-![homepage](./frontend/public/homepage.png)
+### Prerequisites
 
-You can start editing the page by modifying `webapp/frontend/pages/index.tsx`. The page auto-updates as you edit the file.
+- **Node.js** (for the frontend)
+- **Python 3.8+** (for the backend)
+- **PostgreSQL** (for the database)
 
-## Backend
+### Cloning the Repository
 
-Backend is using NodeJS with a MongoDB Atlas cluster. To deploy the backend locally, run the development server from `webapp/backend`:
+1. Clone the repository:
 
-### Server
+   ```bash
+   git clone <repository-url>
+   ```
 
-- Entry point for application: server.ts.
+2. Change directory into the \`webapp\` folder:
 
-Run the following command to install node modules
+   ```bash
+   cd webapp
+   ```
 
-```bash
-npm install 
-```
+---
 
-Use the following commands to start the server
+## Frontend Setup (Next.js)
 
-```bash
-npm run start
-```
+### Steps to Run the Frontend
 
-```bash
-npm run watch
-```
+1. Navigate to the \`brilla-frontend\` folder:
 
-Visit `https://localhost:5000` with your browser to see the result.
+   ```bash
+   cd brilla-frontend
+   ```
 
-### Testing
+2. Install dependencies:
 
-- Testing framework: Jasmine.
+   ```bash
+   npm install
+   ```
 
-Run the following command to test application
+3. Create a \`.env\` file in the \`brilla-frontend\` folder with the following environment variables:
 
-```bash
-npm run test
-```
+   ```
+   NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
+   NEXT_PUBLIC_WS_BASE_URL=ws://localhost:8000/websocket/ws
+   ```
+
+4. Start the development server:
+
+   ```bash
+   npm run dev
+   ```
+
+   The frontend will be available at `http://localhost:3000`.
+
+---
+
+## Backend Setup (FastAPI)
+
+### Prerequisites
+
+- **PostgreSQL** must be running locally.
+
+### Steps to Run the Backend
+
+1. Navigate to the \`backend\` folder:
+
+   ```bash
+   cd backend
+   ```
+
+2. Ensure PostgreSQL is running.
+
+3. Install the backend dependencies:
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. Create a \`.env.dev\` file in the \`backend\` folder with the following content:
+
+   ```
+   DATABASE_URL_VALUE='postgresql+psycopg2://username:password@localhost:5432/brillaai'
+   DEBUG=True
+   ML_API_URL=<your-ml-api-url>
+   ```
+
+5. Start the FastAPI server for development:
+
+   ```bash
+   uvicorn main:app --reload
+   ```
+
+   The backend will be available at `http://localhost:8000`.
+
+---
+
+### Notes
+
+- Be sure to update the `.env` files with your own configuration values.
+- The backend requires a PostgreSQL database connection, so ensure your local environment is correctly set up.
+
