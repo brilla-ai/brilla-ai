@@ -62,7 +62,31 @@ def transcribe_audio_chunk(audio_file: str, base_url: str) -> str:
 
     return transcript
 
-def send_audio_to_ML_layer(process_cmd: str, audio_chunks_dir_path: str, base_url: str, current_round: int):
+
+def is_file_being_written(file_path):
+    """Checks if a file is currently being written to."""
+
+    try:
+        if not os.path.isfile(file_path):
+            return True
+        # Get the initial file size
+        initial_size = os.path.getsize(file_path)
+
+        # Wait a short period (e.g., 1 second)
+        time.sleep(0.1)
+
+        # Get the file size again
+        final_size = os.path.getsize(file_path)
+        # If the file size has changed, it's likely being written to
+        if (initial_size == 0 and final_size == 0):
+            return True
+        else:
+            return initial_size != final_size
+
+    except FileNotFoundError:
+        return False  # File not found
+
+def send_audio_to_ML_layer(process_cmd: str, audio_chunks_dir_path: str, base_url: str, current_round: int, is_live_stream: bool):
 
     while True:
         line = process_cmd.stdout.readline()
@@ -70,31 +94,36 @@ def send_audio_to_ML_layer(process_cmd: str, audio_chunks_dir_path: str, base_ur
 
         if audio_line_match:
             # wait for the audio to be written to file before sending 
-            time.sleep(3.5)
+            # time.sleep(3.5)
             audio_chunk_file_name = audio_line_match.group()
             full_audio_path = os.path.join(audio_chunks_dir_path, audio_chunk_file_name)
+            start_time = time.perf_counter()
+            # if os.path.isfile(full_audio_path):
+            end_time = time.perf_counter()
+            while is_file_being_written(full_audio_path):
+                continue
+            # send to ML layer
+            ML_API_ENDPOINT = base_url.rstrip('/') + '/start-brilla-ai'
+        
+            with open(full_audio_path, "rb") as f:
+                audio_bytes = f.read()
+                bytes_data = base64.b64encode(audio_bytes).decode()
 
-            if os.path.isfile(full_audio_path):
-                # send to ML layer
-                ML_API_ENDPOINT = base_url.rstrip('/') + '/start-brilla-ai'
-            
-                with open(full_audio_path, "rb") as f:
-                    audio_bytes = f.read()
-                    bytes_data = base64.b64encode(audio_bytes).decode()
+                #TODO: request the actual round here
+                if not is_live_stream:
+                    time.sleep(2)
+                payload = {"data": bytes_data, "filename": os.path.basename(full_audio_path), "current_round": current_round}
+                response = requests.post(ML_API_ENDPOINT, json=payload)
 
-                    #TODO: request the actual round here
-                    payload = {"data": bytes_data, "filename": os.path.basename(full_audio_path), "current_round": current_round}
-                    response = requests.post(ML_API_ENDPOINT, json=payload)
-
-                    if response.status_code == 200:
-                        res_json = response.json()
-                        task_id = res_json.get("task_id")
-                        print("Started Processing with task id:", task_id)
-                    else:
-                        print(f"Something went wrong: {response.status_code}")
+                if response.status_code == 200:
+                    res_json = response.json()
+                    task_id = res_json.get("task_id")
+                    print("Started Processing with task id:", task_id)
+                else:
+                    print(f"Something went wrong: {response.status_code}")
                 
-                # remove file aftr processing
-                os.remove(full_audio_path)
+            # remove file aftr processing
+            os.remove(full_audio_path)
 
 def get_manifest_url_download_link(video_url):
     with yt_dlp.YoutubeDL({"quiet": True}) as ydl:
@@ -145,7 +174,7 @@ def process_audio_from_video(video_url, audio_chunks_dir_path, base_url, current
                                         stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=1, 
                                         universal_newlines=True, shell=True, text=True)
     
-    send_audio_to_ML_layer(runAudioExtractCmd, audio_chunks_dir_path, base_url, current_round)
+    send_audio_to_ML_layer(runAudioExtractCmd, audio_chunks_dir_path, base_url, current_round, isLiveStream)
     # runAudioExtractCmd = subprocess.Popen("python3 core/send_to_ML_layer.py", 
     #                                     stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=1, 
     #                                     universal_newlines=True, shell=True, text=True)

@@ -48,7 +48,7 @@ async def update_ai_operations(id: UUID, ai_operations : AIOperationsUpdateModel
 
 
 @ai_operations.get("/start-audio-processing")
-async def start_audio_processing(video_service: Annotated[LiveVideoService, Depends(LiveVideoService)], ai_operations_service: Annotated[AIOperationsService, Depends(AIOperationsService)]):
+def start_audio_processing(video_service: Annotated[LiveVideoService, Depends(LiveVideoService)], ai_operations_service: Annotated[AIOperationsService, Depends(AIOperationsService)]):
     try:
         # extract audio from video
         # video_to_process = videos[0]
