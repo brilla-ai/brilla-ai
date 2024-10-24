@@ -40,9 +40,9 @@ const AIOperations: React.FC<AIOperationsEventProps> = ({
           start_audio_processing: !isProcessing,
         },
       });
-      // // if (!isProcessing) {
-      await startProcessingAudio();
-      // }
+      if (!isProcessing) {
+        await startProcessingAudio();
+      }
       // setIsProcessing(!isProcessing);
     } catch (error) {
       console.error("Error toggling audio processing:", error);

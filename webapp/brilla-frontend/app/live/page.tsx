@@ -29,6 +29,9 @@ export default function Home() {
       } else if (message.target === "video_ended") {
         setVideoUrl("");
       }
+      if (message.video_link) {
+        setVideoUrl(message.video_link);
+      }
       if (message.connection_id) {
         sendJsonMessage({
           type: 1,
@@ -41,14 +44,14 @@ export default function Home() {
   return (
     <main className="flex flex-col ">
       <Navbar gradientBg={true} />
-        <div className="flex flex-col md:flex-row justify-evenly md:items-start items-center md:align-top mt-6 md:mt-8 md:mx-16 md:gap-8 ">
-          <div className="md:mt-[24px] flex-1 ">
-            <VideoPlayer url={videoUrl} />
-          </div>
-          <div className="min-h-[580px]">
-            <AnswerBox lastMessage={lastMessage} />
-          </div>
+      <div className="flex flex-col md:flex-row justify-evenly md:items-start items-center md:align-top mt-6 md:mt-8 md:mx-16 md:gap-8 ">
+        <div className="md:mt-[24px] flex-1 ">
+          <VideoPlayer url={videoUrl} />
         </div>
+        <div className="min-h-[580px]">
+          <AnswerBox lastMessage={lastMessage} />
+        </div>
+      </div>
       <QuizFooter />
     </main>
   );
