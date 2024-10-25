@@ -44,7 +44,7 @@ export default function Home() {
   return (
     <main className="flex flex-col ">
       <Navbar gradientBg={true} />
-      <div className="flex flex-col md:flex-row justify-evenly md:items-start items-center md:align-top mt-6 md:mt-8 md:mx-16 md:gap-8 ">
+       <div className="flex flex-col md:flex-row justify-evenly md:items-start items-stretch md:align-top mt-6 mx-8 md:mt-8 md:mx-16 md:gap-8 ">
         <div className="md:mt-[24px] flex-1 ">
           <VideoPlayer url={videoUrl} />
         </div>
