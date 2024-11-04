@@ -35,13 +35,15 @@ async def receive_from_brilla_ai(payload: Dict[str, Union[str, bytes]], connecti
                 # logging.info("Handling QE Data")
                 await connection_manager.send_message_to_group("live_video", json_response)
                 return {"message": "QE Data received", "data": payload}
-            elif payload.get('answer_text'):
+            elif 'answer_text' in payload:
                 await connection_manager.send_message_to_group("live_video", json_response)
                 # logging.info("Handling QA Data")
                 return {"message": "QA Data received", "data": payload}
         elif 'generated_audio' in payload:
             # logging.info("Handling TTS Data")
             value = payload.get("generated_audio")
+
+            # print("TTS_PAYLOAD", value)
             # print("TTS_PAYLOAD", payload)
             
             # if isinstance(value, bytes):

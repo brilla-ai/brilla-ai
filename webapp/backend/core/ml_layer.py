@@ -12,6 +12,24 @@ import sys
 import glob
 import re
 import time
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
+
+# # Create a session
+# session = requests.Session()
+
+# # Define a retry strategy
+# retry_strategy = Retry(
+#     total=3,
+#     backoff_factor=0.5,
+#     status_forcelist=[429, 500, 502, 503, 504],
+#     allowed_methods=["HEAD", "GET", "OPTIONS"]
+# )
+
+# # Mount the retry strategy to the session
+# adapter = HTTPAdapter(max_retries=retry_strategy)
+# session.mount("http://", adapter)
+# session.mount("https://", adapter)
 
 
 # Function to split audio into chunks and transcribe them
@@ -94,7 +112,7 @@ def send_audio_to_ML_layer(process_cmd: str, audio_chunks_dir_path: str, base_ur
 
         if audio_line_match:
             # wait for the audio to be written to file before sending 
-            # time.sleep(3.5)
+            # time.sleep(0.5)
             audio_chunk_file_name = audio_line_match.group()
             full_audio_path = os.path.join(audio_chunks_dir_path, audio_chunk_file_name)
             start_time = time.perf_counter()
@@ -104,6 +122,8 @@ def send_audio_to_ML_layer(process_cmd: str, audio_chunks_dir_path: str, base_ur
                 continue
             # send to ML layer
             ML_API_ENDPOINT = base_url.rstrip('/') + '/start-brilla-ai'
+
+
         
             with open(full_audio_path, "rb") as f:
                 audio_bytes = f.read()
@@ -114,13 +134,30 @@ def send_audio_to_ML_layer(process_cmd: str, audio_chunks_dir_path: str, base_ur
                     time.sleep(2)
                 payload = {"data": bytes_data, "filename": os.path.basename(full_audio_path), "current_round": current_round}
                 response = requests.post(ML_API_ENDPOINT, json=payload)
-
                 if response.status_code == 200:
                     res_json = response.json()
                     task_id = res_json.get("task_id")
                     print("Started Processing with task id:", task_id)
                 else:
                     print(f"Something went wrong: {response.status_code}")
+                # try:
+                #     response = session.post(ML_API_ENDPOINT, json=payload)
+                #     response.raise_for_status()
+                #     print("Request successful.")
+                #     print(f"Response: {response.content}")
+                #     if response.status_code == 200:
+                #         res_json = response.json()
+                #         task_id = res_json.get("task_id")
+                #         print("Started Processing with task id:", task_id)
+                #     else:
+                #         print(f"Something went wrong: {response.status_code}")
+                # except requests.exceptions.ConnectionError as e:
+                #     print(f"Connection error: {e}")
+                # except requests.exceptions.HTTPError as e:
+                #     print(f"HTTP error: {e}")
+                # except requests.exceptions.RequestException as e:
+                #     print(f"General error: {e}")
+
                 
             # remove file aftr processing
             os.remove(full_audio_path)
