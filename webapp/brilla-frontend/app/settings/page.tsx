@@ -47,7 +47,7 @@ const SettingsPage = () => {
           <h1 className="text-3xl font-bold">Settings</h1>
           <AIOperations lastJsonMessage={lastJsonMessage} />
           <div className="flex gap-12 flex-col md:flex-row">
-            <div className="self-center border border-[#CBD5E1] rounded-lg p-6 max-w-[435px]">
+            <div className="max-h-max border border-[#CBD5E1] rounded-lg p-6 max-w-[435px]">
               <LiveVideoUrlForm />
             </div>
             <LiveVideoLinks lastJsonMessage={lastJsonMessage} />

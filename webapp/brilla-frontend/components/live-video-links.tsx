@@ -48,7 +48,7 @@ const LiveVideoLinks = ({ lastJsonMessage }: LiveVideoLinksEventProps) => {
 
   return (
     <>
-      <div className="border border-[#ADB5BD] rounded py-4 px-7 max-w-[604px] w-full h-max">
+      <div className="border border-[#ADB5BD] rounded py-4 px-7 max-w-[604px] w-full h-max max-h-[700px] overflow-y-auto">
         <div className="grid lg:grid-cols-2">
           <p className="text-lg text-[#0F172A] font-semibold">
             Live Video Links

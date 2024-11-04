@@ -11,11 +11,12 @@ const AnswerBox = ({
   const [displayResponse, setDisplayResponse] = useState("");
   const [completedTyping, setCompletedTyping] = useState(false);
   const [isPulsating, setIsPulsating] = useState(false);
-  const lastMessageRef =  useRef<HTMLDivElement>(null);
+  const lastMessageRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef(null);
 
   const [textValue, setTextValue] = useState("");
   const [chat, setChat] = useState("");
+  const [transcript, setTranscript] = useState("");
 
   // const { lastMessage, sendJsonMessage, lastJsonMessage } = useWebSocket(
   //   ENV_VARS.WS_BASE_URL || "" // Provide a fallback empty string
@@ -37,7 +38,7 @@ const AnswerBox = ({
     speech.onend = () => {
       setIsPulsating(false);
     };
-  }
+  };
 
   useEffect(() => {
     if (!chat?.length) {
@@ -82,6 +83,9 @@ const AnswerBox = ({
       if (message.extracted_question) {
         setChat(message.extracted_question);
       }
+      if (message.transcript) {
+        setTranscript(message.transcript);
+      }
 
       // if (message.connection_id) {
       //   sendJsonMessage({
@@ -95,80 +99,100 @@ const AnswerBox = ({
 
   return (
     <div className="flex flex-col h-full relative no-scrollbar">
-      <div className="max-w-lg  ">
+      <div className="max-w-lg min-w-lg w-full ">
         <div
           ref={containerRef}
-          className="shadow-xl rounded-lg flex flex-col m-6 border-2 border-slate-300 h-[47vh]"
+          className="shadow-xl rounded-lg flex flex-col m-6 border-2 border-slate-300 max-h-max"
         >
-       
+          <div className="overflow-y-auto max-h-max h-full no-scrollbar">
+            <div className="px-2 py-2 mb-2 flex flex-col">
+              <div className="chat-bubble-other  text-gray-800 rounded-lg p-2 whitespace-normal border-2 border-slate-300 h-max min-h-20 text-base">
+                {transcript}
+              </div>
+              <span className="text-sm text-[#D4DCEF] font-sans font-semibold self-end">
+                {translation["transcriptionText"]}
+              </span>
+              {/* {!completedTyping ? (
+                <div className="flex justify-start">
+                  <span className="chat-bubble bg-gradient-to-r from-blue-400 to-violet-400 text-white rounded-lg p-2 whitespace-normal">
+                    {displayResponse}
+                    {!completedTyping && <CursorSVG />}
+                  </span>
+                </div>
+              ) : (
+                <div className="flex justify-start">
+                  <div className="chat-bubble-other bg-gradient-to-r from-gray-300 to-gray-200 text-gray-800 rounded-lg p-2 whitespace-normal">
+                    {chat}
+                  </div>
+                </div>
+              )} */}
+            </div>
+          </div>
+        </div>
+        <div
+          ref={containerRef}
+          className="shadow-xl rounded-lg flex flex-col m-6 border-2 border-slate-300 h-[34vh] p-2"
+        >
           {!completedTyping ? (
             <div className="w-4 h-4 bg-blue-600 rounded-full border-violet-100 border-2 ml-2 m-3 animate-pulse-custom"></div>
-            
           ) : (
             <div className="w-3 h-3 bg-blue-400 rounded-full border-blue-200 ml-2 mt-3"></div>
           )}
           <div className="overflow-y-auto h-[40vh] no-scrollbar">
-            
-              <div
-                className="px-2 py-2 mb-2"
-              >
-                {!completedTyping ? (
-                  <div className="flex justify-start">
-                    <span className="chat-bubble bg-gradient-to-r from-blue-400 to-violet-400 text-white rounded-lg p-2 whitespace-normal">
-                      {displayResponse}
-                      {!completedTyping && <CursorSVG />}
-                    </span>
+            <div className="px-2 py-2 mb-2">
+              {!completedTyping ? (
+                <div className="flex justify-start">
+                  <span className="chat-bubble bg-gradient-to-r from-blue-400 to-violet-400 text-white rounded-lg p-2 whitespace-normal">
+                    {displayResponse}
+                    {!completedTyping && <CursorSVG />}
+                  </span>
+                </div>
+              ) : (
+                <div className="flex justify-start">
+                  <div className="chat-bubble-other bg-gradient-to-r from-gray-300 to-gray-200 text-gray-800 rounded-lg p-2 whitespace-normal">
+                    {chat}
                   </div>
-                ) : (
-                  <div className="flex justify-start">
-                    <div className="chat-bubble-other bg-gradient-to-r from-gray-300 to-gray-200 text-gray-800 rounded-lg p-2 whitespace-normal">
-                      {chat}
-                    </div>
-                  </div>
-                )}
-              </div>
-            
+                </div>
+              )}
+            </div>
           </div>
+
+          <span className="text-sm text-[#D4DCEF] font-sans font-semibold self-end">
+            {translation["extractedQuestionText"]}
+          </span>
         </div>
       </div>
 
       <div className="mx-6 shadow-lg flex flex-col border-2 border-white bg-white rounded-lg px-3 py-1 md:mt-2 order-first md:order-last mt-4">
-      <div className="flex items-center flex-1 justify-center">
-        <span
-          className="h-12 w-12 flex items-center justify-center bg-[#F1F5F9] text-white rounded-md self-center shadow border-2 border-[#E2E8F0] cursor-pointer ${isPulsating ? 'pulsate' : 'bg-[#F1F5F9]'}`"
-          onClick={handleIconClick}
-          style={{
-            borderColor: isPulsating ? 'rgba(255, 0, 0, 0.5)' : '#E2E8F0',
-            transition: 'border-color 0.5s',
-            animation: isPulsating ? 'pulsate 1s infinite' : 'none'
-          }}
-          
-        >
-          🔊
-        </span>
-        <div className="flex flex-col ml-2 flex-1 items-center">
-          <textarea
-            className="px-4 py-2 overflow-auto bg-white font-bold text-[#0F172A] text-xl rounded-md border-2 w-full border-[#F1F5F9] focus:ring-violet-400 outline-none resize-none"
-            id="textInput"
-            readOnly
-            value={textValue}
-            wrap="soft"
-            rows={1}
-          />
+        <div className="flex items-center flex-1 justify-center">
+          <span
+            className="h-12 w-12 flex items-center justify-center bg-[#F1F5F9] text-white rounded-md self-center shadow border-2 border-[#E2E8F0] cursor-pointer ${isPulsating ? 'pulsate' : 'bg-[#F1F5F9]'}`"
+            onClick={handleIconClick}
+            style={{
+              borderColor: isPulsating ? "rgba(255, 0, 0, 0.5)" : "#E2E8F0",
+              transition: "border-color 0.5s",
+              animation: isPulsating ? "pulsate 1s infinite" : "none",
+            }}
+          >
+            🔊
+          </span>
+          <div className="flex flex-col ml-2 flex-1 items-center">
+            <textarea
+              className="px-4 py-2 overflow-auto bg-white font-bold text-[#0F172A] text-xl rounded-md border-2 w-full border-[#F1F5F9] focus:ring-violet-400 outline-none resize-none"
+              id="textInput"
+              readOnly
+              value={textValue}
+              wrap="soft"
+              rows={1}
+            />
+          </div>
         </div>
+        <span className="text-sm text-[#D4DCEF] font-sans font-semibold self-end">
+          {translation["answerText"]}
+        </span>
       </div>
-      <span className="text-sm text-[#D4DCEF] font-sans font-semibold self-end">
-        {translation["answerText"]}
-      </span>
-    </div>
-    
-
-      
     </div>
   );
-
-
 };
-
 
 export default AnswerBox;
