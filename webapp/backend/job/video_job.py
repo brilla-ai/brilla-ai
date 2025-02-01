@@ -22,7 +22,6 @@ live_video_service  = get_live_video_repository_manager()
 connection_manager = get_connection_manager()
 
 async def  check_and_update_live_video_status():
-    print( "Background service running...")
     current_time  = datetime.utcnow()
     videos  = live_video_service.get_all_live_video()
 
