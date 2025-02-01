@@ -145,13 +145,8 @@ def process_audio_from_video(video_url, audio_chunks_dir_path, base_url, current
                                         stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=1, 
                                         universal_newlines=True, shell=True, text=True)
     
-    send_audio_to_ML_layer(runAudioExtractCmd, audio_chunks_dir_path, base_url, current_round)
-    # runAudioExtractCmd = subprocess.Popen("python3 core/send_to_ML_layer.py", 
-    #                                     stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=1, 
-    #                                     universal_newlines=True, shell=True, text=True)
 
-    # cleanup created audio file if we are not in live stream
-    if not isLiveStream:
-        os.remove(extractedAudioTitle)
+    send_audio_to_ML_layer(runAudioExtractCmd, audio_chunks_dir_path, base_url)
+
     
     runAudioExtractCmd.communicate()
