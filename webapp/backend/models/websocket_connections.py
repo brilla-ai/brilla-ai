@@ -9,7 +9,7 @@ from database import Base
 from BaseModel import DefaultData
 
 #  TODO:  Implement the persistence of the connection ids later 
-class WebSocketConenction(Base , DefaultData):
+class WebSocketConnection(Base , DefaultData):
     __tablename__ = "websocket_connections"
     id = Column(Integer, primary_key=True, index=True)
     client_id = Column(String, index=True)

@@ -1,4 +1,3 @@
-# core/command_handler/base_command_executor.py
 
 from abc import ABC, abstractmethod
 

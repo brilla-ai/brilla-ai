@@ -1,10 +1,5 @@
-
-
-
-
 from typing import Annotated
 from fastapi import APIRouter, Depends, WebSocket
-
 from services.websocketService.websocket import WebSocketService
 from core.command_handler.factory import get_command_handler
 from websocket.websocket_command_handler import CommandHandler

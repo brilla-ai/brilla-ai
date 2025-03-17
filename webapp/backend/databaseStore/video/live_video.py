@@ -2,14 +2,15 @@ from datetime import datetime
 
 from typing import Annotated, List, Optional
 
-from uuid import UUID, uuid4
+from uuid import UUID
 
 from fastapi import Depends
 
 from fastapi.encoders import jsonable_encoder
+
 from sqlalchemy.orm import Session
 
-from models.liveVideo import LiveVideo, LiveVideoCreateModel, LiveVideoReadModel, LiveVideoUpdateStopStatusModel, VideoStatus
+from models.liveVideo import LiveVideo, LiveVideoCreateModel, LiveVideoReadModel, VideoStatus
 
 from database import get_db
 

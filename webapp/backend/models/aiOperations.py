@@ -1,13 +1,9 @@
 from typing import Optional
-from uuid import uuid4,  UUID as type_uuid 
-
+from uuid import   UUID as type_uuid 
 from pydantic import BaseModel, ConfigDict
-from sqlalchemy import UUID, Boolean, Column, Enum as SqlAlchemyEnum
-
+from sqlalchemy import  Boolean, Column, Enum as SqlAlchemyEnum
 from database import Base
-
 from enum import Enum
-
 from .BaseModel import DefaultData
 
 

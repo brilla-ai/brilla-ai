@@ -5,11 +5,8 @@ import math
 import base64
 import json
 import yt_dlp
-import tempfile
 import subprocess
 import os 
-import sys
-import glob
 import re
 import time
 
@@ -94,12 +91,9 @@ def send_audio_to_ML_layer(process_cmd: str, audio_chunks_dir_path: str, base_ur
 
         if audio_line_match:
             # wait for the audio to be written to file before sending 
-            # time.sleep(3.5)
             audio_chunk_file_name = audio_line_match.group()
             full_audio_path = os.path.join(audio_chunks_dir_path, audio_chunk_file_name)
-            start_time = time.perf_counter()
-            # if os.path.isfile(full_audio_path):
-            end_time = time.perf_counter()
+           
             while is_file_being_written(full_audio_path):
                 continue
             # send to ML layer
@@ -175,9 +169,7 @@ def process_audio_from_video(video_url, audio_chunks_dir_path, base_url, current
                                         universal_newlines=True, shell=True, text=True)
     
     send_audio_to_ML_layer(runAudioExtractCmd, audio_chunks_dir_path, base_url, current_round, isLiveStream)
-    # runAudioExtractCmd = subprocess.Popen("python3 core/send_to_ML_layer.py", 
-    #                                     stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=1, 
-    #                                     universal_newlines=True, shell=True, text=True)
+    
 
     
     runAudioExtractCmd.communicate()
