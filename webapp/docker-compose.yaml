@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+    backend:
+        build:
+            context: ./backend
+            dockerfile: DockerFile
+            extra_hosts:
+                - "host.docker.internal:host-gateway"
+        ports:
+            - "8000:8000"
+        depends_on:
+            - db
+            - pgadmin
+        environment:
+            DATABASE_URL_VALUE: 'postgresql+psycopg2://brilla:password@db:5432/brillai'
+            DOMAIN_NAME: http://localhost:3000
+            ML_API_URL: https://humorous-polecat-liked.ngrok-free.app
+
+    db:
+        image: postgres:13
+        environment:
+            POSTGRES_USER: brilla
+            POSTGRES_PASSWORD: password
+            POSTGRES_DB: brillai
+        ports:
+            - "5432:5432"
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
+
+    pgadmin:
+        image: dpage/pgadmin4
+        ports:
+            - "5050:80"
+        environment:
+            PGADMIN_DEFAULT_EMAIL: "Lqg2H@example.com"
+            PGADMIN_DEFAULT_PASSWORD: "password"
+        depends_on:
+            - db
+
+    frontend:
+        build:
+            context: ./brilla-frontend
+            dockerfile: DockerFile
+            extra_hosts:
+                - "host.docker.internal:host-gateway"
+        volumes:
+            - frontend_volume:/app
+        ports:
+            - "3000:3000"
+        depends_on:
+            - backend
+
+        environment:
+            NEXT_PUBLIC_API_BASE_URL: http://localhost:8000
+            NEXT_PUBLIC_WS_BASE_URL: http://localhost:8000/websocket/ws
+
+volumes:
+    postgres_data:
+    frontend_volume:
+
+
