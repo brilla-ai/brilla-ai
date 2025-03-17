@@ -1,26 +1,23 @@
-from typing import Annotated, Dict, Optional, Union
+from typing import Annotated
+
 from uuid import UUID
 
-
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException
 
 from core.ml_layer import process_audio_from_video
-from models.aiOperations import AIOperationsUpdateModel, VideoUrl
+
+from models.aiOperations import AIOperationsUpdateModel
 
 from services.aiOperationsService.ai_operations import AIOperationsService
+
 from services.videoService.video_service import LiveVideoService
 
 from services.userService.oauth import get_current_user
 
 from models.user import ReadUserModel, Role
-from core.websocket_connection_manager import get_connection_manager
+
 from models.liveVideo import VideoStatus
-from websocket.websocket import ConnectionManager
 
-from fastapi.encoders import jsonable_encoder
-
-import base64
-import logging
 import os
 
 
@@ -51,8 +48,6 @@ async def update_ai_operations(id: UUID, ai_operations : AIOperationsUpdateModel
 def start_audio_processing(video_service: Annotated[LiveVideoService, Depends(LiveVideoService)], ai_operations_service: Annotated[AIOperationsService, Depends(AIOperationsService)]):
     try:
         # extract audio from video
-        # video_to_process = videos[0]
-        # process and send to ML layer
         video = video_service.get_status_live_video(VideoStatus.live)
         ai_operations = ai_operations_service.get_ai_operation()
         stages = {

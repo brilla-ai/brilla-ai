@@ -1,7 +1,5 @@
-
-
-
 from typing import  Dict, List
+
 import uuid
 
 from fastapi import Depends, WebSocket, WebSocketDisconnect
@@ -40,10 +38,10 @@ class ConnectionManager( IConnectionManager):
         try:
             await websocket.accept()  # Accept the incoming WebSocket connection
 
-            #  random concetion_id  
+            #  random conncetion_id  
             connection_id = str(uuid.uuid4())  # Generate a unique connection ID
             self.client_connections[connection_id] = websocket
-            # self.client_connections[client_id] = websocket
+            
             print(f"Current client connections: {self.client_connections}")
             await websocket.send_json({"type": 1, "target": "handshake", "connection_id": connection_id, "version": "1.0.0", "protocol": "json"})
     
@@ -64,8 +62,6 @@ class ConnectionManager( IConnectionManager):
                 if('error' in command_response):
                     await websocket.send_json({"type": 1, "target": "error_message", "error": command_response, "version": "1.0.0", "protocol": "json"})
 
-                # Send a response back to the client
-                # await websocket.send_text(response)
 
     def disconnect(self, websocket: WebSocket, client_id: str, group_name: str = None):
         if group_name and group_name in self.active_connections:
@@ -97,7 +93,6 @@ class ConnectionManager( IConnectionManager):
                 return connection_id
         return None
 
-                  
 
     async def send_message_to_client(self, client_id: str, message: str):
         if client_id in self.client_connections:

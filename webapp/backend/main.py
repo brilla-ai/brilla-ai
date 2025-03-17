@@ -1,8 +1,6 @@
 import asyncio
 from contextlib import asynccontextmanager
-import threading
-from typing import Annotated
-from fastapi import Depends, FastAPI
+from fastapi import FastAPI
 from uvicorn import run
 from router.ml_layer import ml_layer
 from  router.user import user_router
@@ -14,7 +12,6 @@ from fastapi.middleware.cors import CORSMiddleware
 import os 
 from database import Base, engine, get_db
 from dotenv import load_dotenv
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.interval import IntervalTrigger
 from helper.seed_data import Seed
@@ -25,7 +22,7 @@ from job.video_job import check_and_update_live_video_status
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     global loop
-    loop = asyncio.get_running_loop()  # ✅ Store FastAPI's event loop at startup
+    loop = asyncio.get_running_loop()
     scheduler.add_job(job_wrapper, trigger=IntervalTrigger(seconds=10))
     scheduler.start()
     print("Scheduler started.")
@@ -45,16 +42,10 @@ def job_wrapper():
         future = asyncio.run_coroutine_threadsafe(check_and_update_live_video_status(), loop)
         future.result() 
 
-# def start_scheduler():
-#     scheduler.add_job(
-#         lambda: asyncio.get_event_loop(check_and_update_live_video_status()), 
-#         trigger=IntervalTrigger(seconds=60)
-#     )
-#     scheduler.start()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Change this to specific origins in production
+    allow_origins=["*"],  
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

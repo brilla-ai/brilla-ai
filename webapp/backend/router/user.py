@@ -1,4 +1,3 @@
-from datetime import datetime, timedelta
 from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
@@ -22,11 +21,9 @@ async def read_users_me(current_user: ReadUserModel = Depends(get_current_active
 
 @user_router.post("/create")
 async def create_user(create_user: CreateUserModel , user_service : Annotated[UserService , Depends(UserService)]):
-    # if( current_user.role):
         user = user_service.create_user(create_user)
         return {"message": "User created", "user": user}
-    # else:
-    #     raise HTTPException(status_code=401, detail="Unauthorized")
+
 
 
 

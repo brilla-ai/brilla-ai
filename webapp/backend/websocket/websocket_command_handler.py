@@ -2,7 +2,7 @@
 import json
 
 
-from .base_comand_executor import BaseCommandExecutor
+from .base_command_executor import BaseCommandExecutor
 
 
 
@@ -34,25 +34,6 @@ class CommandHandler:
         except Exception as e:
             return json.dumps({"error": str(e)})  
         
-
-    # async def method_dispatcher(self, target: str, arguments: list):
-    #     # Check if the target method exists and is callable
-    #     from  core.command_handler.websocket_command_handler import WebSocketCommands
-    #     from  core.command_handler.websocket_command_handler import get_connection_manager, LiveVideoService, AIOperationsService
-    #     live_service : LiveVideoService = Depends(LiveVideoService)
-    #     ai_service : AIOperationsService = Depends(AIOperationsService)
-    #     connection_manager =  Depends(get_connection_manager())
-    #     commands  = WebSocketCommands( live_video_service=live_service, ai_operations_service=ai_service, websocket_connection_manager=connection_manager)
-    #     method = getattr(commands, target, None)
-    
-    #     if method and callable(method):
-    #         print("calling method")
-    #         try:
-    #             return await method(*arguments)  # Call the method with the arguments
-    #         except Exception as e:
-    #             return {"error": str(e)}
-    #     else:
-    #         return {"error": f"No method found for target: {target}"}
 
 
     
