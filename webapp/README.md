@@ -1,113 +1,108 @@
+# Project Documentation
 
-# Brilla AI web application
+## 1. Introduction
 
-This repository contains both the frontend and backend for the Brilla web application. The frontend is developed using the [Next.js](https://nextjs.org/) framework, while the backend is built with [FastAPI](https://fastapi.tiangolo.com/) and requires a PostgreSQL database.
+### 1.1 Overview
 
-## Project Structure
+This document provides detailed information about the project, including its purpose, architecture, setup, APIs, and development workflow.
 
-- **brilla-frontend/** - The frontend codebase (Next.js).
-- **backend/** - The backend codebase (FastAPI).
-- **webapp/** - Main folder containing both frontend and backend projects.
+### 1.2 Target Audience
 
-## Getting Started
+* **Developers** – For understanding the technical implementation, APIs, and development processes.
+* **Product Managers** – For understanding the product’s high-level functionality and user flows.
 
-### Prerequisites
+### 1.3 High-Level Architecture
 
-- **Node.js** (for the frontend)
-- **Python 3.8+** (for the backend)
-- **PostgreSQL** (for the database)
+(Include a diagram if necessary)
 
-### Cloning the Repository
+## 2. Getting Started
 
-1. Clone the repository:
+### 2.1 For Developers
 
-   ```bash
-   git clone <repository-url>
-   ```
+#### 2.1.1 Prerequisites
 
-2. Change directory into the \`webapp\` folder:
+Required software, dependencies, and versions.
 
-   ```bash
-   cd webapp
-   ```
+* Python 3.8+
+* Node 18+
+* Git
+* Virtual Environment Tools (e.g venv)
+* Docker
 
----
+#### 2.1.2 Setup & Installation
 
-## Frontend Setup (Next.js)
+1.  Clone the project using <https://github.com/brilla-ai/brilla-ai.git>
+2.  Change directory in `brilla-ai` folder
+3.  Change directory into the `webapp` folder
+4.  Run `docker compose up`
+5.  Open browser and go to <http://localhost:3000/> to view frontend
+6.  Open <http://localhost:8000/> in browser for backend docs
 
-### Steps to Run the Frontend
+### 2.2 For Product Managers
 
-1. Navigate to the \`brilla-frontend\` folder:
+* How to access the system.
+* Key user workflows and features.
 
-   ```bash
-   cd brilla-frontend
-   ```
+## 3. Project Structure
 
-2. Install dependencies:
+### 3.1 Codebase Overview
 
-   ```bash
-   npm install
-   ```
+Description of key directories and files.
 
-3. Create a \`.env\` file in the \`brilla-frontend\` folder with the following environment variables:
+**Backend**
 
-   ```
-   NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
-   NEXT_PUBLIC_WS_BASE_URL=ws://localhost:8000/websocket/ws
-   ```
+**Key Directories:**
 
-4. Start the development server:
+* `alembic` – Database migrations using Alembic.
+* `core` – Core configurations and settings.
+* `databaseStore` – Database connection and query management.
+* `helper` – Utility functions and reusable logic.
+* `job` – Background jobs and task scheduling.
+* `models` – Database models (ORM).
+* `router` – API endpoints and routing.
+* `services` – Business logic and service layer.
+* `websocket` – WebSocket connections and real-time features.
 
-   ```bash
-   npm run dev
-   ```
+**Key Files:**
 
-   The frontend will be available at `http://localhost:3000`.
+* `main.py` – Entry point for the backend server.
+* `database.py` – Handles database initialization.
+* `requirements.txt` – Lists dependencies for the backend.
+* `.gitignore` – Specifies files and directories to be ignored in version control.
 
----
+**Frontend**
 
-## Backend Setup (FastAPI)
+**Key Directories:**
 
-### Prerequisites
+* `apis` – API request handlers.
+* `app` – Main application logic and state management.
+* `assets/images` – Static assets like images.
+* `components` – Reusable UI components.
+* `lib` – Utility functions and shared logic.
+* `mocks` – Mock data for testing.
+* `public` – Static public files.
+* `styles` – Global styles and theme definitions.
+* `tests` & `tests-examples` – Unit and integration tests.
 
-- **PostgreSQL** must be running locally.
+**Key Files:**
 
-### Steps to Run the Backend
+* `README.md` – Documentation for the frontend setup.
+* `.gitignore` – Ignore rules for frontend files.
+* `.eslintrc.json` – ESLint configuration for code linting.
+* `components.json` – Likely a manifest for components.
 
-1. Navigate to the \`backend\` folder:
+## 4. Technologies & Dependencies
 
-   ```bash
-   cd backend
-   ```
+List of frameworks, libraries, and tools used.
 
-2. Ensure PostgreSQL is running.
+**Backend**
 
-3. Install the backend dependencies:
+* FastApi
+* PostgreSql
 
-   ```bash
-   pip install -r requirements.txt
-   ```
+**Frontend**
 
-4. Create a \`.env.dev\` file in the \`backend\` folder with the following content:
+* React / Next js
+* Playwright for testing
 
-   ```
-   DATABASE_URL_VALUE='postgresql+psycopg2://username:password@localhost:5432/brillaai'
-   DEBUG=True
-   ML_API_URL=<your-ml-api-url>
-   ```
-
-5. Start the FastAPI server for development:
-
-   ```bash
-   uvicorn main:app --reload
-   ```
-
-   The backend will be available at `http://localhost:8000`.
-
----
-
-### Notes
-
-- Be sure to update the `.env` files with your own configuration values.
-- The backend requires a PostgreSQL database connection, so ensure your local environment is correctly set up.
-
+Justification for choices (brief for PMs).
