@@ -5,7 +5,7 @@ from core.command_handler.websocket_command_handler import WebSocketCommands
 from services.aiOperationsService.ai_operations import AIOperationsService
 from services.videoService.video_service import LiveVideoService
 from .websocket_connection_manager import get_connection_manager
-from websocket.base_comand_executor import BaseCommandExecutor
+from webapp.backend.websocket.base_command_executor import BaseCommandExecutor
 
 def get_command_executor(
     live_video_service = Depends(LiveVideoService),

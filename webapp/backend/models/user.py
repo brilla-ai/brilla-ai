@@ -1,13 +1,20 @@
 
 from typing import Optional
+
 from sqlalchemy import Column, String, Boolean, DateTime,  Enum as SQLAlchemyEnum, ForeignKey
+
 from sqlalchemy.dialects.postgresql  import UUID 
+
 from sqlalchemy.orm import relationship
+
 from database import Base
-from uuid import uuid4
+
 from uuid import UUID as type_uuid
+
 from pydantic import BaseModel
+
 from datetime import datetime, timedelta
+
 from  enum import Enum
 
 from .BaseModel import DefaultData 

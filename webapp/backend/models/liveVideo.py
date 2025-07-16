@@ -1,12 +1,21 @@
 from datetime import datetime, timezone
+
 from enum import Enum
+
 from typing import Optional
+
 from uuid import uuid4
+
 from pydantic import BaseModel, ConfigDict
-from sqlalchemy import UUID, Boolean, Column, DateTime, ForeignKey, String, func, event,  Enum as SqlAlchemyEnum
+
+from sqlalchemy import UUID, Boolean, Column, DateTime, ForeignKey, String, event,  Enum as SqlAlchemyEnum
+
 from sqlalchemy.orm import relationship
+
 from .BaseModel import DefaultData
+
 from database import Base
+
 from uuid import UUID as type_uuid
 
 
@@ -97,8 +106,6 @@ class LiveVideoReadModel(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
-    # class Config: 
-    #     orm_mode = True
 
 
 class LiveVideoCreateModel(BaseModel):

@@ -1,0 +1,13 @@
+version: '3.8'
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: DockerFile
+    volumes:
+      - frontend_volume:/app 
+    env_file:
+      - .env
+volumes:
+  frontend_volume:
+

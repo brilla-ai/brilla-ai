@@ -1,18 +1,18 @@
 from datetime import datetime
 from typing import Annotated, Optional
 from fastapi import Depends
-from models.user import AcceptInviteModel, CreateAcceptInviteModel, CreateInviteUserModel, ReadInviteUserModel, ReadUserModel, Role, User
+from models.user import  CreateAcceptInviteModel, CreateInviteUserModel, ReadInviteUserModel, ReadUserModel, Role
 from databaseStore.User.invite_repository import InviteRepository
 from helper.generate_invite_code import generate_invite_code
-from databaseStore.User.user_respository import UserRepository
+from webapp.backend.databaseStore.User.user_rspository import UserRepository
 from .authHelper import get_password_hash
 
 
 class InviteUserService:
 
-    def __init__(self, invite_repository: Annotated[InviteRepository, Depends(InviteRepository)], user_respository: Annotated[UserRepository, Depends(UserRepository)] ) -> None:
+    def __init__(self, invite_repository: Annotated[InviteRepository, Depends(InviteRepository)], user_repository: Annotated[UserRepository, Depends(UserRepository)] ) -> None:
         self.invite_repository = invite_repository
-        self.user_repository = user_respository
+        self.user_repository = user_repository
     def create_invite(self, invite_user: CreateInviteUserModel) -> dict:
         if( invite_user.role not in Role._value2member_map_):
             return {"message": "Invalid role", "data": None}
@@ -53,12 +53,15 @@ class InviteUserService:
         
         user = self.user_repository.create_user(user_data)
 
-        invite_data =   self.deactive_invite(invite.invite_code)
+        invite_data =   self.deactivate_invite(invite.invite_code)
+        
         if( invite_data ):
+            
             return {"message": "User created", "data": ReadUserModel(**user).__dict__}
+        
         return {"message": "User already exist", "data": ReadUserModel(**user).__dict__}
     
-    def  deactive_invite(self, invite_code: str):
+    def  deactivate_invite(self, invite_code: str):
         invite = self.invite_repository.get_invite_by_code(invite_code)
         if( invite and invite.is_active ):
             invite_data  = {

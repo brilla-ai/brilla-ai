@@ -1,9 +1,7 @@
 from services.aiOperationsService.interface.IAi_operations import IAIOperationsService
 from services.videoService.interface.ILive_video_service import ILiveVideoService
 from websocket.interface.IConnection_manager import IConnectionManager
-
 from models.liveVideo import VideoStatus
-from fastapi.encoders import jsonable_encoder
 
 class WebSocketCommands:
 
@@ -60,7 +58,6 @@ class WebSocketCommands:
                             videos = self.live_video_service.get_all_live_video()
                             ai_operations = self.ai_operations_service.get_ai_operation()
                             await  websocket.send_json({"videos": videos.get("data"), "ai_operations": ai_operations.get("data")})
-                          
                     else: 
                         print("websocket already in group")
                         await websocket.send_json({"type": 1, "target": "error_message", "error": "WebSocket already in group", "version": "1.0.0", "protocol": "json"})

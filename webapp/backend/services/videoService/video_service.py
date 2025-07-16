@@ -19,7 +19,7 @@ from .interface.ILive_video_service import ILiveVideoService
 
 from .live_video_edit_logs import LiveVideoEditLogsService
 
-from core.reponse_model import BaseResponseModel
+from core.response_model import BaseResponseModel
 
 from models.liveVideo import LiveVideoCreateModel, LiveVideoEditLogCreateModel, LiveVideoUpdateModel, LiveVideoUpdateStopStatusModel, VideoStatus
 
@@ -87,7 +87,6 @@ class  LiveVideoService(ILiveVideoService):
     async def  stop_live_video_update(self, id: UUID, user_id : UUID, stop_status: LiveVideoUpdateStopStatusModel):
         live_video_response  =  self.live_video_repository.stop_live_video_update(id, stop_status) 
         if( live_video_response ):
-            # live_video_validated_response  =  apply_pydantic_model(LiveVideoReadModel, live_video_response)
             
             #  add an entry to the log 
             self.__create_live_video_log(user_id, id)
