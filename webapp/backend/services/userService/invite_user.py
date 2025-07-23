@@ -4,8 +4,8 @@ from fastapi import Depends
 from models.user import  CreateAcceptInviteModel, CreateInviteUserModel, ReadInviteUserModel, ReadUserModel, Role
 from databaseStore.User.invite_repository import InviteRepository
 from helper.generate_invite_code import generate_invite_code
-from webapp.backend.databaseStore.User.user_rspository import UserRepository
-from .authHelper import get_password_hash
+from databaseStore.User.user_repository import UserRepository
+from authHelper import get_password_hash
 
 
 class InviteUserService:

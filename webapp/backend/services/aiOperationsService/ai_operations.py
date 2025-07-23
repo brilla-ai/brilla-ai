@@ -4,7 +4,7 @@ from uuid import uuid4
 
 from fastapi import Depends, status 
 
-from webapp.backend.core.response_model import BaseResponseModel
+from core.response_model import BaseResponseModel
 
 from helper.filter_none_values import  filter_none_values
 
@@ -12,7 +12,7 @@ from models.aiOperations import AIOperationsUpdateModel
 
 from databaseStore.AIOperations.ai_operations import AIOperationsRepository
 
-from .interface.IAi_operations import IAIOperationsService
+from interface.IAi_operations import IAIOperationsService
 
 from websocket.websocket import ConnectionManager
 

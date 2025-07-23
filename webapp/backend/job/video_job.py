@@ -11,7 +11,7 @@ from core.live_video_repository_manager import get_live_video_repository_manager
 from core.websocket_connection_manager import get_connection_manager
 from fastapi.encoders import jsonable_encoder
 
-from webapp.backend.core.response_model import BaseResponseModel
+from core.response_model import BaseResponseModel
 
 
 live_video_service  = get_live_video_repository_manager()

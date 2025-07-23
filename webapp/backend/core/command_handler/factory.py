@@ -4,7 +4,7 @@ from ..factory import get_command_executor
 
 from websocket.websocket_command_handler import CommandHandler
 
-from webapp.backend.websocket.base_command_executor import BaseCommandExecutor
+from websocket.base_command_executor import BaseCommandExecutor
 
 
 def get_command_handler(command_executor: BaseCommandExecutor = Depends(get_command_executor)) -> CommandHandler:
